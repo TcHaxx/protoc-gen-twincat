@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ProtocGenTc</RootNamespace>
+    <Version>0.0.0</Version>
+    <Authors>densogiaichned</Authors>
+    <Company>TcHaxx</Company>
+    <Copyright>Copyright (c) 2025 densogiaichned</Copyright>
+    <Description>A protobuf compiler plugin for TwinCAT that generates POUs and DUTs from *.proto files.</Description>
+    <RepositoryUrl>https://github.com/TcHaxx/protoc-gen-twincat</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+</Project>
