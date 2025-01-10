@@ -1,15 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>ProtocGenTc</RootNamespace>
-    <Version>0.0.0</Version>
-    <Authors>densogiaichned</Authors>
-    <Company>TcHaxx</Company>
-    <Copyright>Copyright (c) 2025 densogiaichned</Copyright>
-    <Description>A protobuf compiler plugin for TwinCAT that generates POUs and DUTs from *.proto files.</Description>
-    <RepositoryUrl>https://github.com/TcHaxx/protoc-gen-twincat</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>TcHaxx.ProtocGenTc</RootNamespace>
+        <Version>0.0.0</Version>
+        <Authors>densogiaichned</Authors>
+        <Company>TcHaxx</Company>
+        <Copyright>Copyright (c) 2025 densogiaichned</Copyright>
+        <Description>A protobuf compiler plugin for TwinCAT that generates POUs and DUTs from *.proto files.</Description>
+        <RepositoryUrl>https://github.com/TcHaxx/protoc-gen-twincat</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.29.3" />
+        <PackageReference Include="Grpc.Tools" Version="2.50.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+        <Protobuf Include="../../proto/tchaxx-extensions.proto" GrpcServices="None" Link="proto/tchaxx-extensions.proto" />
+    </ItemGroup>
 </Project>

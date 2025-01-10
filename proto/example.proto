@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "proto/tchaxx-extensions.proto";
+
+package example;
+
+message Example {
+  string name = 1 [(tchaxx.extensions.v1.max_string_len) = 256];
+  int32 value = 2;
+  string another_string = 3;
+}
