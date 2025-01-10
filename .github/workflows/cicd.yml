@@ -28,7 +28,6 @@ jobs:
   ci-protoc-gen-twincat:
     name: CI - protoc-gen-twincat
     runs-on: ubuntu-latest
-    env:
 
     steps:
       - uses: actions/checkout@v4
