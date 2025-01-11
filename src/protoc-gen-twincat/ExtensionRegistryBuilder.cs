@@ -12,6 +12,7 @@ internal static class ExtensionRegistryBuilder
             AttributePackMode,
             AttributeDisplayMode,
             AttributeTcrpcenable,
+            IntegerType,
         };
         return registry;
     }

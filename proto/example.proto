@@ -2,10 +2,24 @@ syntax = "proto3";
 
 import "proto/tchaxx-extensions.proto";
 
-package example;
+package Example;
 
-message Example {
-  string name = 1 [(tchaxx.extensions.v1.max_string_len) = 256];
-  int32 value = 2;
-  string another_string = 3;
+message ST_Example {
+  string sName = 1 [(tchaxx.extensions.v1.max_string_len) = 256];
+  uint32 nUDInt1 = 2;
+  int32 nDInt2 = 3 [(tchaxx.extensions.v1.integer_type) = EIT_DINT,
+                      (tchaxx.extensions.v1.attribute_display_mode) = EDM_BIN];
+  string sMyString = 4;
+  fixed64 nFixed64 = 5;
+  sfixed64 nSFixed64 = 6;
+  uint32 nByte = 7 [(tchaxx.extensions.v1.integer_type) = EIT_BYTE];
+  float fReal = 8;
+  double fLReal = 9;
+  ST_SubDataType stOtherDataType = 10;
+}
+
+message ST_SubDataType {
+  option (tchaxx.extensions.v1.attribute_pack_mode) = EPM_ONE_BYTE_ALIGNED;
+  int32 nDInt = 1 [(tchaxx.extensions.v1.integer_type) = EIT_DINT,
+                      (tchaxx.extensions.v1.attribute_display_mode) = EDM_HEX];
 }
