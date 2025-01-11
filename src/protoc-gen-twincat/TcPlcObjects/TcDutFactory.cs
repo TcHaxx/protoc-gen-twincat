@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using System.Xml;
 
 namespace TcHaxx.ProtocGenTc.TcPlcObjects;
@@ -16,7 +17,8 @@ internal static class TcDutFactory
                 Id = Guid.NewGuid().ToString(),
             }
         };
-        dut.DUT.Declaration ??= new XmlDocument().CreateCDataSection(attributes);
+        dut.WriteHeader();
+        dut.DUT.Declaration.Data += attributes;
         return dut;
     }
 
@@ -38,4 +40,9 @@ internal static class TcDutFactory
         dut.DUT.Declaration.AppendData(sb.ToString());
     }
 
+    private static void WriteHeader(this TcDUT dut)
+    {
+        var header = Helper.GetApplicationHeader(Assembly.GetExecutingAssembly());
+        dut.DUT.Declaration ??= new XmlDocument().CreateCDataSection(header);
+    }
 }

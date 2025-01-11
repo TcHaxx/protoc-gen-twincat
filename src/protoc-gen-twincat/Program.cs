@@ -88,7 +88,7 @@ static string ProcessIntegerField(FieldDescriptorProto field)
     var options = field.Options;
     if (TryGetAttributeDisplayMode(options, out var displaymodeAttribute))
     {
-        sb.AppendLine(displaymodeAttribute);
+        sb.AppendLine($"\t{displaymodeAttribute}");
     }
     var dataType = string.Empty;
     if (options is not null && options.HasExtension(IntegerType))
@@ -97,7 +97,7 @@ static string ProcessIntegerField(FieldDescriptorProto field)
         {
             var error = $"Unhandled integer type: {field.Name} : {field.Type}";
             Console.Error.WriteLine(error);
-            sb.Append($"// {error}\r\n");
+            sb.AppendLine($"\t// {error}");
             return sb.ToString();
         }
     }
@@ -108,19 +108,18 @@ static string ProcessIntegerField(FieldDescriptorProto field)
         {
             var error = $"Unhandled integer type: {field.Name} : {field.Type}";
             Console.Error.WriteLine(error);
-            sb.Append($"// {error}\r\n");
+            sb.AppendLine($"\t// {error}");
             return sb.ToString();
         }
     }
     if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
     {
-        sb.Append($"{field.Name} : ARRAY[0..{length}] OF {dataType};");
+        sb.AppendLine($"\t{field.Name} : ARRAY[0..{length}] OF {dataType};");
     }
     else
     {
-        sb.Append($"{field.Name} : {dataType};");
+        sb.AppendLine($"\t{field.Name} : {dataType};");
     }
-    sb.AppendLine();
     return sb.ToString();
 }
 
@@ -200,13 +199,12 @@ static string ProcessGenericField(FieldDescriptorProto field)
     var stripped = field.TypeName.StartsWith('.') ? field.TypeName.Split('.')[^1] : field.TypeName;
     if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
     {
-        sb.Append($"{field.Name} : ARRAY[0..{length}] OF {stripped};");
+        sb.AppendLine($"\t{field.Name} : ARRAY[0..{length}] OF {stripped};");
     }
     else
     {
-        sb.Append($"{field.Name} : {stripped};");
+        sb.AppendLine($"\t{field.Name} : {stripped};");
     }
-    sb.AppendLine();
     return sb.ToString();
 }
 
@@ -217,7 +215,7 @@ static string ProcessStringField(FieldDescriptorProto field)
     var options = field.Options;
     if (options is null)
     {
-        sb.Append($"{field.Name} : STRING;");
+        sb.AppendLine($"\t{field.Name} : STRING;");
     }
     else
     {
@@ -225,16 +223,15 @@ static string ProcessStringField(FieldDescriptorProto field)
         if (options.HasExtension(MaxStringLen))
         {
             var extensionValue = options.GetExtension(MaxStringLen);
-            sb.Append($"{field.Name} : STRING({extensionValue});");
+            sb.AppendLine($"\t{field.Name} : STRING({extensionValue});");
         }
         else
         {
             Console.Error.WriteLine($"Field: {field.Name} has options but no MaxStringLen extension");
-            sb.Append($"{field.Name} : STRING;");
+            sb.AppendLine($"\t{field.Name} : STRING;");
         }
     }
 
-    sb.AppendLine();
     return sb.ToString();
 }
 
@@ -243,13 +240,12 @@ static string ProcessDoubleField(FieldDescriptorProto field)
     var sb = new StringBuilder();
     if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
     {
-        sb.Append($"{field.Name} : ARRAY[0..{length}] OF LREAL;");
+        sb.AppendLine($"\t{field.Name} : ARRAY[0..{length}] OF LREAL;");
     }
     else
     {
-        sb.Append($"{field.Name} : LREAL;");
+        sb.AppendLine($"\t{field.Name} : LREAL;");
     }
-    sb.AppendLine();
     return sb.ToString();
 }
 
@@ -258,13 +254,12 @@ static string ProcessFloatField(FieldDescriptorProto field)
     var sb = new StringBuilder();
     if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
     {
-        sb.Append($"{field.Name} : ARRAY[0..{length}] OF REAL;");
+        sb.AppendLine($"\t{field.Name} : ARRAY[0..{length}] OF REAL;");
     }
     else
     {
-        sb.Append($"{field.Name} : REAL;");
+        sb.AppendLine($"\t{field.Name} : REAL;");
     }
-    sb.AppendLine();
     return sb.ToString();
 }
 
@@ -328,7 +323,7 @@ static string GetDutAttributes(MessageOptions? options)
     var sbDutAttributes = new StringBuilder();
     if (TryGetAttributePackMode(options, out var packmodeAttribute))
     {
-        sbDutAttributes.AppendLine(packmodeAttribute);
+        sbDutAttributes.AppendLine($"{packmodeAttribute}");
     }
     return sbDutAttributes.ToString();
 }
