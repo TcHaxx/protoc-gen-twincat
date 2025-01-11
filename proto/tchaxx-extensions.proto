@@ -27,7 +27,7 @@ enum EnumPackMode {
   EPM_ONE_BYTE_ALIGNED = 1;
   EPM_TWO_BYTES_ALIGNED = 2;
   EPM_FOUR_BYTES_ALIGNED = 4;
-  EPM_MEIGHT_BYTES_ALIGNED = 8;
+  EPM_EIGHT_BYTES_ALIGNED = 8;
 }
 
 // https://infosys.beckhoff.com/content/1033/tc3_plc_intro/2529633163.html

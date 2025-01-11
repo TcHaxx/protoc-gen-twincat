@@ -354,7 +354,7 @@ static bool TryGetAttributePackMode(MessageOptions? options, [NotNullWhen(true)]
         case EnumPackMode.EpmFourBytesAligned:
             value = "{attribute 'pack_mode' := '4'}";
             return true;
-        case EnumPackMode.EpmMeightBytesAligned:
+        case EnumPackMode.EpmEightBytesAligned:
             value = "{attribute 'pack_mode' := '8'}";
             return true;
         default:
