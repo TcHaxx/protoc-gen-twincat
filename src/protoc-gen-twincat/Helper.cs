@@ -52,4 +52,20 @@ internal static class Helper
 
         return sb.ToString();
     }
+
+    internal static string TransformComment(string? comment, string indentation = "")
+    {
+        if (string.IsNullOrEmpty(comment))
+        {
+            return string.Empty;
+        }
+
+        var splitted = comment.Split(["\r\n", "\n"], StringSplitOptions.RemoveEmptyEntries);
+        var sb = new StringBuilder(splitted.Length * 80);
+        foreach (var line in splitted)
+        {
+            _ = sb.AppendLine($"{indentation}//{line}");
+        }
+        return sb.ToString().TrimEnd();
+    }
 }

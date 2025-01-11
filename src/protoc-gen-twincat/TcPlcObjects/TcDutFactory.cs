@@ -6,7 +6,7 @@ namespace TcHaxx.ProtocGenTc.TcPlcObjects;
 
 internal static class TcDutFactory
 {
-    public static TcDUT CreateTcDUT(string typeName, string? attributes)
+    public static TcDUT CreateTcDUT(string typeName, string? attributes, Comments comments)
     {
         var dut = new TcDUT
         {
@@ -18,7 +18,13 @@ internal static class TcDutFactory
             }
         };
         dut.WriteHeader();
+        if (!string.IsNullOrWhiteSpace(comments.LeadingComments))
+        {
+            dut.DUT.Declaration.Data += Helper.TransformComment(comments.LeadingComments) + Environment.NewLine;
+        }
+
         dut.DUT.Declaration.Data += attributes;
+
         return dut;
     }
 

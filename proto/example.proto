@@ -4,29 +4,36 @@ import "proto/tchaxx-extensions.proto";
 
 package Example;
 
+// This is a message-level comment.
 message ST_Example {
-  string sName = 1 [(tchaxx.ext.v1.max_string_len) = 256];
-  repeated uint32 aUdintArray = 2 [(tchaxx.ext.v1.array_length) = 5];
+  // This is a leading field-level comment,
+  // and it continues on the next line.
+  string sName = 1 [(tchaxx.ext.v1.max_string_len) = 256];  // Trailing comment for field1 (sName).
+  repeated uint32 aUdintArray = 2 [(tchaxx.ext.v1.array_length) = 5]; // Trailing comment for field2 (aUdintArray).
   int32 nDInt2 = 3 [
     (tchaxx.ext.v1.integer_type) = EIT_DINT,
     (tchaxx.ext.v1.attribute_display_mode) = EDM_BIN
-  ];
+  ]; // Trailing comment for field3 (nDInt2).
   string sMyString = 4;
   fixed64 nFixed64 = 5;
-  sfixed64 nSFixed64 = 6;
+  sfixed64 nSFixed64 = 6;  // Trailing comment for field4 (nSFixed64).
+  // Leading comment for field7 (aByteArray),
+  // also multiline...
   repeated uint32 aByteArray = 7 [
     (tchaxx.ext.v1.array_length) = 32,
     (tchaxx.ext.v1.integer_type) = EIT_BYTE
-  ];
+  ]; // Trailing comment for field7 (aByteArray).
   float fReal = 8;
-  repeated double fLReal = 9  [(tchaxx.ext.v1.array_length) = 1];
-  repeated ST_SubDataType aSubDataTypeArray = 10 [(tchaxx.ext.v1.array_length) = 0];
+  repeated double fLReal = 9  [(tchaxx.ext.v1.array_length) = 1];  // Trailing comment for field9 (fLReal).
+  repeated ST_SubDataType aSubDataTypeArray = 10 [(tchaxx.ext.v1.array_length) = 0]; // Trailing comment for field10 (aSubDataTypeArray).
 }
 
-message ST_SubDataType {
+// This is a message-level comment (message ST_SubDataType),
+// also multiline...
+message ST_SubDataType {  // This trailing comment is ignored!
   option (tchaxx.ext.v1.attribute_pack_mode) = EPM_ONE_BYTE_ALIGNED;
   int32 nDInt = 1 [
     (tchaxx.ext.v1.integer_type) = EIT_DINT,
     (tchaxx.ext.v1.attribute_display_mode) = EDM_HEX
-  ];
+  ];  // Trailing comment for field1 (nDInt).
 }
