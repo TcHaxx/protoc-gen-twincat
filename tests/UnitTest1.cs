@@ -1,4 +1,4 @@
-﻿namespace ProtocGenTcTests;
+﻿namespace TcHaxx.ProtocGenTcTests;
 
 public class UnitTest1
 {
