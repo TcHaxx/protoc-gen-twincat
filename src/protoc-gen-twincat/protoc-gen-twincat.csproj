@@ -20,6 +20,6 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-        <Protobuf Include="../../proto/tchaxx-extensions.proto" GrpcServices="None" Link="proto/tchaxx-extensions.proto" />
+        <Protobuf Include="../../proto/tchaxx-extensions.proto" GrpcServices="None" Link="proto/tchaxx-extensions.proto" ProtoCompile="True" />
     </ItemGroup>
 </Project>
