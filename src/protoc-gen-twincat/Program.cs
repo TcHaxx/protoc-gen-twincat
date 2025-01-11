@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -44,6 +44,7 @@ foreach (var file in request.ProtoFile)
         };
         response.File.Add(responseFile);
         var processedFields = new StringBuilder();
+
         foreach (var field in message.Field)
         {
             await Console.Error.WriteLineAsync($"Field: {field.Name} (Type: {field.Type})");
@@ -89,98 +90,122 @@ static string ProcessIntegerField(FieldDescriptorProto field)
     {
         sb.AppendLine(displaymodeAttribute);
     }
+    var dataType = string.Empty;
     if (options is not null && options.HasExtension(IntegerType))
     {
-#pragma warning disable S3458 // Empty "case" clauses that fall through to the "default" should be omitted
-        switch (options.GetExtension(IntegerType))
+        if (!TryGetTwinCatDataTypeFromEnumInterTypes(options.GetExtension(IntegerType), out dataType))
         {
-            case EnumIntegerTypes.EitByte:
-                sb.Append($"{field.Name} : BYTE;");
-                break;
-            case EnumIntegerTypes.EitWord:
-                sb.Append($"{field.Name} : WORD;");
-                break;
-            case EnumIntegerTypes.EitDword:
-                sb.Append($"{field.Name} : DWORD;");
-                break;
-            case EnumIntegerTypes.EitLword:
-                sb.Append($"{field.Name} : LWORD;");
-                break;
-            case EnumIntegerTypes.EitSint:
-                sb.Append($"{field.Name} : SINT;");
-                break;
-            case EnumIntegerTypes.EitUsint:
-                sb.Append($"{field.Name} : USINT;");
-                break;
-            case EnumIntegerTypes.EitInt:
-                sb.Append($"{field.Name} : INT;");
-                break;
-            case EnumIntegerTypes.EitUint:
-                sb.Append($"{field.Name} : UINT;");
-                break;
-            case EnumIntegerTypes.EitDint:
-                sb.Append($"{field.Name} : DINT;");
-                break;
-            case EnumIntegerTypes.EitUdint:
-                sb.Append($"{field.Name} : UDINT;");
-                break;
-            case EnumIntegerTypes.EitLint:
-                sb.Append($"{field.Name} : LINT;");
-                break;
-            case EnumIntegerTypes.EitUlint:
-                sb.Append($"{field.Name} : ULINT;");
-                break;
-            case EnumIntegerTypes.EitDefault:
-            default:
-                var error = $"Unhandled integer type: {field.Name} : {field.Type}";
-                Console.Error.WriteLine(error);
-                sb.Append($"// {error}\r\n");
-                break;
+            var error = $"Unhandled integer type: {field.Name} : {field.Type}";
+            Console.Error.WriteLine(error);
+            sb.Append($"// {error}\r\n");
+            return sb.ToString();
         }
-#pragma warning restore S3458 // Empty "case" clauses that fall through to the "default" should be omitted
     }
     else
     {
-#pragma warning disable IDE0010 // Add missing cases
-        switch (field.Type)
+        dataType = MapProtoIntegerToTwinCat(field);
+        if (string.IsNullOrEmpty(dataType))
         {
-            case FieldDescriptorProto.Types.Type.Uint32:
-            case FieldDescriptorProto.Types.Type.Fixed32:
-                sb.Append($"{field.Name} : UDINT;");
-                break;
-            case FieldDescriptorProto.Types.Type.Uint64:
-            case FieldDescriptorProto.Types.Type.Fixed64:
-                sb.Append($"{field.Name} : ULINT;");
-                break;
-            case FieldDescriptorProto.Types.Type.Int32:
-            case FieldDescriptorProto.Types.Type.Sint32:
-            case FieldDescriptorProto.Types.Type.Sfixed32:
-                sb.Append($"{field.Name} : DINT;");
-                break;
-            case FieldDescriptorProto.Types.Type.Int64:
-            case FieldDescriptorProto.Types.Type.Sint64:
-            case FieldDescriptorProto.Types.Type.Sfixed64:
-                sb.Append($"{field.Name} : LINT;");
-                break;
-            default:
-                var error = $"Unhandled integer type: {field.Name} : {field.Type}";
-                Console.Error.WriteLine(error);
-                sb.Append($"// {error}\r\n");
-                break;
+            var error = $"Unhandled integer type: {field.Name} : {field.Type}";
+            Console.Error.WriteLine(error);
+            sb.Append($"// {error}\r\n");
+            return sb.ToString();
         }
-#pragma warning restore IDE0010 // Add missing cases
+    }
+    if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
+    {
+        sb.Append($"{field.Name} : ARRAY[0..{length}] OF {dataType};");
+    }
+    else
+    {
+        sb.Append($"{field.Name} : {dataType};");
     }
     sb.AppendLine();
     return sb.ToString();
 }
 
+static bool TryGetTwinCatDataTypeFromEnumInterTypes(EnumIntegerTypes enumIntegerTypes, out string dataType)
+{
+    switch (enumIntegerTypes)
+    {
+        case EnumIntegerTypes.EitByte:
+            dataType = "BYTE";
+            return true;
+        case EnumIntegerTypes.EitWord:
+            dataType = "WORD";
+            return true;
+        case EnumIntegerTypes.EitDword:
+            dataType = "DWORD";
+            return true;
+        case EnumIntegerTypes.EitLword:
+            dataType = "LWORD";
+            return true;
+        case EnumIntegerTypes.EitSint:
+            dataType = "SINT";
+            return true;
+        case EnumIntegerTypes.EitUsint:
+            dataType = "USINT";
+            return true;
+        case EnumIntegerTypes.EitInt:
+            dataType = "INT";
+            return true;
+        case EnumIntegerTypes.EitUint:
+            dataType = "UINT";
+            return true;
+        case EnumIntegerTypes.EitDint:
+            dataType = "DINT";
+            return true;
+        case EnumIntegerTypes.EitUdint:
+            dataType = "UDINT";
+            return true;
+        case EnumIntegerTypes.EitLint:
+            dataType = "LINT";
+            return true;
+        case EnumIntegerTypes.EitUlint:
+            dataType = "ULINT";
+            return true;
+        case EnumIntegerTypes.EitDefault:
+            dataType = string.Empty;
+            return false;
+        default:
+            dataType = string.Empty;
+            return false;
+    }
+}
+
+static string MapProtoIntegerToTwinCat(FieldDescriptorProto field)
+{
+#pragma warning disable IDE0072 // Add missing cases
+    return field.Type switch
+    {
+        FieldDescriptorProto.Types.Type.Uint32 or
+        FieldDescriptorProto.Types.Type.Fixed32 => "UDINT",
+        FieldDescriptorProto.Types.Type.Uint64 or
+        FieldDescriptorProto.Types.Type.Fixed64 => "ULINT",
+        FieldDescriptorProto.Types.Type.Int32 or
+        FieldDescriptorProto.Types.Type.Sint32 or
+        FieldDescriptorProto.Types.Type.Sfixed32 => "DINT",
+        FieldDescriptorProto.Types.Type.Int64 or
+        FieldDescriptorProto.Types.Type.Sint64 or
+        FieldDescriptorProto.Types.Type.Sfixed64 => "LINT",
+        _ => string.Empty,
+    };
+#pragma warning restore IDE0072 // Add missing cases
+}
 
 static string ProcessGenericField(FieldDescriptorProto field)
 {
     var sb = new StringBuilder();
     // Remove leading '.Example.' from type name, e.g. .Example.ST_SubDataType -> ST_SubDataType
     var stripped = field.TypeName.StartsWith('.') ? field.TypeName.Split('.')[^1] : field.TypeName;
-    sb.Append($"{field.Name} : {stripped};");
+    if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
+    {
+        sb.Append($"{field.Name} : ARRAY[0..{length}] OF {stripped};");
+    }
+    else
+    {
+        sb.Append($"{field.Name} : {stripped};");
+    }
     sb.AppendLine();
     return sb.ToString();
 }
@@ -216,7 +241,14 @@ static string ProcessStringField(FieldDescriptorProto field)
 static string ProcessDoubleField(FieldDescriptorProto field)
 {
     var sb = new StringBuilder();
-    sb.Append($"{field.Name} : LREAL;");
+    if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
+    {
+        sb.Append($"{field.Name} : ARRAY[0..{length}] OF LREAL;");
+    }
+    else
+    {
+        sb.Append($"{field.Name} : LREAL;");
+    }
     sb.AppendLine();
     return sb.ToString();
 }
@@ -224,7 +256,14 @@ static string ProcessDoubleField(FieldDescriptorProto field)
 static string ProcessFloatField(FieldDescriptorProto field)
 {
     var sb = new StringBuilder();
-    sb.Append($"{field.Name} : REAL;");
+    if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
+    {
+        sb.Append($"{field.Name} : ARRAY[0..{length}] OF REAL;");
+    }
+    else
+    {
+        sb.Append($"{field.Name} : REAL;");
+    }
     sb.AppendLine();
     return sb.ToString();
 }
@@ -322,4 +361,27 @@ static bool TryGetAttributePackMode(MessageOptions? options, [NotNullWhen(true)]
             Console.Error.WriteLine($"Unhandled pack mode: {packMode}");
             return false;
     }
+}
+
+static bool HasRepeatedLabel(FieldDescriptorProto field)
+{
+    return field.Label == FieldDescriptorProto.Types.Label.Repeated;
+}
+
+static bool GetArrayLengthWhenRepeatedLabelOrFail(FieldDescriptorProto field, out uint length)
+{
+    length = 0;
+    if (!HasRepeatedLabel(field))
+    {
+        return false;
+    }
+
+    if (field.Options is null || !field.Options.HasExtension(ArrayLength))
+    {
+        throw new InvalidOperationException($"Field {field.Name} has label \"repeated\" but no TcHaxx.Extensions.v1.{nameof(ArrayLength)} extension");
+    }
+
+    var len = field.Options.GetExtension(ArrayLength);
+    length = len > 0 ? len - 1 : 0;
+    return true;
 }

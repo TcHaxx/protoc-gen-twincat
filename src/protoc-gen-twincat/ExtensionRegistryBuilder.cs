@@ -8,6 +8,7 @@ internal static class ExtensionRegistryBuilder
     {
         var registry = new ExtensionRegistry
         {
+            ArrayLength,
             MaxStringLen,
             AttributePackMode,
             AttributeDisplayMode,

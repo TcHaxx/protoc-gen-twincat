@@ -5,21 +5,28 @@ import "proto/tchaxx-extensions.proto";
 package Example;
 
 message ST_Example {
-  string sName = 1 [(tchaxx.extensions.v1.max_string_len) = 256];
-  uint32 nUDInt1 = 2;
-  int32 nDInt2 = 3 [(tchaxx.extensions.v1.integer_type) = EIT_DINT,
-                      (tchaxx.extensions.v1.attribute_display_mode) = EDM_BIN];
+  string sName = 1 [(tchaxx.ext.v1.max_string_len) = 256];
+  repeated uint32 aUdintArray = 2 [(tchaxx.ext.v1.array_length) = 5];
+  int32 nDInt2 = 3 [
+    (tchaxx.ext.v1.integer_type) = EIT_DINT,
+    (tchaxx.ext.v1.attribute_display_mode) = EDM_BIN
+  ];
   string sMyString = 4;
   fixed64 nFixed64 = 5;
   sfixed64 nSFixed64 = 6;
-  uint32 nByte = 7 [(tchaxx.extensions.v1.integer_type) = EIT_BYTE];
+  repeated uint32 aByteArray = 7 [
+    (tchaxx.ext.v1.array_length) = 32,
+    (tchaxx.ext.v1.integer_type) = EIT_BYTE
+  ];
   float fReal = 8;
-  double fLReal = 9;
-  ST_SubDataType stOtherDataType = 10;
+  repeated double fLReal = 9  [(tchaxx.ext.v1.array_length) = 1];
+  repeated ST_SubDataType aSubDataTypeArray = 10 [(tchaxx.ext.v1.array_length) = 0];
 }
 
 message ST_SubDataType {
-  option (tchaxx.extensions.v1.attribute_pack_mode) = EPM_ONE_BYTE_ALIGNED;
-  int32 nDInt = 1 [(tchaxx.extensions.v1.integer_type) = EIT_DINT,
-                      (tchaxx.extensions.v1.attribute_display_mode) = EDM_HEX];
+  option (tchaxx.ext.v1.attribute_pack_mode) = EPM_ONE_BYTE_ALIGNED;
+  int32 nDInt = 1 [
+    (tchaxx.ext.v1.integer_type) = EIT_DINT,
+    (tchaxx.ext.v1.attribute_display_mode) = EDM_HEX
+  ];
 }
