@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -9,6 +9,14 @@ using TcHaxx.Extensions.v1;
 using TcHaxx.ProtocGenTc;
 using TcHaxx.ProtocGenTc.TcPlcObjects;
 using static TcHaxx.Extensions.v1.TchaxxExtensionsExtensions;
+
+#if DEBUG
+await Console.Error.WriteLineAsync("Waiting for debugger to attach...");
+while (!System.Diagnostics.Debugger.IsAttached)
+{
+    await Task.Delay(500);
+}
+#endif
 
 var extensionRegistry = ExtensionRegistryBuilder.Build();
 
