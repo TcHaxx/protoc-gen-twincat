@@ -21,6 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "protoc-gen-twincat.Tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "proto", "proto", "{581EA80E-076C-4578-8383-F56DB0C236E3}"
 	ProjectSection(SolutionItems) = preProject
+		proto\example.proto = proto\example.proto
 		proto\tchaxx-extensions.proto = proto\tchaxx-extensions.proto
 	EndProjectSection
 EndProject

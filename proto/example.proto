@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "proto/tchaxx-extensions.proto";
+import "tchaxx-extensions.proto";
 
 package Example;
 
@@ -16,7 +16,7 @@ message ST_Example {
   ]; // Trailing comment for field3 (nDInt2).
   string sMyString = 4;
   fixed64 nFixed64 = 5;
-  sfixed64 nSFixed64 = 6;  // Trailing comment for field4 (nSFixed64).
+  optional sfixed64 nSFixed64 = 6;  // Trailing comment for field4 (nSFixed64).
   // Leading comment for field7 (aByteArray),
   // also multiline...
   repeated uint32 aByteArray = 7 [

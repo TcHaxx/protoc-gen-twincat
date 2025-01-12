@@ -260,9 +260,8 @@ static string ProcessStringField(FieldDescriptorProto field, Comments comments)
     else
     {
         Console.Error.WriteLine($"Field: {field.Name} has options: {options}");
-        if (options.HasExtension(MaxStringLen))
+        if (options.TryGetExtension(MaxStringLen, out var extensionValue))
         {
-            var extensionValue = options.GetExtension(MaxStringLen);
             sb.Append($"\t{field.Name} : STRING({extensionValue});");
         }
         else
@@ -355,12 +354,11 @@ static string SerializePlcObject(TcDUT tcDUT)
 static bool TryGetAttributeDisplayMode(FieldOptions? options, [NotNullWhen(true)] out string value)
 {
     value = string.Empty;
-    if (options is null || !options.HasExtension(AttributeDisplayMode))
+    if (options.TryGetExtension(AttributeDisplayMode, out var displayMode))
     {
         return false;
     }
 
-    var displayMode = options.GetExtension(AttributeDisplayMode);
     switch (displayMode)
     {
         case EnumDisplayMode.EdmDefault:
@@ -397,31 +395,12 @@ static string GetDutAttributes(MessageOptions? options)
 static bool TryGetAttributePackMode(MessageOptions? options, [NotNullWhen(true)] out string value)
 {
     value = string.Empty;
-    if (options is null || !options.HasExtension(AttributePackMode))
+    if (options.TryGetExtension(AttributePackMode, out var packMode))
     {
-        return false;
+        value = $@"{{attribute 'pack_mode' := '{packMode}'}}";
+        return true;
     }
-
-    var packMode = options.GetExtension(AttributePackMode);
-    switch (packMode)
-    {
-        case EnumPackMode.EpmDefault:
-        case EnumPackMode.EpmOneByteAligned:
-            value = "{attribute 'pack_mode' := '1'}";
-            return true;
-        case EnumPackMode.EpmTwoBytesAligned:
-            value = "{attribute 'pack_mode' := '2'}";
-            return true;
-        case EnumPackMode.EpmFourBytesAligned:
-            value = "{attribute 'pack_mode' := '4'}";
-            return true;
-        case EnumPackMode.EpmEightBytesAligned:
-            value = "{attribute 'pack_mode' := '8'}";
-            return true;
-        default:
-            Console.Error.WriteLine($"Unhandled pack mode: {packMode}");
-            return false;
-    }
+    return false;
 }
 
 static bool HasRepeatedLabel(FieldDescriptorProto field)
@@ -437,12 +416,11 @@ static bool GetArrayLengthWhenRepeatedLabelOrFail(FieldDescriptorProto field, ou
         return false;
     }
 
-    if (field.Options is null || !field.Options.HasExtension(ArrayLength))
+    if (!field.Options.TryGetExtension(ArrayLength, out var len))
     {
         throw new InvalidOperationException($"Field {field.Name} has label \"repeated\" but no TcHaxx.Extensions.v1.{nameof(ArrayLength)} extension");
     }
 
-    var len = field.Options.GetExtension(ArrayLength);
     length = len > 0 ? len - 1 : 0;
     return true;
 }
