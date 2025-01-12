@@ -21,7 +21,11 @@ while (!System.Diagnostics.Debugger.IsAttached)
 
 var extensionRegistry = ExtensionRegistryBuilder.Build();
 
-var response = new CodeGeneratorResponse();
+var response = new CodeGeneratorResponse
+{
+    SupportedFeatures = (ulong)CodeGeneratorResponse.Types.Feature.Proto3Optional
+};
+
 var request = CodeGeneratorRequest.Parser
     .WithExtensionRegistry(extensionRegistry)
     .ParseFrom(Console.OpenStandardInput());
