@@ -1,24 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <RootNamespace>TcHaxx.ProtocGenTcTests</RootNamespace>
-  </PropertyGroup>
+    <PropertyGroup>
+        <RootNamespace>TcHaxx.ProtocGenTcTests</RootNamespace>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="descriptor.pb" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Using Include="Xunit" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+        <PackageReference Include="xunit" Version="2.9.3" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.0.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Google.Protobuf" Version="3.29.3" />
+        <PackageReference Include="Grpc.Tools" Version="2.69.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\src\protoc-gen-twincat\protoc-gen-twincat.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="proto/extension.proto" GrpcServices="None" ProtoCompile="True" />
+        <Protobuf Include="proto/test-extensions-helper.proto" GrpcServices="None" ProtoCompile="True" />
+    </ItemGroup>
+
+<!-- Compile protos for Unit-Tests -->
+    <PropertyGroup>
+        <ProtobufDescriptorSetOutDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/$(TargetFramework)/.protobufs</ProtobufDescriptorSetOutDir>
+    </PropertyGroup>
+    <ItemGroup>
+        <TestProtobuf Include="test-extensions-helper.proto" />
+    </ItemGroup>
+    <Target Name="ProtocGenTc_BeforeCompile" BeforeTargets="Build">
+        <MakeDir Directories="$(ProtobufDescriptorSetOutDir)" />
+        <Exec Command="protoc -I. --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(TestProtobuf.Identity).pb ./proto/%(TestProtobuf.Identity)" />
+    </Target>
 </Project>

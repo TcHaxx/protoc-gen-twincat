@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "proto/extension.proto";
+
+package test.extension.helper;
+
+message MessageWithExtension {
+  option (test.ext.v1.attribute_pack_mode) = EPM_FOUR_BYTES_ALIGNED;
+}
+message MessageWithoutExtension {
+}

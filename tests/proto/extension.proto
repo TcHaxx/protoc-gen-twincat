@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package test.ext.v1;
+
+option csharp_namespace = "Test.Extensions.v1";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.MessageOptions {
+  optional EnumPackMode attribute_pack_mode = 50000;          // pack mode, e.g. {attribute 'pack_mode' := '4'}
+}
+
+extend google.protobuf.FieldOptions {
+  optional uint32 array_length = 50100;                       // array length, e.g. ARRAY[0..15] OF...
+  optional EnumIntegerTypes integer_type = 50101;             // integer data types, e.g. WORD, ULINT, etc.
+  optional int32 max_string_len = 50102;                      // max. string len, e.g. STRING(256)
+  optional EnumDisplayMode attribute_display_mode = 50103;    // display mode, e.g. {attribute 'displaymode':='dec'}
+}
+
+extend google.protobuf.ServiceOptions {
+  optional bool attribute_tcrpcenable = 51000;                // enable TcRpc, e.g. {attribute 'TcRpcEnable'}
+}
+
+// https://infosys.beckhoff.com/content/1033/tc3_plc_intro/2529746059.html
+enum EnumPackMode {
+  EPM_DEFAULT = 0;
+  EPM_ONE_BYTE_ALIGNED = 1;
+  EPM_TWO_BYTES_ALIGNED = 2;
+  EPM_FOUR_BYTES_ALIGNED = 4;
+  EPM_EIGHT_BYTES_ALIGNED = 8;
+}
+
+// https://infosys.beckhoff.com/content/1033/tc3_plc_intro/2529633163.html
+enum EnumDisplayMode {
+  EDM_DEFAULT = 0;
+  EDM_DEC = 1;
+  EDM_HEX = 2;
+  EDM_BIN = 3;
+}
+
+// https://infosys.beckhoff.com/content/1033/tc3_plc_intro/2529399691.html
+enum EnumIntegerTypes {
+  EIT_DEFAULT = 0;
+  EIT_BYTE = 1;
+  EIT_WORD = 2;
+  EIT_DWORD = 3;
+  EIT_LWORD = 4;
+  EIT_SINT = 5;
+  EIT_USINT = 6;
+  EIT_INT = 7;
+  EIT_UINT = 8;
+  EIT_DINT = 9;
+  EIT_UDINT = 10; 
+  EIT_LINT = 11; 
+  EIT_ULINT = 12; 
+}
