@@ -9,3 +9,10 @@ message MessageWithExtension {
 }
 message MessageWithoutExtension {
 }
+
+message MessageTestFieldBytes {
+  bytes invalid_throws = 1;
+  bytes valid_len123 = 2 [(test.ext.v1.array_length) = 123];
+  bytes valid_len0 = 3 [(test.ext.v1.array_length) = 0];
+  bytes valid_len1 = 4 [(test.ext.v1.array_length) = 1];
+}

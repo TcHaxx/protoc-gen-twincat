@@ -1,5 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Google.Protobuf;
+using Google.Protobuf.Reflection;
+using TcHaxx.Extensions.v1;
+using static TcHaxx.Extensions.v1.TchaxxExtensionsExtensions;
 
 namespace TcHaxx.ProtocGenTc;
 
@@ -29,5 +32,77 @@ internal static class ExtensionsHelper
 
         value = option.GetExtension(extension)!;
         return true;
+    }
+
+    public static bool TryGetAttributePackMode(MessageOptions? options, [NotNullWhen(true)] out string value)
+    {
+        value = string.Empty;
+        if (options.TryGetExtension(AttributePackMode, out var packMode))
+        {
+            value = $@"{{attribute 'pack_mode' := '{packMode}'}}";
+            return true;
+        }
+        return false;
+    }
+
+    public static bool HasRepeatedLabel(this FieldDescriptorProto field)
+    {
+        return field.Label == FieldDescriptorProto.Types.Label.Repeated;
+    }
+
+    public static bool GetArrayLengthWhenRepeatedLabelOrFail(this FieldDescriptorProto field, out uint length)
+    {
+        length = 0;
+        if (!field.HasRepeatedLabel())
+        {
+            return false;
+        }
+
+        if (!field.Options.TryGetExtension(ArrayLength, out var len))
+        {
+            throw new InvalidOperationException($"Field {field.Name} has label \"repeated\" but no TcHaxx.Extensions.v1.{nameof(ArrayLength)} extension");
+        }
+
+        length = len > 0 ? len - 1 : 0;
+        return true;
+    }
+
+    public static bool GetArrayLengthWhenBytesFieldOrFail(this FieldDescriptorProto field, out uint length)
+    {
+        length = 0;
+        if (!field.Options.TryGetExtension(ArrayLength, out var len))
+        {
+            throw new InvalidOperationException($"Field {field.Name} (bytes) required TcHaxx.Extensions.v1.{nameof(ArrayLength)} extension missing");
+        }
+
+        length = len > 0 ? len - 1 : 0;
+        return true;
+    }
+
+    public static bool TryGetAttributeDisplayMode(FieldOptions? options, [NotNullWhen(true)] out string value)
+    {
+        value = string.Empty;
+        if (options.TryGetExtension(AttributeDisplayMode, out var displayMode))
+        {
+            return false;
+        }
+
+        switch (displayMode)
+        {
+            case EnumDisplayMode.EdmDefault:
+                return false;
+            case EnumDisplayMode.EdmDec:
+                value = "{attribute 'displaymode':='dec'}";
+                return true;
+            case EnumDisplayMode.EdmHex:
+                value = "{attribute 'displaymode':='hex'}";
+                return true;
+            case EnumDisplayMode.EdmBin:
+                value = "{attribute 'displaymode':='bin'}";
+                return true;
+            default:
+                Console.Error.WriteLine($"Unhandled display mode: {displayMode}");
+                return false;
+        }
     }
 }

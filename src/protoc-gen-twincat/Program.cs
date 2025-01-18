@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text;
+﻿using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using Google.Protobuf;
@@ -73,7 +72,7 @@ foreach (var file in request.ProtoFile)
                 FieldDescriptorProto.Types.Type.Bool => throw new NotImplementedException(),
                 FieldDescriptorProto.Types.Type.Group => throw new NotImplementedException(),
                 FieldDescriptorProto.Types.Type.Message => ProcessGenericField(field, comments),
-                FieldDescriptorProto.Types.Type.Bytes => throw new NotImplementedException(),
+                FieldDescriptorProto.Types.Type.Bytes => ProcessBytesField(field, comments),
                 FieldDescriptorProto.Types.Type.Uint32 => ProcessIntegerField(field, comments),
                 FieldDescriptorProto.Types.Type.Enum => ProcessGenericField(field, comments),
                 FieldDescriptorProto.Types.Type.Sfixed32 => ProcessIntegerField(field, comments),
@@ -95,6 +94,28 @@ foreach (var file in request.ProtoFile)
     response.WriteTo(Console.OpenStandardOutput());
 }
 
+static string ProcessBytesField(FieldDescriptorProto field, Comments comments)
+{
+    var sb = new StringBuilder();
+    if (!string.IsNullOrEmpty(comments.LeadingComments))
+    {
+        sb.AppendLine(Helper.TransformComment(comments.LeadingComments, "\t"));
+    }
+
+    if (field.GetArrayLengthWhenBytesFieldOrFail(out var length))
+    {
+        sb.Append($"\t{field.Name} : ARRAY[0..{length}] OF BYTE;");
+    }
+
+    if (!string.IsNullOrEmpty(comments.TrailingComments))
+    {
+        sb.Append(Helper.TransformComment(comments.TrailingComments, "\t"));
+    }
+
+    sb.AppendLine();
+    return sb.ToString();
+}
+
 static string ProcessIntegerField(FieldDescriptorProto field, Comments comments)
 {
     var sb = new StringBuilder();
@@ -104,7 +125,7 @@ static string ProcessIntegerField(FieldDescriptorProto field, Comments comments)
     }
 
     var options = field.Options;
-    if (TryGetAttributeDisplayMode(options, out var displaymodeAttribute))
+    if (ExtensionsHelper.TryGetAttributeDisplayMode(options, out var displaymodeAttribute))
     {
         sb.AppendLine($"\t{displaymodeAttribute}");
     }
@@ -130,7 +151,7 @@ static string ProcessIntegerField(FieldDescriptorProto field, Comments comments)
             return sb.ToString();
         }
     }
-    if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
+    if (field.GetArrayLengthWhenRepeatedLabelOrFail(out var length))
     {
         sb.Append($"\t{field.Name} : ARRAY[0..{length}] OF {dataType};");
     }
@@ -227,7 +248,7 @@ static string ProcessGenericField(FieldDescriptorProto field, Comments comments)
 
     // Remove leading '.Example.' from type name, e.g. .Example.ST_SubDataType -> ST_SubDataType
     var stripped = field.TypeName.StartsWith('.') ? field.TypeName.Split('.')[^1] : field.TypeName;
-    if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
+    if (field.GetArrayLengthWhenRepeatedLabelOrFail(out var length))
     {
         sb.Append($"\t{field.Name} : ARRAY[0..{length}] OF {stripped};");
     }
@@ -286,7 +307,7 @@ static string ProcessDoubleField(FieldDescriptorProto field, Comments comments)
         sb.AppendLine(Helper.TransformComment(comments.LeadingComments, "\t"));
     }
 
-    if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
+    if (field.GetArrayLengthWhenRepeatedLabelOrFail(out var length))
     {
         sb.Append($"\t{field.Name} : ARRAY[0..{length}] OF LREAL;");
     }
@@ -311,7 +332,7 @@ static string ProcessFloatField(FieldDescriptorProto field, Comments comments)
         sb.AppendLine(Helper.TransformComment(comments.LeadingComments, "\t"));
     }
 
-    if (GetArrayLengthWhenRepeatedLabelOrFail(field, out var length))
+    if (field.GetArrayLengthWhenRepeatedLabelOrFail(out var length))
     {
         sb.Append($"\t{field.Name} : ARRAY[0..{length}] OF REAL;");
     }
@@ -351,33 +372,6 @@ static string SerializePlcObject(TcDUT tcDUT)
     return utf8String;
 }
 
-static bool TryGetAttributeDisplayMode(FieldOptions? options, [NotNullWhen(true)] out string value)
-{
-    value = string.Empty;
-    if (options.TryGetExtension(AttributeDisplayMode, out var displayMode))
-    {
-        return false;
-    }
-
-    switch (displayMode)
-    {
-        case EnumDisplayMode.EdmDefault:
-            return false;
-        case EnumDisplayMode.EdmDec:
-            value = "{attribute 'displaymode':='dec'}";
-            return true;
-        case EnumDisplayMode.EdmHex:
-            value = "{attribute 'displaymode':='hex'}";
-            return true;
-        case EnumDisplayMode.EdmBin:
-            value = "{attribute 'displaymode':='bin'}";
-            return true;
-        default:
-            Console.Error.WriteLine($"Unhandled display mode: {displayMode}");
-            return false;
-    }
-}
-
 static string GetDutAttributes(MessageOptions? options)
 {
     if (options is null)
@@ -385,44 +379,11 @@ static string GetDutAttributes(MessageOptions? options)
         return string.Empty;
     }
     var sbDutAttributes = new StringBuilder();
-    if (TryGetAttributePackMode(options, out var packmodeAttribute))
+    if (ExtensionsHelper.TryGetAttributePackMode(options, out var packmodeAttribute))
     {
         sbDutAttributes.AppendLine($"{packmodeAttribute}");
     }
     return sbDutAttributes.ToString();
-}
-
-static bool TryGetAttributePackMode(MessageOptions? options, [NotNullWhen(true)] out string value)
-{
-    value = string.Empty;
-    if (options.TryGetExtension(AttributePackMode, out var packMode))
-    {
-        value = $@"{{attribute 'pack_mode' := '{packMode}'}}";
-        return true;
-    }
-    return false;
-}
-
-static bool HasRepeatedLabel(FieldDescriptorProto field)
-{
-    return field.Label == FieldDescriptorProto.Types.Label.Repeated;
-}
-
-static bool GetArrayLengthWhenRepeatedLabelOrFail(FieldDescriptorProto field, out uint length)
-{
-    length = 0;
-    if (!HasRepeatedLabel(field))
-    {
-        return false;
-    }
-
-    if (!field.Options.TryGetExtension(ArrayLength, out var len))
-    {
-        throw new InvalidOperationException($"Field {field.Name} has label \"repeated\" but no TcHaxx.Extensions.v1.{nameof(ArrayLength)} extension");
-    }
-
-    length = len > 0 ? len - 1 : 0;
-    return true;
 }
 
 static RepeatedField<int> GetCurrentPath(FileDescriptorProto file, DescriptorProto message, FieldDescriptorProto? field = null)

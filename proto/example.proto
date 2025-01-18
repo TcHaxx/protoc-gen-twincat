@@ -26,6 +26,7 @@ message ST_Example {
   float fReal = 8;
   repeated double fLReal = 9  [(tchaxx.ext.v1.array_length) = 1];  // Trailing comment for field9 (fLReal).
   repeated ST_SubDataType aSubDataTypeArray = 10 [(tchaxx.ext.v1.array_length) = 0]; // Trailing comment for field10 (aSubDataTypeArray).
+  bytes aBytes = 11 [(tchaxx.ext.v1.array_length) = 16];  // Fields of type 'bytes' must have a 'array_length' attribute.
 }
 
 // This is a message-level comment (message ST_SubDataType),
