@@ -36,6 +36,12 @@ jobs:
           dotnet-version: ${{env.dotnet_versions}}
       - name: Restore dependencies
         run: dotnet restore ${{ env.solution }}
+      - name: Install protoc
+        run: |
+              sudo apt update
+              sudo apt install -y protobuf-compiler
+              protoc --version
+
       - name: Build
         run: dotnet build -c Release --no-restore ${{ env.solution }}
       - name: Test
