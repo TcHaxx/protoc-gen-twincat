@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using Example;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Google.Protobuf.Compiler;
@@ -36,6 +37,7 @@ foreach (var file in request.ProtoFile)
         continue;
     }
 
+    ST_Example.Parser.WithDiscardUnknownFields(true).ParseFrom(file.ToByteArray());
 
     var sourceCodeInfoLocation = file.SourceCodeInfo.Location;
 
