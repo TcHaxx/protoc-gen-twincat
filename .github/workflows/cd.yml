@@ -48,15 +48,7 @@ jobs:
 
       - name: Publish AOT
         run: |
-          dotnet publish ${{ env.csproj }} \
-            -c Release \
-            -r ${{ matrix.runtime }} \
-            -o ${{ matrix.dist_dir }} \
-            --self-contained true \
-            /p:PublishAot=true \
-            /p:SuppressTrimAnalysisWarnings=true \
-            /p:SuppressAotAnalysisWarnings=true \
-            -p:Version=${{ env.new_release_version }}
+              dotnet publish ${{ env.csproj }} -c Release -r ${{ matrix.runtime }} -o ${{ matrix.dist_dir }} --self-contained true /p:PublishAot=true /p:SuppressTrimAnalysisWarnings=true /p:SuppressAotAnalysisWarnings=true -p:Version=${{ env.new_release_version }}
 
       - name: Zip output (Linux)
         if: ${{ runner.os == 'Linux' }}
