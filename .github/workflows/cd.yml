@@ -10,10 +10,7 @@ on:
 env:
   solution: ./protoc-gen-twincat.slnx
   csproj: ./src/protoc-gen-twincat/protoc-gen-twincat.csproj
-  dist_win: ./dist/win-x64
-  dist_linux: ./dist/linux-x64
-  dotnet_versions: |
-                    10.0.x
+  dotnet_versions: 10.0.x
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: 1
@@ -21,52 +18,72 @@ env:
 jobs:
   cd-protoc-gen-twincat:
     name: CD - protoc-gen-twincat
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Use 'include' to define explicit OS/runtime pairs (avoid cartesian product)
+        include:
+          - os: ubuntu-latest
+            runtime: linux-x64
+            dist_dir: ./dist/linux-x64
+            zip_name: linux-x64.zip
+          - os: windows-2022
+            runtime: win-x64
+            dist_dir: ./dist/win-x64
+            zip_name: win-x64.zip
+
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: write
+
+    env:
+      new_release_version: ${{ fromJson(fromJson(inputs.semantic_release).semantic_release).new_release_version }}
+      release_tag: ${{ fromJson(fromJson(inputs.semantic_release).semantic_release).new_release_git_tag }}
 
     steps:
       - uses: actions/checkout@v6
 
       - uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: ${{ env.dotnet_versions }}    
-      
-      - name: Publish Windows AOT
-        env:
-          new_release_version: ${{ fromJson(fromJson(inputs.semantic_release).semantic_release).new_release_version }}
-          runtime: win-x64
-        run: |
-              dotnet publish ${{ env.csproj }} \
-                -c Release \
-                -r ${{ env.runtime }} \
-                -o ${{ env.dist_win }} \
-                --self-contained true \
-                /p:PublishAot=true \
-                /p:SuppressTrimAnalysisWarnings=true \
-                /p:SuppressAotAnalysisWarnings=true \
-                -p:Version=${{ env.new_release_version }}
-      
-      - name: Publish Linux AOT
-        env:
-          new_release_version: ${{ fromJson(fromJson(inputs.semantic_release).semantic_release).new_release_version }}
-          runtime: linux-x64
-        run: |
-              dotnet publish ${{ env.csproj }} \
-                -c Release \
-                -r ${{ env.runtime }} \
-                -o ${{ env.dist_linux }} \
-                --self-contained true \
-                /p:PublishAot=true \
-                /p:SuppressTrimAnalysisWarnings=true \
-                /p:SuppressAotAnalysisWarnings=true \
-                -p:Version=${{ env.new_release_version }}
+          dotnet-version: ${{ env.dotnet_versions }}
 
-      - name: Upload Release asset
-        if: fromJson(fromJson( inputs.semantic_release ).semantic_release).new_release_git_tag != ''
+      - name: Publish AOT
         run: |
-              gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
-              release_tag="${{ fromJson(fromJson( inputs.semantic_release ).semantic_release).new_release_git_tag }}"
-              zip -r linux-x64.zip ${{ env.dist_linux }}
-              zip -r win-x64.zip ${{ env.dist_win }}
-              gh release upload $release_tag linux-x64.zip win-x64.zip --clobber
+          dotnet publish ${{ env.csproj }} \
+            -c Release \
+            -r ${{ matrix.runtime }} \
+            -o ${{ matrix.dist_dir }} \
+            --self-contained true \
+            /p:PublishAot=true \
+            /p:SuppressTrimAnalysisWarnings=true \
+            /p:SuppressAotAnalysisWarnings=true \
+            -p:Version=${{ env.new_release_version }}
+
+      - name: Zip output (Linux)
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          zip -r ${{ matrix.zip_name }} ${{ matrix.dist_dir }}
+
+      - name: Zip output (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        shell: pwsh
+        run: |
+          $dist = "${{ matrix.dist_dir }}"
+          if (Test-Path $dist) {
+            Compress-Archive -Path (Join-Path $dist '*') -DestinationPath "${{ matrix.zip_name }}" -Force
+          } else {
+            Write-Error "Dist dir not found: $dist"
+          }
+
+      - name: Upload Release asset (Linux)
+        if: ${{ runner.os == 'Linux' && env.release_tag != '' }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          gh release upload "${{ env.release_tag }}" "${{ matrix.zip_name }}" --clobber
+
+      - name: Upload Release asset (Windows)
+        if: ${{ runner.os == 'Windows' && env.release_tag != '' }}
+        shell: pwsh
+        run: |
+          $token = "${{ secrets.GITHUB_TOKEN }}"
+          $token | gh auth login --with-token
+          gh release upload "${{ env.release_tag }}" "${{ matrix.zip_name }}" --clobber
