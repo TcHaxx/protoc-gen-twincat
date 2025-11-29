@@ -1,0 +1,44 @@
+name: Main CI/CD pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - src/**
+      - tests/**
+      - .releaserc.*
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    permissions:
+      contents: read
+    secrets: inherit
+    uses: ./.github/workflows/ci.yml
+
+  semantic-release:
+    needs: ci
+    permissions:
+      contents: write
+    secrets: inherit
+    uses: ./.github/workflows/release.yml
+
+  cd:
+    needs: [ semantic-release, ci ]
+    permissions:
+      contents: write
+    secrets: inherit
+    if: needs.semantic-release.outputs.new_release_published == 'true'
+    uses: ./.github/workflows/cd.yml
+    with:
+      semantic_release: ${{ needs.semantic-release.outputs.semantic_release }}

@@ -1,0 +1,31 @@
+name: Semantic-Release
+on:
+  workflow_call:
+
+    outputs:
+      new_release_published:
+        description: Whether a new release was published
+        value: ${{ jobs.semantic-release.outputs.new_release_published }}
+      semantic_release:
+        description: The complete output of action-semantic-release as JSON
+        value: ${{ toJson(jobs.semantic-release.outputs) }}
+
+jobs:
+  semantic-release:
+    permissions:
+      contents: write
+
+    runs-on: [ubuntu-latest]
+
+    outputs:
+      new_release_published: ${{ steps.semantic_release.outputs.new_release_published }}
+      semantic_release: ${{ toJson(steps.semantic_release.outputs) }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v6
+        id: semantic_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

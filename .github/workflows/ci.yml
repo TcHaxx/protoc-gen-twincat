@@ -1,0 +1,40 @@
+name: CI
+on:
+  workflow_call:
+
+env:
+  solution: ./protoc-gen-twincat.slnx
+  dotnet_versions: |
+                    10.0.x
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
+
+jobs:
+  ci-protoc-gen-twincat:
+    name: CI - protoc-gen-twincat
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{env.dotnet_versions}}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.solution }}
+
+      - name: Install protoc
+        run: |
+              sudo apt update
+              sudo apt install -y protobuf-compiler
+              protoc --version
+
+      - name: Build
+        run: dotnet build -c Release --no-restore ${{ env.solution }}
+
+      - name: Test
+        run: dotnet test -c Release --no-build --verbosity normal ${{ env.solution }}

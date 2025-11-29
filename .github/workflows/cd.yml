@@ -1,0 +1,72 @@
+name: CD
+on:
+  workflow_call:
+    inputs:
+      semantic_release:
+        description: The complete output of action-semantic-release as JSON
+        required: true
+        type: string
+
+env:
+  solution: ./protoc-gen-twincat.slnx
+  csproj: ./src/protoc-gen-twincat/protoc-gen-twincat.csproj
+  dist_win: ./dist/win-x64
+  dist_linux: ./dist/linux-x64
+  dotnet_versions: |
+                    10.0.x
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
+
+jobs:
+  cd-protoc-gen-twincat:
+    name: CD - protoc-gen-twincat
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.dotnet_versions }}    
+      
+      - name: Publish Windows AOT
+        env:
+          new_release_version: ${{ fromJson(fromJson(inputs.semantic_release).semantic_release).new_release_version }}
+          runtime: win-x64
+        run: |
+              dotnet publish ${{ env.csproj }} \
+                -c Release \
+                -r ${{ env.runtime }} \
+                -o ${{ env.dist_win }} \
+                --self-contained true \
+                /p:PublishAot=true \
+                /p:SuppressTrimAnalysisWarnings=true \
+                /p:SuppressAotAnalysisWarnings=true \
+                -p:Version=${{ env.new_release_version }}
+      
+      - name: Publish Linux AOT
+        env:
+          new_release_version: ${{ fromJson(fromJson(inputs.semantic_release).semantic_release).new_release_version }}
+          runtime: linux-x64
+        run: |
+              dotnet publish ${{ env.csproj }} \
+                -c Release \
+                -r ${{ env.runtime }} \
+                -o ${{ env.dist_linux }} \
+                --self-contained true \
+                /p:PublishAot=true \
+                /p:SuppressTrimAnalysisWarnings=true \
+                /p:SuppressAotAnalysisWarnings=true \
+                -p:Version=${{ env.new_release_version }}
+
+      - name: Upload Release asset
+        if: fromJson(fromJson( inputs.semantic_release ).semantic_release).new_release_git_tag != ''
+        run: |
+              gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+              release_tag="${{ fromJson(fromJson( inputs.semantic_release ).semantic_release).new_release_git_tag }}"
+              zip -r linux-x64.zip ${{ env.dist_linux }}
+              zip -r win-x64.zip ${{ env.dist_win }}
+              gh release upload $release_tag linux-x64.zip win-x64.zip --clobber
