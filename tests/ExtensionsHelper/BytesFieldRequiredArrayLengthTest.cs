@@ -6,6 +6,7 @@ using Test.Extension.Helper;
 using static Test.Extensions.v1.ExtensionExtensions;
 
 namespace TcHaxx.ProtocGenTcTests.ExtensionsHelper;
+
 public class BytesFieldRequiredArrayLengthTest
 {
     private const string TEST_PROTO = "test-extensions-helper.proto";

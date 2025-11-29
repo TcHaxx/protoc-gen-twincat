@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/env/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/env/.github/" />
+  <Folder Name="/env/.github/workflows/">
+    <File Path=".github/workflows/cicd.yml" />
+  </Folder>
+  <Folder Name="/proto/">
+    <File Path="proto/example.proto" />
+    <File Path="proto/tchaxx-extensions.proto" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/protoc-gen-twincat/protoc-gen-twincat.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/protoc-gen-twincat.Tests.csproj" />
+  </Folder>
+</Solution>

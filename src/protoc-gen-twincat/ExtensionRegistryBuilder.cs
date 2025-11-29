@@ -2,6 +2,7 @@
 using static TcHaxx.Extensions.v1.TchaxxExtensionsExtensions;
 
 namespace TcHaxx.ProtocGenTc;
+
 internal static class ExtensionRegistryBuilder
 {
     public static ExtensionRegistry Build()
