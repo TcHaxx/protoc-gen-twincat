@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "proto/extension.proto";
+
+package test.bool;
+
+message TestBool {
+  bool flag = 1;
+  repeated bool flags = 2;
+}

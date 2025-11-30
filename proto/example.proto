@@ -4,6 +4,14 @@ import "tchaxx-extensions.proto";
 
 package Example;
 
+// ExampleEnum
+enum ExampleEnum {
+  option (tchaxx.ext.v1.enum_integer_type) = EIT_WORD;
+  EXAMPLE_ENUM_VALUE_DEFAULT = 0; // test default
+  EXAMPLE_ENUM_VALUE_1 = 1; // test 1
+  EXAMPLE_ENUM_VALUE_2 = 2;
+}
+
 // This is a message-level comment.
 message ST_Example {
   // This is a leading field-level comment,
@@ -37,4 +45,5 @@ message ST_SubDataType {  // This trailing comment is ignored!
     (tchaxx.ext.v1.integer_type) = EIT_DINT,
     (tchaxx.ext.v1.attribute_display_mode) = EDM_HEX
   ];  // Trailing comment for field1 (nDInt).
+  ExampleEnum demo_enum = 3; // test example enum
 }

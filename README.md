@@ -30,7 +30,7 @@ dotnet build -c Release
    ```
 4. Run the following command to generate TwinCAT files:
 ```sh
-protoc --plugin=protoc-gen-twincat=../src/protoc-gen-twincat/bin/Release/net9.0/protoc-gen-twincat.exe --twincat_out ../.out example.proto
+protoc --plugin=protoc-gen-twincat=../src/protoc-gen-twincat/bin/Release/net10.0/protoc-gen-twincat.exe --twincat_out ../.out example.proto
 ```
 This will generate the corresponding `TcPOU` and `TcDUT` files in the current directory.
 

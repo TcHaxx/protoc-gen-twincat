@@ -8,4 +8,6 @@ internal static class Constants
     internal const char CLI_DELIMITER = '*';
 
     internal const string DEFAULT_COPYRIGHT = "Copyright (c) 2025 densogiaichned";
+
+    internal const int WIDTH = 80;
 }

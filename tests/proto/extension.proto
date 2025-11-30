@@ -7,7 +7,10 @@ option csharp_namespace = "Test.Extensions.v1";
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.MessageOptions {
-  optional EnumPackMode attribute_pack_mode = 50000;          // pack mode, e.g. {attribute 'pack_mode' := '4'}
+  optional EnumPackMode attribute_pack_mode = 50000;  // pack mode, e.g. {attribute 'pack_mode' := '4'}
+  optional string st_prefix = 50010;                  // global datatype prefix, e.g. ST_ for structures/udts
+  optional string fb_prefix = 50011;                  // function block prefix, e.g. FB_ for function blocks
+  optional string enum_prefix = 50012;                // enum prefix, e.g. E_ for enumerations
 }
 
 extend google.protobuf.FieldOptions {
@@ -19,6 +22,16 @@ extend google.protobuf.FieldOptions {
 
 extend google.protobuf.ServiceOptions {
   optional bool attribute_tcrpcenable = 51000;                // enable TcRpc, e.g. {attribute 'TcRpcEnable'}
+}
+
+extend google.protobuf.FileOptions {
+  optional string global_st_prefix = 52000;   // global datatype prefix, e.g. ST_ for structures
+  optional string global_fb_prefix = 52001;   // global function block prefix, e.g. FB_ for function blocks
+  optional string global_enum_prefix = 52002; // global enum prefix, e.g. E_ for enumerations
+}
+  
+extend google.protobuf.EnumOptions {
+  optional EnumIntegerTypes enum_integer_type = 53000; // integer data types for enums, e.g. WORD, ULINT, etc.
 }
 
 // https://infosys.beckhoff.com/content/1033/tc3_plc_intro/2529746059.html
