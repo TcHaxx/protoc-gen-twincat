@@ -50,6 +50,11 @@ jobs:
         run: |
               dotnet publish ${{ env.csproj }} -c Release -r ${{ matrix.runtime }} -o ${{ matrix.dist_dir }} --self-contained true /p:PublishAot=true /p:SuppressTrimAnalysisWarnings=true /p:SuppressAotAnalysisWarnings=true -p:Version=${{ env.new_release_version }}
 
+      - name: Copy tchaxx-extensions.proto
+        run: |
+          mkdir -p ${{ matrix.dist_dir }}/include
+          cp proto/tchaxx-extensions.proto ${{ matrix.dist_dir }}/include
+
       - name: Zip output (Linux)
         if: ${{ runner.os == 'Linux' }}
         run: |
