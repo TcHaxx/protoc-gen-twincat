@@ -16,7 +16,7 @@ public class BytesFieldRequiredArrayLengthTest
     {
         var extensionRegistry = new ExtensionRegistry
      {
-         ArrayLength
+         ArrayLen
      };
 
         var descriptorSet = FileDescriptorSet.Parser.WithExtensionRegistry(extensionRegistry).ParseFrom(File.ReadAllBytes($"./.protobufs/{TEST_PROTO}.pb"));

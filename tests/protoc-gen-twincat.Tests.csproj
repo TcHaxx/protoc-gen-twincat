@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <None Remove="descriptor.pb" />
+        <None Remove="proto\test-bool.proto" />
     </ItemGroup>
 
     <ItemGroup>
@@ -14,6 +15,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+        <PackageReference Include="Verify.Xunit" Version="31.7.3" />
         <PackageReference Include="xunit" Version="2.9.3" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
             <PrivateAssets>all</PrivateAssets>
@@ -37,6 +39,7 @@
     <ItemGroup>
         <Protobuf Include="proto/extension.proto" GrpcServices="None" ProtoCompile="True" />
         <Protobuf Include="proto/test-extensions-helper.proto" GrpcServices="None" ProtoCompile="True" />
+        <Protobuf Include="proto/test-bool.proto" GrpcServices="None" ProtoCompile="True" />
     </ItemGroup>
 
 <!-- Compile protos for Unit-Tests -->
@@ -45,6 +48,7 @@
     </PropertyGroup>
     <ItemGroup>
         <TestProtobuf Include="test-extensions-helper.proto" />
+        <TestProtobuf Include="test-bool.proto" />
     </ItemGroup>
     <Target Name="ProtocGenTc_BeforeCompile" BeforeTargets="Build">
         <MakeDir Directories="$(ProtobufDescriptorSetOutDir)" />

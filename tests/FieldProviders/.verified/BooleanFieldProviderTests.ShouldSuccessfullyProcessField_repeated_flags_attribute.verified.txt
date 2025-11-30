@@ -1,0 +1,1 @@
+﻿	repeated_flags_attribute : ARRAY[0..2] OF BOOL;

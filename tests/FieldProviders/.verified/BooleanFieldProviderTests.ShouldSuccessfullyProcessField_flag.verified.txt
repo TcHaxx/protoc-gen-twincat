@@ -1,0 +1,2 @@
+﻿	// leading flag comment
+	flag : BOOL;	// trailing flag comment

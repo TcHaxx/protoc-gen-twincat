@@ -4,7 +4,12 @@ import "proto/extension.proto";
 
 package test.bool;
 
-message TestBool {
-  bool flag = 1;
-  repeated bool flags = 2;
+message TestBoolValid {
+  // leading flag comment
+  bool flag = 1; // trailing flag comment
+  repeated bool repeated_flags_attribute = 2 [(test.array_len) = 3];
+}
+
+message TestBoolInvalid {
+  repeated bool repeated_flags_no_attribute = 1;
 }

@@ -5,14 +5,14 @@ import "proto/extension.proto";
 package test.extension.helper;
 
 message MessageWithExtension {
-  option (test.ext.v1.attribute_pack_mode) = EPM_FOUR_BYTES_ALIGNED;
+  option (test.attribute_pack_mode) = EPM_FOUR_BYTES_ALIGNED;
 }
 message MessageWithoutExtension {
 }
 
 message MessageTestFieldBytes {
   bytes invalid_throws = 1;
-  bytes valid_len123 = 2 [(test.ext.v1.array_length) = 123];
-  bytes valid_len0 = 3 [(test.ext.v1.array_length) = 0];
-  bytes valid_len1 = 4 [(test.ext.v1.array_length) = 1];
+  bytes valid_len123 = 2 [(test.array_len) = 123];
+  bytes valid_len0 = 3 [(test.array_len) = 0];
+  bytes valid_len1 = 4 [(test.array_len) = 1];
 }
