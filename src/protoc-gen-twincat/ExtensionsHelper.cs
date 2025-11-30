@@ -58,9 +58,9 @@ internal static class ExtensionsHelper
             return false;
         }
 
-        if (!field.Options.TryGetExtension(ArrayLength, out var len))
+        if (!field.Options.TryGetExtension(ArrayLen, out var len))
         {
-            throw new InvalidOperationException($"Field {field.Name} has label \"repeated\" but no TcHaxx.Extensions.v1.{nameof(ArrayLength)} extension");
+            throw new InvalidOperationException($"Field {field.Name} has label \"repeated\" but no TcHaxx.Extensions.v1.{nameof(ArrayLen)} extension");
         }
 
         length = len > 0 ? len - 1 : 0;
@@ -70,9 +70,9 @@ internal static class ExtensionsHelper
     public static bool GetArrayLengthWhenBytesFieldOrFail(this FieldDescriptorProto field, out uint length)
     {
         length = 0;
-        if (!field.Options.TryGetExtension(ArrayLength, out var len))
+        if (!field.Options.TryGetExtension(ArrayLen, out var len))
         {
-            throw new InvalidOperationException($"Field {field.Name} (bytes) required TcHaxx.Extensions.v1.{nameof(ArrayLength)} extension missing");
+            throw new InvalidOperationException($"Field {field.Name} (bytes) required TcHaxx.Extensions.v1.{nameof(ArrayLen)} extension missing");
         }
 
         length = len > 0 ? len - 1 : 0;

@@ -6,7 +6,7 @@ package Example;
 
 // ExampleEnum
 enum ExampleEnum {
-  option (tchaxx.ext.v1.enum_integer_type) = EIT_WORD;
+  option (tchaxx.enum_integer_type) = EIT_WORD;
   EXAMPLE_ENUM_VALUE_DEFAULT = 0; // test default
   EXAMPLE_ENUM_VALUE_1 = 1; // test 1
   EXAMPLE_ENUM_VALUE_2 = 2;
@@ -16,11 +16,11 @@ enum ExampleEnum {
 message ST_Example {
   // This is a leading field-level comment,
   // and it continues on the next line.
-  string sName = 1 [(tchaxx.ext.v1.max_string_len) = 256];  // Trailing comment for field1 (sName).
-  repeated uint32 aUdintArray = 2 [(tchaxx.ext.v1.array_length) = 5]; // Trailing comment for field2 (aUdintArray).
+  string sName = 1 [(tchaxx.max_string_len) = 256];  // Trailing comment for field1 (sName).
+  repeated uint32 aUdintArray = 2 [(tchaxx.array_len) = 5]; // Trailing comment for field2 (aUdintArray).
   int32 nDInt2 = 3 [
-    (tchaxx.ext.v1.integer_type) = EIT_DINT,
-    (tchaxx.ext.v1.attribute_display_mode) = EDM_BIN
+    (tchaxx.integer_type) = EIT_DINT,
+    (tchaxx.attribute_display_mode) = EDM_BIN
   ]; // Trailing comment for field3 (nDInt2).
   string sMyString = 4;
   fixed64 nFixed64 = 5;
@@ -28,22 +28,22 @@ message ST_Example {
   // Leading comment for field7 (aByteArray),
   // also multiline...
   repeated uint32 aByteArray = 7 [
-    (tchaxx.ext.v1.array_length) = 32,
-    (tchaxx.ext.v1.integer_type) = EIT_BYTE
+    (tchaxx.array_len) = 32,
+    (tchaxx.integer_type) = EIT_BYTE
   ]; // Trailing comment for field7 (aByteArray).
   float fReal = 8;
-  repeated double fLReal = 9  [(tchaxx.ext.v1.array_length) = 1];  // Trailing comment for field9 (fLReal).
-  repeated ST_SubDataType aSubDataTypeArray = 10 [(tchaxx.ext.v1.array_length) = 0]; // Trailing comment for field10 (aSubDataTypeArray).
-  bytes aBytes = 11 [(tchaxx.ext.v1.array_length) = 16];  // Fields of type 'bytes' must have a 'array_length' attribute.
+  repeated double fLReal = 9  [(tchaxx.array_len) = 1];  // Trailing comment for field9 (fLReal).
+  repeated ST_SubDataType aSubDataTypeArray = 10 [(tchaxx.array_len) = 0]; // Trailing comment for field10 (aSubDataTypeArray).
+  bytes aBytes = 11 [(tchaxx.array_len) = 16];  // Fields of type 'bytes' must have a 'array_len' attribute.
 }
 
 // This is a message-level comment (message ST_SubDataType),
 // also multiline...
 message ST_SubDataType {  // This trailing comment is ignored!
-  option (tchaxx.ext.v1.attribute_pack_mode) = EPM_ONE_BYTE_ALIGNED;
+  option (tchaxx.attribute_pack_mode) = EPM_ONE_BYTE_ALIGNED;
   int32 nDInt = 1 [
-    (tchaxx.ext.v1.integer_type) = EIT_DINT,
-    (tchaxx.ext.v1.attribute_display_mode) = EDM_HEX
+    (tchaxx.integer_type) = EIT_DINT,
+    (tchaxx.attribute_display_mode) = EDM_HEX
   ];  // Trailing comment for field1 (nDInt).
   ExampleEnum demo_enum = 3; // test example enum
 }
