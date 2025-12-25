@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "tchaxx-extensions.proto";
+
+package test.prefix;
+
+option (tchaxx.global_st_prefix) = "ST_FILE_";
+option (tchaxx.global_fb_prefix) = "FB_FILE_";
+option (tchaxx.global_enum_prefix) = "E_FILE_";
+
+message TestMessagePrefix {
+  option (tchaxx.st_prefix) = "ST_MSG_";
+  option (tchaxx.fb_prefix) = "FB_MSG_";
+  uint32 id = 1;
+}
+
+enum TestEnumPrefix {
+  option (tchaxx.enum_prefix) = "E_ENUM_";
+  E_VALUE_DEFAULT = 0;
+  E_VALUE_ONE = 1;
+}

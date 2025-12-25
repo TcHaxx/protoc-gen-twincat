@@ -3,7 +3,7 @@ using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
 using TcHaxx.ProtocGenTc;
 using Test.Extension.Helper;
-using static Test.Extensions.v1.ExtensionExtensions;
+using static TcHaxx.Extensions.v1.TchaxxExtensionsExtensions;
 
 namespace TcHaxx.ProtocGenTcTests.ExtensionsHelper;
 
@@ -33,7 +33,7 @@ public class BytesFieldRequiredArrayLengthTest
     }
 
     [Fact]
-    public void ThrowsIfNoArrayLengthFieldOption()
+    public async Task ThrowsIfNoArrayLengthFieldOption()
     {
         Assert.NotNull(_sut);
 
@@ -42,7 +42,7 @@ public class BytesFieldRequiredArrayLengthTest
 
         var sut = md.Field.Single(f => f.Name == "invalid_throws");
 
-        Assert.Throws<InvalidOperationException>(() => sut.GetArrayLengthWhenBytesFieldOrFail(out _));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => Task.FromResult(sut.GetArrayLengthWhenBytesFieldOrFail(out _)));
     }
 
     [Theory]

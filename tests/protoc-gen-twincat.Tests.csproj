@@ -6,7 +6,9 @@
 
     <ItemGroup>
         <None Remove="descriptor.pb" />
-        <None Remove="proto\test-bool.proto" />
+        <None Remove="proto/test-bool.proto" />
+        <None Remove="proto/test-extensions-helper.proto" />
+        <None Remove="proto/test-prefix.proto" />
     </ItemGroup>
 
     <ItemGroup>
@@ -33,13 +35,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\protoc-gen-twincat\protoc-gen-twincat.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Protobuf Include="proto/extension.proto" GrpcServices="None" ProtoCompile="True" />
-        <Protobuf Include="proto/test-extensions-helper.proto" GrpcServices="None" ProtoCompile="True" />
-        <Protobuf Include="proto/test-bool.proto" GrpcServices="None" ProtoCompile="True" />
+        <ProjectReference Include="../src/protoc-gen-twincat/protoc-gen-twincat.csproj" />
     </ItemGroup>
 
 <!-- Compile protos for Unit-Tests -->
@@ -47,11 +43,17 @@
         <ProtobufDescriptorSetOutDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/$(TargetFramework)/.protobufs</ProtobufDescriptorSetOutDir>
     </PropertyGroup>
     <ItemGroup>
+        <Protobuf Include="proto/test-extensions-helper.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+        <Protobuf Include="proto/test-bool.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+        <Protobuf Include="proto/test-prefix.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+    </ItemGroup>
+    <ItemGroup>
         <TestProtobuf Include="test-extensions-helper.proto" />
         <TestProtobuf Include="test-bool.proto" />
+        <TestProtobuf Include="test-prefix.proto" />
     </ItemGroup>
     <Target Name="ProtocGenTc_BeforeCompile" BeforeTargets="Build">
         <MakeDir Directories="$(ProtobufDescriptorSetOutDir)" />
-        <Exec Command="protoc -I. --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(TestProtobuf.Identity).pb ./proto/%(TestProtobuf.Identity)" />
+        <Exec Command="protoc -I../proto -Iproto --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(TestProtobuf.Identity).pb ./proto/%(TestProtobuf.Identity)" />
     </Target>
 </Project>

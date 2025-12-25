@@ -1,10 +1,10 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
+using TcHaxx.Extensions.v1;
 using TcHaxx.ProtocGenTc;
 using Test.Extension.Helper;
-using Test.Extensions.v1;
-using static Test.Extensions.v1.ExtensionExtensions;
+using static TcHaxx.Extensions.v1.TchaxxExtensionsExtensions;
 
 namespace TcHaxx.ProtocGenTcTests.ExtensionsHelper;
 
