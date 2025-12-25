@@ -10,11 +10,10 @@ extend google.protobuf.MessageOptions {
   optional EnumPackMode attribute_pack_mode = 50000;  // pack mode, e.g. {attribute 'pack_mode' := '4'}
   optional string st_prefix = 50010;                  // global datatype prefix, e.g. ST_ for structures/udts
   optional string fb_prefix = 50011;                  // function block prefix, e.g. FB_ for function blocks
-  optional string enum_prefix = 50012;                // enum prefix, e.g. E_ for enumerations
 }
 
 extend google.protobuf.FieldOptions {
-  optional uint32 array_len = 50100;                          // array length, e.g. ARRAY[0..15] OF...
+  optional uint32 array_len = 50100;                       // array length, e.g. ARRAY[0..15] OF...
   optional EnumIntegerTypes integer_type = 50101;             // integer data types, e.g. WORD, ULINT, etc.
   optional int32 max_string_len = 50102;                      // max. string len, e.g. STRING(256)
   optional EnumDisplayMode attribute_display_mode = 50103;    // display mode, e.g. {attribute 'displaymode':='dec'}
@@ -32,6 +31,7 @@ extend google.protobuf.FileOptions {
   
 extend google.protobuf.EnumOptions {
   optional EnumIntegerTypes enum_integer_type = 53000; // integer data types for enums, e.g. WORD, ULINT, etc.
+  optional string enum_prefix = 53001;                 // enum prefix, e.g. E_ for enumerations
 }
 
 // https://infosys.beckhoff.com/content/1033/tc3_plc_intro/2529746059.html
