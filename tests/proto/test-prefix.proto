@@ -14,8 +14,17 @@ message TestMessagePrefix {
   uint32 id = 1;
 }
 
+message TestMessageNoPrefix {
+  uint32 id = 1;
+}
+
 enum TestEnumPrefix {
   option (tchaxx.enum_prefix) = "E_ENUM_";
   E_VALUE_DEFAULT = 0;
   E_VALUE_ONE = 1;
+}
+
+enum TestEnumNoPrefix {
+  E_NP_VALUE_DEFAULT = 0;
+  E_NP_VALUE_ONE = 1;
 }

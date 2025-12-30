@@ -46,11 +46,16 @@
         <Protobuf Include="proto/test-extensions-helper.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
         <Protobuf Include="proto/test-bool.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
         <Protobuf Include="proto/test-prefix.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+        <Protobuf Include="proto/test-tcpoufactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
     </ItemGroup>
     <ItemGroup>
         <TestProtobuf Include="test-extensions-helper.proto" />
         <TestProtobuf Include="test-bool.proto" />
         <TestProtobuf Include="test-prefix.proto" />
+        <TestProtobuf Include="test-tcpoufactory.proto" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Prefix\.verified\" />
     </ItemGroup>
     <Target Name="ProtocGenTc_BeforeCompile" BeforeTargets="Build">
         <MakeDir Directories="$(ProtobufDescriptorSetOutDir)" />

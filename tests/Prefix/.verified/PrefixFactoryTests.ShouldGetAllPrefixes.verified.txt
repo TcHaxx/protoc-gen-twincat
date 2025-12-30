@@ -1,0 +1,20 @@
+﻿{
+  Global: {
+    GlobalFbPrefix: FB_FILE_,
+    GlobalStPrefix: ST_FILE_,
+    GlobalEnumPrefix: E_FILE_
+  },
+  Message: {
+    { "name": "TestMessagePrefix", "field": [ { "name": "id", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_UINT32", "jsonName": "id" } ], "options": { } }: {
+      MessageFbPrefix: FB_MSG_,
+      MessageStPrefix: ST_MSG_
+    },
+    { "name": "TestMessageNoPrefix", "field": [ { "name": "id", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_UINT32", "jsonName": "id" } ] }: {}
+  },
+  Enum: {
+    { "name": "TestEnumPrefix", "value": [ { "name": "E_VALUE_DEFAULT", "number": 0 }, { "name": "E_VALUE_ONE", "number": 1 } ], "options": { } }: {
+      EnumPrefix: E_ENUM_
+    },
+    { "name": "TestEnumNoPrefix", "value": [ { "name": "E_NP_VALUE_DEFAULT", "number": 0 }, { "name": "E_NP_VALUE_ONE", "number": 1 } ] }: {}
+  }
+}
