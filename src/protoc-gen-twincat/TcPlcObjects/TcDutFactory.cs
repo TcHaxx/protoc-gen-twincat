@@ -142,46 +142,7 @@ internal static class TcDutFactory
 
     private static void WriteHeader(this TcDUT dut)
     {
-        var header = GetApplicationHeader(Assembly.GetExecutingAssembly());
+        var header = Helper.GetApplicationHeader(Assembly.GetExecutingAssembly());
         dut.DUT.Declaration ??= new XmlDocument().CreateCDataSection(header);
-    }
-
-    /// <summary>
-    /// Prints the application header based on <see cref="Assembly"/>-attributes as <see cref="string"/>.
-    /// </summary>
-    /// <param name="assembly"></param>
-    /// <returns></returns>
-    private static string GetApplicationHeader(Assembly assembly)
-    {
-        var sb = new StringBuilder(1000);
-
-        var version = assembly.GetName().Version;
-        var repoUrl = assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
-                              .FirstOrDefault(x => x.Key.Equals("RepositoryUrl"))?.Value ?? string.Empty;
-
-        var delimiter = new string(ProtocGenTc.Constants.CLI_DELIMITER, ProtocGenTc.Constants.WIDTH - 1);
-        sb.AppendLine($"({delimiter}");
-        sb.AppendLine($"{assembly.GetName().Name} v{version}".Center());
-        if (!string.IsNullOrWhiteSpace(repoUrl))
-        {
-            sb.AppendLine($"{repoUrl.Center()}");
-        }
-
-        sb.AppendLine($"{delimiter})");
-
-        return sb.ToString();
-    }
-
-    /// <summary>
-    /// Centers a <see cref="string"/>.
-    /// </summary>
-    /// <param name="s"></param>
-    /// <param name="width"></param>
-    /// <returns>centered string</returns>
-    private static string Center(this string s, int width = ProtocGenTc.Constants.WIDTH)
-    {
-        return string.IsNullOrEmpty(s) ?
-            string.Empty :
-            s.PadLeft(((width - s.Length) / 2) + s.Length).PadRight(width);
     }
 }
