@@ -2,5 +2,5 @@
 
 internal static class Constants
 {
-    public const string TcPlcObjectVersion = "1.1.0.1";
+    public const string TC_PLC_OBJECT_VERSION = "1.1.0.1";
 }

@@ -15,7 +15,7 @@ public partial class TcDUT
 
     private TcPlcObjectDUT dUTField;
 
-    private string versionField = Constants.TcPlcObjectVersion;
+    private string versionField = Constants.TC_PLC_OBJECT_VERSION;
 
     /// <remarks/>
     public TcPlcObjectDUT DUT

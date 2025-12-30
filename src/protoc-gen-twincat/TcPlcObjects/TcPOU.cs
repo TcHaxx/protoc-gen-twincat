@@ -16,7 +16,7 @@ public partial class TcPOU
 
     private TcPlcObjectPOU pOUField;
 
-    private string versionField = Constants.TcPlcObjectVersion;
+    private string versionField = Constants.TC_PLC_OBJECT_VERSION;
 
     private string productVersionField = string.Empty;
 

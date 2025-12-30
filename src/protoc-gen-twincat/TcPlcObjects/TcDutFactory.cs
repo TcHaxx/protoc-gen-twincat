@@ -13,7 +13,7 @@ internal static class TcDutFactory
     {
         var dut = new TcDUT
         {
-            Version = Constants.TcPlcObjectVersion,
+            Version = Constants.TC_PLC_OBJECT_VERSION,
             DUT = new TcPlcObjectDUT()
             {
                 Name = enumDescriptor.Name,
@@ -34,7 +34,7 @@ internal static class TcDutFactory
     {
         var dut = new TcDUT
         {
-            Version = Constants.TcPlcObjectVersion,
+            Version = Constants.TC_PLC_OBJECT_VERSION,
             DUT = new TcPlcObjectDUT()
             {
                 Name = message.Name,
