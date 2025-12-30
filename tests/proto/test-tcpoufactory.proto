@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "tchaxx-extensions.proto";
+
+package test.prefix;
+
+// Test simple message
+message TestSimpleMessage {
+  uint32 id = 1;
+}

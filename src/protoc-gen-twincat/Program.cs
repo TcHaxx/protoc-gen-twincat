@@ -170,9 +170,9 @@ static string ProcessUnknownField(FieldDescriptorProto field)
     return $"// {error}\r\n";
 }
 
-static string SerializePlcObject(TcDUT tcDUT)
+static string SerializePlcObject<T>(T plcObject)
 {
-    var serializer = new XmlSerializer(typeof(TcDUT));
+    var serializer = new XmlSerializer(typeof(T));
     var settings = new XmlWriterSettings
     {
         Encoding = new UTF8Encoding(false),
@@ -181,7 +181,7 @@ static string SerializePlcObject(TcDUT tcDUT)
     };
     using var memoryStream = new MemoryStream();
     using var xmlWriter = XmlWriter.Create(memoryStream, settings);
-    serializer.Serialize(xmlWriter, tcDUT);
+    serializer.Serialize(xmlWriter, plcObject);
     var utf8String = Encoding.UTF8.GetString(memoryStream.ToArray());
     return utf8String;
 }

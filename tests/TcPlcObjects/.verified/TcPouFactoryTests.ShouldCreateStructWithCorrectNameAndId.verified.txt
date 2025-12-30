@@ -1,0 +1,10 @@
+﻿{
+  POU: {
+    Declaration: [],
+    Name: TestSimpleMessage,
+    Id: Guid_1,
+    SpecialFunc: None
+  },
+  Version: 1.1.0.1,
+  ProductVersion: 
+}
