@@ -1,6 +1,4 @@
 ﻿using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
 using Google.Protobuf;
 using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
@@ -79,7 +77,7 @@ async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromMessageAsyn
     return new CodeGeneratorResponse.Types.File
     {
         Name = message.Name + ".TcDUT",
-        Content = SerializePlcObject(tcDUT),
+        Content = PlcObjectSerializer.Serialize(tcDUT),
     };
 }
 
@@ -113,7 +111,7 @@ async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromEnumAsync(F
     return new CodeGeneratorResponse.Types.File
     {
         Name = enumDescriptor.Name + ".TcDUT",
-        Content = SerializePlcObject(tcDUT),
+        Content = PlcObjectSerializer.Serialize(tcDUT),
     };
 }
 
@@ -170,20 +168,3 @@ static string ProcessUnknownField(FieldDescriptorProto field)
     Console.Error.WriteLine(error);
     return $"// {error}\r\n";
 }
-
-static string SerializePlcObject<T>(T plcObject)
-{
-    var serializer = new XmlSerializer(typeof(T));
-    var settings = new XmlWriterSettings
-    {
-        Encoding = new UTF8Encoding(false),
-        Indent = true,
-        OmitXmlDeclaration = false
-    };
-    using var memoryStream = new MemoryStream();
-    using var xmlWriter = XmlWriter.Create(memoryStream, settings);
-    serializer.Serialize(xmlWriter, plcObject);
-    var utf8String = Encoding.UTF8.GetString(memoryStream.ToArray());
-    return utf8String;
-}
-
