@@ -42,16 +42,10 @@
         <Protobuf Include="proto/test-tcpoufactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
     </ItemGroup>
     <ItemGroup>
-        <TestProtobuf Include="proto/test-extensions-helper.proto" />
-        <TestProtobuf Include="proto/test-bool.proto" />
-        <TestProtobuf Include="proto/test-prefix.proto" />
-        <TestProtobuf Include="proto/test-tcpoufactory.proto" />
-    </ItemGroup>
-    <ItemGroup>
       <Folder Include="Prefix\.verified\" />
     </ItemGroup>
     <Target Name="ProtocGenTc_BeforeCompile" BeforeTargets="Build">
-        <MakeDir Directories="$(ProtobufDescriptorSetOutDir)" />
-        <Exec Command="protoc -I../proto -Iproto --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(TestProtobuf.Identity).pb ./%(TestProtobuf.Identity)" />
+        <MakeDir Directories="$(ProtobufDescriptorSetOutDir)/proto" />
+        <Exec Command="protoc -I../proto -Iproto --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(Protobuf.Identity).pb ./%(Protobuf.Identity)" />
     </Target>
 </Project>
