@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace TcHaxx.ProtocGenTc.FieldProviders;
+namespace TcHaxx.ProtocGenTc.Fields;
 
 internal static class CommentProvider
 {

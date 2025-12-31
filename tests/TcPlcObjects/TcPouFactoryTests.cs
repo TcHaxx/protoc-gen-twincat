@@ -1,3 +1,4 @@
+using System.Xml;
 using Google.Protobuf;
 using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
@@ -18,6 +19,7 @@ public class TcPouFactoryTests : VerifyBase
     public TcPouFactoryTests() : base()
     {
         _localSettings = VerifyGlobalSettings.GetGlobalSettings();
+        _localSettings.AlwaysIncludeMembersWithType<XmlCDataSection>();
 
         var extensionRegistry = ExtensionRegistryBuilder.Build();
 

@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using Google.Protobuf.Reflection;
 
-namespace TcHaxx.ProtocGenTc.FieldProviders;
+namespace TcHaxx.ProtocGenTc.Fields;
 
-internal static class FloatFieldProvider
+internal static class DoubleFieldProvider
 {
     internal static string ProcessField(FieldDescriptorProto field, Comments comments)
     {
@@ -13,11 +13,11 @@ internal static class FloatFieldProvider
 
         if (field.GetArrayLengthWhenRepeatedLabelOrFail(out var length))
         {
-            sb.Append($"\t{field.Name} : ARRAY[0..{length}] OF REAL;");
+            sb.Append($"\t{field.Name} : ARRAY[0..{length}] OF LREAL;");
         }
         else
         {
-            sb.Append($"\t{field.Name} : REAL;");
+            sb.Append($"\t{field.Name} : LREAL;");
         }
 
         sb.Append(CommentProvider.TransformComment(comments.TrailingComments, "\t"));

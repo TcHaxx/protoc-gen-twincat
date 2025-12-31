@@ -2,7 +2,7 @@
 using Google.Protobuf.Reflection;
 using static TcHaxx.Extensions.v1.TchaxxExtensionsExtensions;
 
-namespace TcHaxx.ProtocGenTc.FieldProviders;
+namespace TcHaxx.ProtocGenTc.Fields;
 
 internal static class StringFieldProvider
 {

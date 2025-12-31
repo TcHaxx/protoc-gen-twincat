@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Google.Protobuf.Reflection;
 
-namespace TcHaxx.ProtocGenTc.FieldProviders;
+namespace TcHaxx.ProtocGenTc.Fields;
 
 internal static class GenericFieldProvider
 {

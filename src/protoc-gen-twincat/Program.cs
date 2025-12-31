@@ -6,7 +6,7 @@ using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
 using TcHaxx.Extensions.v1;
 using TcHaxx.ProtocGenTc;
-using TcHaxx.ProtocGenTc.FieldProviders;
+using TcHaxx.ProtocGenTc.Fields;
 using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTc.TcPlcObjects;
 

@@ -17,6 +17,7 @@ internal static class VerifyGlobalSettings
     {
         _settings = new VerifySettings();
         _settings.UseDirectory(".verified");
+        _settings.AddExtraSettings(x => x.Converters.Add(new XmlCDataJsonConverter()));
         return _settings;
     }
 }
