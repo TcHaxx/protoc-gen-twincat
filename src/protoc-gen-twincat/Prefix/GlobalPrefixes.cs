@@ -1,4 +1,3 @@
-﻿
-namespace TcHaxx.ProtocGenTc.Prefix;
+﻿namespace TcHaxx.ProtocGenTc.Prefix;
 
-public record GlobalPrefixes(string? GlobalFbPrefix, string? GlobalStPrefix, string? GlobalEnumPrefix);
+public record GlobalPrefixes(Extensions.v1.Prefix? GlobalFbPrefix, Extensions.v1.Prefix? GlobalStPrefix, Extensions.v1.Prefix? GlobalEnumPrefix);

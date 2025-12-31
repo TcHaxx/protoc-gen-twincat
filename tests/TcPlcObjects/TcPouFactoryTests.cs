@@ -23,7 +23,7 @@ public class TcPouFactoryTests : VerifyBase
 
         var extensionRegistry = ExtensionRegistryBuilder.Build();
 
-        var descriptorSet = FileDescriptorSet.Parser.WithExtensionRegistry(extensionRegistry).ParseFrom(File.ReadAllBytes($"./.protobufs/{TEST_PROTO}.pb"));
+        var descriptorSet = FileDescriptorSet.Parser.WithExtensionRegistry(extensionRegistry).ParseFrom(File.ReadAllBytes($"./.protobufs/proto/{TEST_PROTO}.pb"));
 
         var request = new CodeGeneratorRequest
         {
@@ -41,6 +41,19 @@ public class TcPouFactoryTests : VerifyBase
     {
         Assert.NotNull(_sut);
         var md = _sut.MessageType.Single(m => m.Name == nameof(TestSimpleMessage));
+        Assert.NotNull(md);
+        var msgComment = CommentsProvider.GetComments(_sut, md);
+
+        var pou = TcPouFactory.Create(md, msgComment, _sut.GetPrefixes());
+
+        await Verify(pou, _localSettings);
+    }
+
+    [Fact]
+    public async Task ShouldCreateStructWithCorrectNameAndIdFromNestedMessage()
+    {
+        Assert.NotNull(_sut);
+        var md = _sut.MessageType.Single(m => m.Name == nameof(TestNestedMessage));
         Assert.NotNull(md);
         var msgComment = CommentsProvider.GetComments(_sut, md);
 

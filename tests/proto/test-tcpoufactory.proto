@@ -4,7 +4,15 @@ import "tchaxx-extensions.proto";
 
 package test.prefix;
 
+option (tchaxx.global_fb_prefix) = {type: "FB_", instance: "_fb"};
+option (tchaxx.global_st_prefix) = {type: "ST_", instance: "_st"};
+
 // Test simple message
 message TestSimpleMessage {
   uint32 id = 1;
+}
+
+message TestNestedMessage {
+  TestSimpleMessage simple_message = 1;
+  uint32 id = 2;
 }

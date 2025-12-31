@@ -1,4 +1,4 @@
 ﻿
 namespace TcHaxx.ProtocGenTc.Prefix;
 
-public record EnumPrefixes(string? EnumPrefix);
+public record EnumPrefixes(Extensions.v1.Prefix? EnumPrefix);

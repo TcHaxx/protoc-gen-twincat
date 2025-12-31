@@ -5,16 +5,16 @@
                           protoc-gen-twincat V0.0.0.0                           
                   https://github.com/TcHaxx/protoc-gen-twincat                  
 *******************************************************************************)
-// Test simple message
 {attribute 'no_explicit_call' := 'do not call this POU directly'} 
-FUNCTION_BLOCK INTERNAL FINAL FB_TestSimpleMessage IMPLEMENTS I_Message
+FUNCTION_BLOCK INTERNAL FINAL FB_TestNestedMessage IMPLEMENTS I_Message
 VAR
     _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
     _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
-    _stTestSimpleMessage : ST_TestSimpleMessage;
+    _stTestNestedMessage : ST_TestNestedMessage;
+    _fbTestSimpleMessage : FB_TestSimpleMessage;
     END_VAR
 ]]>,
-    Name: FB_TestSimpleMessage,
+    Name: FB_TestNestedMessage,
     Id: Guid_1,
     SpecialFunc: None
   },

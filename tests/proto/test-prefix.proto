@@ -4,13 +4,13 @@ import "tchaxx-extensions.proto";
 
 package test.prefix;
 
-option (tchaxx.global_st_prefix) = "ST_FILE_";
-option (tchaxx.global_fb_prefix) = "FB_FILE_";
-option (tchaxx.global_enum_prefix) = "E_FILE_";
+option (tchaxx.global_st_prefix) = {type: "ST_FILE_", instance: "_st_file_"};
+option (tchaxx.global_fb_prefix) = {type: "FB_FILE_", instance: "_fb_file_"};
+option (tchaxx.global_enum_prefix) = {type: "E_FILE_", instance: "_e_file_"};
 
 message TestMessagePrefix {
-  option (tchaxx.st_prefix) = "ST_MSG_";
-  option (tchaxx.fb_prefix) = "FB_MSG_";
+  option (tchaxx.st_prefix) = {type: "ST_MSG_", instance: "_st_msg_"};
+  option (tchaxx.fb_prefix) = {type:"FB_MSG_", instance: "_fb_msg_"};
   uint32 id = 1;
 }
 
@@ -19,7 +19,7 @@ message TestMessageNoPrefix {
 }
 
 enum TestEnumPrefix {
-  option (tchaxx.enum_prefix) = "E_ENUM_";
+  option (tchaxx.enum_prefix) = {type: "E_ENUM_", instance: "_e_enum_"};
   E_VALUE_DEFAULT = 0;
   E_VALUE_ONE = 1;
 }

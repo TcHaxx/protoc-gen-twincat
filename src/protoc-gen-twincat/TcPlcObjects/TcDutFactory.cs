@@ -12,7 +12,7 @@ internal static class TcDutFactory
 {
     public static TcDUT CreateEnum(EnumDescriptorProto enumDescriptor, Comments comments, Prefixes prefixes)
     {
-        var name = prefixes.GetEnumNameWithPrefix(enumDescriptor);
+        var name = prefixes.GetEnumNameWithTypePrefix(enumDescriptor);
         var dut = new TcDUT
         {
             Version = Constants.TC_PLC_OBJECT_VERSION,
@@ -34,7 +34,7 @@ internal static class TcDutFactory
 
     public static TcDUT CreateStruct(DescriptorProto message, Comments comments, Prefixes prefixes)
     {
-        var name = prefixes.GetStNameWithPrefix(message);
+        var name = prefixes.GetStNameWithTypePrefix(message);
         var dut = new TcDUT
         {
             Version = Constants.TC_PLC_OBJECT_VERSION,

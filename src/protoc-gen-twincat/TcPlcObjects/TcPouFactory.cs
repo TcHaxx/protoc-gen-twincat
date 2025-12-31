@@ -11,7 +11,7 @@ internal static class TcPouFactory
 {
     public static TcPOU Create(DescriptorProto message, Comments comments, Prefixes prefixes)
     {
-        var name = prefixes.GetFbNameWithPrefix(message);
+        var name = prefixes.GetFbNameWithTypePrefix(message);
         var pou = new TcPOU
         {
             Version = Constants.TC_PLC_OBJECT_VERSION,
@@ -38,13 +38,15 @@ internal static class TcPouFactory
     {
         var sb = new StringBuilder();
         sb.AppendLine($$"""
-        {attribute 'no_explicit_call' := 'do not call this POU directly'} 
-        FUNCTION_BLOCK INTERNAL FINAL {{prefixes.GetFbNameWithPrefix(message)}}Message IMPLEMENTS I_Message
-            VAR
-                fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
-                fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
-            END_VAR
-        """);
+                        {attribute 'no_explicit_call' := 'do not call this POU directly'} 
+                        FUNCTION_BLOCK INTERNAL FINAL {{prefixes.GetFbNameWithTypePrefix(message)}} IMPLEMENTS I_Message
+                        VAR
+                            _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
+                            _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
+                            {{prefixes.GetStNameWithInstancePrefix(message)}} : {{prefixes.GetStNameWithTypePrefix(message)}};
+                        """);
+        subMessages.ToList().ForEach(x => sb.AppendLine($"    {prefixes.GetFbNameWithInstancePrefix(x)} : {prefixes.GetFbNameWithTypePrefix(x)};"));
+        sb.AppendLine("    END_VAR");
         return sb.ToString();
     }
 
@@ -59,5 +61,4 @@ internal static class TcPouFactory
         var header = Helper.GetApplicationHeader(Assembly.GetExecutingAssembly());
         pou.POU.Declaration ??= new XmlDocument().CreateCDataSection(header);
     }
-
 }

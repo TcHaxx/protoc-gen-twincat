@@ -17,7 +17,7 @@ public class PrefixExtensionsTests : VerifyBase
     {
         var extensionRegistry = ExtensionRegistryBuilder.Build();
 
-        var descriptorSet = FileDescriptorSet.Parser.WithExtensionRegistry(extensionRegistry).ParseFrom(File.ReadAllBytes($"./.protobufs/{TEST_PROTO}.pb"));
+        var descriptorSet = FileDescriptorSet.Parser.WithExtensionRegistry(extensionRegistry).ParseFrom(File.ReadAllBytes($"./.protobufs/proto/{TEST_PROTO}.pb"));
 
         var request = new CodeGeneratorRequest
         {
@@ -37,7 +37,8 @@ public class PrefixExtensionsTests : VerifyBase
         var prefixes = _sut.GetPrefixes();
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessagePrefix));
         Assert.True(prefixes.TryGetPrefixForFb(msg, out var prefix));
-        Assert.Equal("FB_MSG_", prefix);
+        Assert.Equal("FB_MSG_", prefix.Type);
+        Assert.Equal("_fb_msg_", prefix.Instance);
     }
 
     [Fact]
@@ -47,7 +48,8 @@ public class PrefixExtensionsTests : VerifyBase
         var prefixes = _sut.GetPrefixes();
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessagePrefix));
         Assert.True(prefixes.TryGetPrefixForSt(msg, out var prefix));
-        Assert.Equal("ST_MSG_", prefix);
+        Assert.Equal("ST_MSG_", prefix.Type);
+        Assert.Equal("_st_msg_", prefix.Instance);
     }
 
     [Fact]
@@ -57,7 +59,8 @@ public class PrefixExtensionsTests : VerifyBase
         var prefixes = _sut.GetPrefixes();
         var @enum = _sut.EnumType.First(x => x.Name == nameof(TestEnumPrefix));
         Assert.True(prefixes.TryGetEnumPrefix(@enum, out var prefix));
-        Assert.Equal("E_ENUM_", prefix);
+        Assert.Equal("E_ENUM_", prefix.Type);
+        Assert.Equal("_e_enum_", prefix.Instance);
     }
 
     [Fact]
@@ -67,7 +70,8 @@ public class PrefixExtensionsTests : VerifyBase
         var prefixes = _sut.GetPrefixes();
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessageNoPrefix));
         Assert.True(prefixes.TryGetPrefixForFb(msg, out var prefix));
-        Assert.Equal("FB_FILE_", prefix);
+        Assert.Equal("FB_FILE_", prefix.Type);
+        Assert.Equal("_fb_file_", prefix.Instance);
     }
 
     [Fact]
@@ -77,7 +81,8 @@ public class PrefixExtensionsTests : VerifyBase
         var prefixes = _sut.GetPrefixes();
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessageNoPrefix));
         Assert.True(prefixes.TryGetPrefixForSt(msg, out var prefix));
-        Assert.Equal("ST_FILE_", prefix);
+        Assert.Equal("ST_FILE_", prefix.Type);
+        Assert.Equal("_st_file_", prefix.Instance);
     }
     [Fact]
     public void ShouldGetGlobalPrefixedFbName()
@@ -85,7 +90,7 @@ public class PrefixExtensionsTests : VerifyBase
         Assert.NotNull(_sut);
         var prefixes = _sut.GetPrefixes();
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessageNoPrefix));
-        Assert.Equal($"FB_FILE_{nameof(TestMessageNoPrefix)}", prefixes.GetFbNameWithPrefix(msg));
+        Assert.Equal($"FB_FILE_{nameof(TestMessageNoPrefix)}", PrefixesExtensions.GetFbNameWithTypePrefix(prefixes, msg));
     }
 
     [Fact]
@@ -94,7 +99,7 @@ public class PrefixExtensionsTests : VerifyBase
         Assert.NotNull(_sut);
         var prefixes = _sut.GetPrefixes();
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessagePrefix));
-        Assert.Equal($"FB_MSG_{nameof(TestMessagePrefix)}", prefixes.GetFbNameWithPrefix(msg));
+        Assert.Equal($"FB_MSG_{nameof(TestMessagePrefix)}", PrefixesExtensions.GetFbNameWithTypePrefix(prefixes, msg));
     }
 
     [Fact]
@@ -103,7 +108,7 @@ public class PrefixExtensionsTests : VerifyBase
         Assert.NotNull(_sut);
         var prefixes = _sut.GetPrefixes();
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessageNoPrefix));
-        Assert.Equal($"ST_FILE_{nameof(TestMessageNoPrefix)}", prefixes.GetStNameWithPrefix(msg));
+        Assert.Equal($"ST_FILE_{nameof(TestMessageNoPrefix)}", prefixes.GetStNameWithTypePrefix(msg));
     }
 
     [Fact]
@@ -112,7 +117,7 @@ public class PrefixExtensionsTests : VerifyBase
         Assert.NotNull(_sut);
         var prefixes = _sut.GetPrefixes();
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessagePrefix));
-        Assert.Equal($"ST_MSG_{nameof(TestMessagePrefix)}", prefixes.GetStNameWithPrefix(msg));
+        Assert.Equal($"ST_MSG_{nameof(TestMessagePrefix)}", prefixes.GetStNameWithTypePrefix(msg));
     }
 
     [Fact]
@@ -122,7 +127,8 @@ public class PrefixExtensionsTests : VerifyBase
         var prefixes = _sut.GetPrefixes();
         var @enum = _sut.EnumType.First(x => x.Name == nameof(TestEnumNoPrefix));
         Assert.True(prefixes.TryGetEnumPrefix(@enum, out var prefix));
-        Assert.Equal("E_FILE_", prefix);
+        Assert.Equal("E_FILE_", prefix.Type);
+        Assert.Equal("_e_file_", prefix.Instance);
     }
 
     [Fact]
@@ -131,7 +137,7 @@ public class PrefixExtensionsTests : VerifyBase
         Assert.NotNull(_sut);
         var prefixes = _sut.GetPrefixes();
         var @enum = _sut.EnumType.First(x => x.Name == nameof(TestEnumNoPrefix));
-        Assert.Equal($"E_FILE_{nameof(TestEnumNoPrefix)}", prefixes.GetEnumNameWithPrefix(@enum));
+        Assert.Equal($"E_FILE_{nameof(TestEnumNoPrefix)}", prefixes.GetEnumNameWithTypePrefix(@enum));
     }
 
     [Fact]
@@ -140,6 +146,6 @@ public class PrefixExtensionsTests : VerifyBase
         Assert.NotNull(_sut);
         var prefixes = _sut.GetPrefixes();
         var @enum = _sut.EnumType.First(x => x.Name == nameof(TestEnumPrefix));
-        Assert.Equal($"E_ENUM_{nameof(TestEnumPrefix)}", prefixes.GetEnumNameWithPrefix(@enum));
+        Assert.Equal($"E_ENUM_{nameof(TestEnumPrefix)}", prefixes.GetEnumNameWithTypePrefix(@enum));
     }
 }
