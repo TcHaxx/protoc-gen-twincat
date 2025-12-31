@@ -4,19 +4,21 @@ using System.Text;
 using System.Xml;
 using Google.Protobuf.Reflection;
 using TcHaxx.Extensions.v1;
+using TcHaxx.ProtocGenTc.Prefix;
 
 namespace TcHaxx.ProtocGenTc.TcPlcObjects;
 
 internal static class TcDutFactory
 {
-    public static TcDUT CreateEnum(EnumDescriptorProto enumDescriptor, Comments comments)
+    public static TcDUT CreateEnum(EnumDescriptorProto enumDescriptor, Comments comments, Prefixes prefixes)
     {
+        var name = prefixes.GetEnumNameWithPrefix(enumDescriptor);
         var dut = new TcDUT
         {
             Version = Constants.TC_PLC_OBJECT_VERSION,
             DUT = new TcPlcObjectDUT()
             {
-                Name = enumDescriptor.Name,
+                Name = name,
                 Id = Guid.NewGuid().ToString(),
             }
         };
@@ -30,14 +32,15 @@ internal static class TcDutFactory
         return dut;
     }
 
-    public static TcDUT CreateStruct(DescriptorProto message, Comments comments)
+    public static TcDUT CreateStruct(DescriptorProto message, Comments comments, Prefixes prefixes)
     {
+        var name = prefixes.GetStNameWithPrefix(message);
         var dut = new TcDUT
         {
             Version = Constants.TC_PLC_OBJECT_VERSION,
             DUT = new TcPlcObjectDUT()
             {
-                Name = message.Name,
+                Name = name,
                 Id = Guid.NewGuid().ToString(),
             }
         };

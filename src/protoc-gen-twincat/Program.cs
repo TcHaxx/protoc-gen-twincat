@@ -7,6 +7,7 @@ using Google.Protobuf.Reflection;
 using TcHaxx.Extensions.v1;
 using TcHaxx.ProtocGenTc;
 using TcHaxx.ProtocGenTc.FieldProviders;
+using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTc.TcPlcObjects;
 
 #if DEBUG
@@ -62,7 +63,7 @@ async Task<IEnumerable<CodeGeneratorResponse.Types.File>> GenerateResponseFilesA
 async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromMessageAsync(FileDescriptorProto file, DescriptorProto message)
 {
     var msgComment = CommentsProvider.GetComments(file, message);
-    var tcDUT = TcDutFactory.CreateStruct(message, msgComment);
+    var tcDUT = TcDutFactory.CreateStruct(message, msgComment, file.GetPrefixes());
     var processedFields = new StringBuilder();
 
     foreach (var field in message.Field)
@@ -85,7 +86,7 @@ async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromMessageAsyn
 async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromEnumAsync(FileDescriptorProto file, EnumDescriptorProto enumDescriptor)
 {
     var enumComment = CommentsProvider.GetComments(file, enumDescriptor);
-    var tcDUT = TcDutFactory.CreateEnum(enumDescriptor, enumComment);
+    var tcDUT = TcDutFactory.CreateEnum(enumDescriptor, enumComment, file.GetPrefixes());
     var processedFields = new StringBuilder();
 
     for (var i = 0; i < enumDescriptor.Value.Count; i++)

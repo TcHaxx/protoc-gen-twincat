@@ -2,19 +2,21 @@
 using System.Text;
 using System.Xml;
 using Google.Protobuf.Reflection;
+using TcHaxx.ProtocGenTc.Prefix;
 
 namespace TcHaxx.ProtocGenTc.TcPlcObjects;
 
 internal static class TcPouFactory
 {
-    public static TcPOU Create(DescriptorProto message, Comments comments)
+    public static TcPOU Create(DescriptorProto message, Comments comments, Prefixes prefixes)
     {
+        var name = prefixes.GetFbNameWithPrefix(message);
         var pou = new TcPOU
         {
             Version = Constants.TC_PLC_OBJECT_VERSION,
             POU = new TcPlcObjectPOU()
             {
-                Name = message.Name,
+                Name = name,
                 Id = Guid.NewGuid().ToString(),
                 SpecialFunc = "None"
             }

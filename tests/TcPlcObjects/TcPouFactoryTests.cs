@@ -2,6 +2,7 @@ using Google.Protobuf;
 using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
 using TcHaxx.ProtocGenTc;
+using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTcTests.VerifySetup;
 using Test.Prefix;
 using TcHaxx.ProtocGenTc.TcPlcObjects;
@@ -41,7 +42,7 @@ public class TcPouFactoryTests : VerifyBase
         Assert.NotNull(md);
         var msgComment = CommentsProvider.GetComments(_sut, md);
 
-        var pou = TcPouFactory.Create(md, msgComment);
+        var pou = TcPouFactory.Create(md, msgComment, _sut.GetPrefixes());
 
         await Verify(pou, _localSettings);
     }
