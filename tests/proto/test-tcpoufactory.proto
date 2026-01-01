@@ -10,7 +10,7 @@ option (tchaxx.global_st_prefix) = {type: "ST_", instance: "_st"};
 // Test simple message
 message TestSimpleMessage {
   uint32 id = 1;
-  repeated uint32 ohoh = 2 [(tchaxx.array_len) = 2];
+  repeated uint32 numbers = 2 [(tchaxx.array_len) = 2];
 }
 
 message TestNestedMessage {

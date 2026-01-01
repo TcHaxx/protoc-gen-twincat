@@ -2,6 +2,7 @@
 using System.Text;
 using System.Xml;
 using Google.Protobuf.Reflection;
+using TcHaxx.ProtocGenTc.Fields;
 using TcHaxx.ProtocGenTc.Message;
 using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTc.TcPlcObjects.Methods;
@@ -36,6 +37,7 @@ internal static class TcPouFactory
         pou.POU.Method =
         [
             GenerateMethod(CalculateSize.From(message, prefixes)),
+            GenerateMethod(MergeFrom.From(message, prefixes))
         ];
         return pou;
     }
@@ -54,12 +56,21 @@ internal static class TcPouFactory
         foreach (var repeatedField in message.Field.Where(f => f.Label == FieldDescriptorProto.Types.Label.Repeated))
         {
             var msgName = prefixes.GetStNameWithInstancePrefix(message);
-            var varName = repeatedField.Type == FieldDescriptorProto.Types.Type.Message
-                    ? prefixes.GetStNameWithInstancePrefix(repeatedField)
-                    : repeatedField.Name;
-            sb.AppendLine($$"""
-                                fbRepeated{{repeatedField.Name}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{varName}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{varName}}[0]));
-                            """);
+            if (repeatedField.Type == FieldDescriptorProto.Types.Type.Message)
+            {
+                var varName = prefixes.GetStNameWithInstancePrefix(repeatedField);
+                var fbName = prefixes.GetFbNameWithInstancePrefix(repeatedField);
+                sb.AppendLine($$"""
+                                    _fbRepeated{{repeatedField.Name}}Codec : FB_FieldCodecMessage(nTag:= 16#{{repeatedField.GetFieldTagValue().ToString("X2")}}, ipMessage:= {{fbName}});
+                                    _fbRepeated{{repeatedField.Name}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{varName}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{varName}}[0]));
+                                """);
+            }
+            else
+            {
+                sb.AppendLine($$"""
+                                    _fbRepeated{{repeatedField.Name}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}[0]));
+                                """);
+            }
         }
         subMessages.ToList().ForEach(x => sb.AppendLine($"    {prefixes.GetFbNameWithInstancePrefix(x)} : {prefixes.GetFbNameWithTypePrefix(x)};"));
         sb.AppendLine("    END_VAR");
