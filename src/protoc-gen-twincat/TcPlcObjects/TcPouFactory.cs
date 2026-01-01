@@ -30,11 +30,11 @@ internal static class TcPouFactory
 
         var subMessages = message.GetSubMessages();
 
-        pou.POU.Declaration.Data += EmitPouDecleration(message, subMessages, prefixes);
+        pou.POU.Declaration.Data += EmitPouDeclaration(message, subMessages, prefixes);
         return pou;
     }
 
-    private static string EmitPouDecleration(DescriptorProto message, IEnumerable<FieldDescriptorProto> subMessages, Prefixes prefixes)
+    private static string EmitPouDeclaration(DescriptorProto message, IEnumerable<FieldDescriptorProto> subMessages, Prefixes prefixes)
     {
         var sb = new StringBuilder();
         sb.AppendLine($$"""
