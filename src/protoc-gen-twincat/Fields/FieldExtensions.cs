@@ -7,9 +7,9 @@ public static class FieldExtensions
 {
     extension(FieldDescriptorProto field)
     {
-        internal int GetFieldTagValue()
+        internal uint GetFieldTagValue()
         {
-            return (field.Number << 3) | (int)field.GetWireType();
+            return ((uint)field.Number << 3) | (uint)field.GetWireType();
         }
 
         internal WireFormat.WireType GetWireType()
@@ -37,5 +37,65 @@ public static class FieldExtensions
                 _ => throw new NotSupportedException($"Unsupported field type: {field.Type}"),
             };
         }
+
+        internal string GetFieldAssignVarString(string context)
+        {
+            return (field.Type, context) switch
+            {
+                (FieldDescriptorProto.Types.Type.Bool, _) => "bValue",
+                (FieldDescriptorProto.Types.Type.Group, _) => throw new NotImplementedException(),
+                (FieldDescriptorProto.Types.Type.Enum, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Message, _) => "iMessage",
+                (FieldDescriptorProto.Types.Type.String, "merge") => "anyStringOut",
+                (FieldDescriptorProto.Types.Type.String, "write") => "sStringToWrite",
+                (FieldDescriptorProto.Types.Type.String, _) => "anyString",
+                (FieldDescriptorProto.Types.Type.Bytes, _) => "aBytes",
+                (FieldDescriptorProto.Types.Type.Int32, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Int64, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Uint32, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Uint64, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Sint32, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Sint64, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Fixed32, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Fixed64, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Sfixed32, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Sfixed64, _) => "nValue",
+                (FieldDescriptorProto.Types.Type.Float, _) => "fValue",
+                (FieldDescriptorProto.Types.Type.Double, _) => "fValue",
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        internal int GetFieldTagLength()
+        {
+            var tagValue = field.GetFieldTagValue();
+            return ComputeRawVarint32Size(tagValue);
+        }
+    }
+
+
+    private static int ComputeRawVarint32Size(uint value)
+    {
+        if ((value & (0xffffffff << 7)) == 0)
+        {
+            return 1;
+        }
+
+        if ((value & (0xffffffff << 14)) == 0)
+        {
+            return 2;
+        }
+
+        if ((value & (0xffffffff << 21)) == 0)
+        {
+            return 3;
+        }
+
+        if ((value & (0xffffffff << 28)) == 0)
+        {
+            return 4;
+        }
+
+        return 5;
     }
 }

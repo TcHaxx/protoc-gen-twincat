@@ -61,6 +61,13 @@ internal static class PrefixesExtensions
                 : message.Name;
         }
 
+        internal string GetStNameWithInstancePrefix(FieldDescriptorProto fieldMessage)
+        {
+            var strippedName = StripNestedTypeName(fieldMessage.TypeName);
+            return prefixes.TryGetPrefixForStByName(strippedName, out var prefixedName)
+                ? $"{prefixedName.Instance}{strippedName}"
+                : strippedName;
+        }
         internal bool TryGetPrefixForSt(DescriptorProto message, [NotNullWhen(true)] out Extensions.v1.Prefix? prefix)
         {
             prefix = prefixes.Global.GlobalStPrefix;
@@ -99,6 +106,15 @@ internal static class PrefixesExtensions
         {
             prefix = prefixes.Global.GlobalFbPrefix;
             var msgPrefix = prefixes.Message.Where(x => x.Key.Name == name).Select(x => x.Value.MessageFbPrefix)
+                .FirstOrDefault();
+            prefix = msgPrefix ?? prefix;
+            return prefix is not null;
+        }
+
+        private bool TryGetPrefixForStByName(string name, [NotNullWhen(true)] out Extensions.v1.Prefix? prefix)
+        {
+            prefix = prefixes.Global.GlobalStPrefix;
+            var msgPrefix = prefixes.Message.Where(x => x.Key.Name == name).Select(x => x.Value.MessageStPrefix)
                 .FirstOrDefault();
             prefix = msgPrefix ?? prefix;
             return prefix is not null;

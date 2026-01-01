@@ -12,10 +12,38 @@ VAR
     _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
     _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
     _stTestSimpleMessage : ST_TestSimpleMessage;
+    fbRepeatedohoh : FB_RepeatedField(anyArray:= F_ToAnyType(_stTestSimpleMessage.ohoh), anyFirstElem:= F_ToAnyType(_stTestSimpleMessage.ohoh[0]));
     END_VAR
 ]]>,
+    Implementation: {
+      ST: <![CDATA[]]>
+    },
+    Method: [
+      {
+        Declaration:
+<![CDATA[(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
+METHOD CalculateSize : UDINT
+VAR
+    nSize : UDINT;
+    nRepeatedFieldSize : UDINT;
+END_VAR
+]]>,
+        Implementation: {
+          ST:
+<![CDATA[// Uint32 id = 1;
+nSize := nSize + 1 + F_ComputeUInt32Size(nValue:= _stTestSimpleMessage.id);
+// Uint32 ohoh = 2;
+fbRepeatedohoh.CalculatePackedDataSize(nPackedDataSize => nRepeatedFieldSize);
+nSize := nSize + 1 + nRepeatedFieldSize;")
+CalculateSize := nSize;
+]]>
+        },
+        Name: CalculateSize,
+        Id: Guid_1
+      }
+    ],
     Name: FB_TestSimpleMessage,
-    Id: Guid_1,
+    Id: Guid_2,
     SpecialFunc: None
   },
   Version: 1.1.0.1,

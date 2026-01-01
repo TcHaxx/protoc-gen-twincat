@@ -14,8 +14,34 @@ VAR
     _fbTestSimpleMessage : FB_TestSimpleMessage;
     END_VAR
 ]]>,
+    Implementation: {
+      ST: <![CDATA[]]>
+    },
+    Method: [
+      {
+        Declaration:
+<![CDATA[(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
+METHOD CalculateSize : UDINT
+VAR
+    nSize : UDINT;
+    nRepeatedFieldSize : UDINT;
+END_VAR
+]]>,
+        Implementation: {
+          ST:
+<![CDATA[// Message simple_message = 1;
+nSize := nSize + F_ComputeMessageSize(iMessage:= _fbTestSimpleMessage);
+// Uint32 id = 2;
+nSize := nSize + 1 + F_ComputeUInt32Size(nValue:= _stTestNestedMessage.id);
+CalculateSize := nSize;
+]]>
+        },
+        Name: CalculateSize,
+        Id: Guid_1
+      }
+    ],
     Name: FB_TestNestedMessage,
-    Id: Guid_1,
+    Id: Guid_2,
     SpecialFunc: None
   },
   Version: 1.1.0.1,

@@ -8,13 +8,13 @@ using TcHaxx.ProtocGenTc.Fields;
 using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTc.TcPlcObjects;
 
-#if DEBUG
-await Console.Error.WriteLineAsync("Waiting for debugger to attach...");
-while (!System.Diagnostics.Debugger.IsAttached)
-{
-    await Task.Delay(500);
-}
-#endif
+// #if DEBUG
+// await Console.Error.WriteLineAsync("Waiting for debugger to attach...");
+// while (!System.Diagnostics.Debugger.IsAttached)
+// {
+//     await Task.Delay(500);
+// }
+// #endif
 
 var extensionRegistry = ExtensionRegistryBuilder.Build();
 
