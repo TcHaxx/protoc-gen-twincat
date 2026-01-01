@@ -51,17 +51,18 @@ async Task<IEnumerable<CodeGeneratorResponse.Types.File>> GenerateResponseFilesA
 
     foreach (var message in file.MessageType)
     {
-        var responseFile = await GenerateResponseFileFromMessageAsync(file, message);
-        result.Add(responseFile);
+        var responseFiles = await GenerateResponseFileFromMessageAsync(file, message);
+        result.AddRange(responseFiles);
     }
 
     return result;
 }
 
-async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromMessageAsync(FileDescriptorProto file, DescriptorProto message)
+async Task<List<CodeGeneratorResponse.Types.File>> GenerateResponseFileFromMessageAsync(FileDescriptorProto file, DescriptorProto message)
 {
     var msgComment = CommentsProvider.GetComments(file, message);
     var tcDUT = TcDutFactory.CreateStruct(message, msgComment, file.GetPrefixes());
+    var tcPOU = TcPouFactory.Create(message, msgComment, file.GetPrefixes());
     var processedFields = new StringBuilder();
 
     foreach (var field in message.Field)
@@ -74,11 +75,19 @@ async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromMessageAsyn
 
     tcDUT.WriteStructDeclaration(processedFields);
 
-    return new CodeGeneratorResponse.Types.File
-    {
-        Name = message.Name + ".TcDUT",
-        Content = PlcObjectSerializer.Serialize(tcDUT),
-    };
+    List<CodeGeneratorResponse.Types.File> responses =
+    [
+        new()
+        {
+            Name = message.Name + ".TcPOU", Content = PlcObjectSerializer.Serialize(tcPOU),
+        },
+        new()
+        {
+            Name = message.Name + ".TcDUT", Content = PlcObjectSerializer.Serialize(tcDUT),
+        }
+    ];
+
+    return responses;
 }
 
 async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromEnumAsync(FileDescriptorProto file, EnumDescriptorProto enumDescriptor)
