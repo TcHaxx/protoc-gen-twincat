@@ -79,11 +79,11 @@ async Task<List<CodeGeneratorResponse.Types.File>> GenerateResponseFileFromMessa
     [
         new()
         {
-            Name = message.Name + ".TcPOU", Content = PlcObjectSerializer.Serialize(tcPOU),
+            Name = tcPOU.POU.Name + ".TcPOU", Content = PlcObjectSerializer.Serialize(tcPOU),
         },
         new()
         {
-            Name = message.Name + ".TcDUT", Content = PlcObjectSerializer.Serialize(tcDUT),
+            Name = tcDUT.DUT.Name + ".TcDUT", Content = PlcObjectSerializer.Serialize(tcDUT),
         }
     ];
 
@@ -119,7 +119,7 @@ async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromEnumAsync(F
 
     return new CodeGeneratorResponse.Types.File
     {
-        Name = enumDescriptor.Name + ".TcDUT",
+        Name = tcDUT.DUT.Name + ".TcDUT",
         Content = PlcObjectSerializer.Serialize(tcDUT),
     };
 }
