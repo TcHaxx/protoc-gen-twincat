@@ -71,6 +71,13 @@ public static class FieldExtensions
             var tagValue = field.GetFieldTagValue();
             return ComputeRawVarint32Size(tagValue);
         }
+
+        internal string Dump()
+        {
+            var label = field.HasLabel && field.Label != FieldDescriptorProto.Types.Label.Optional ? $"{field.Label.ToString().ToLower()} " : string.Empty;
+            var type = field.HasTypeName ? field.TypeName.Split('.').Last() : field.Type.ToString().ToLower();
+            return $"{label}{type} {field.Name} = {field.Number};";
+        }
     }
 
 

@@ -45,7 +45,7 @@ internal class CalculateSize : IMethodProcessor
         var sb = new StringBuilder();
         foreach (var field in message.Field)
         {
-            sb.AppendLine($"// {field.Type} {field.Name} = {field.Number};");
+            sb.AppendLine($"// {field.Dump()}");
             if (field.Type == FieldDescriptorProto.Types.Type.Message)
             {
                 sb.AppendLine(

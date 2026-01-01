@@ -43,7 +43,6 @@ internal static class TcPouFactory
     private static string EmitPouDeclaration(DescriptorProto message, IEnumerable<FieldDescriptorProto> subMessages, Prefixes prefixes)
     {
         var sb = new StringBuilder();
-        // TODO: RepeatedFields
         sb.AppendLine($$"""
                         {attribute 'no_explicit_call' := 'do not call this POU directly'} 
                         FUNCTION_BLOCK INTERNAL FINAL {{prefixes.GetFbNameWithTypePrefix(message)}} IMPLEMENTS I_Message

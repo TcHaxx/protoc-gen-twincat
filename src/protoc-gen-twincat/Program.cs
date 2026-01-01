@@ -64,15 +64,15 @@ async Task<List<CodeGeneratorResponse.Types.File>> GenerateResponseFileFromMessa
     var tcDUT = TcDutFactory.CreateStruct(message, msgComment, file.GetPrefixes());
     var tcPOU = TcPouFactory.Create(message, msgComment, file.GetPrefixes());
     var processedFields = new StringBuilder();
-
+    await Console.Error.WriteLineAsync($"message {message.Name} {{");
     foreach (var field in message.Field)
     {
-        await Console.Error.WriteLineAsync($"Field: {field.Name} (Type: {field.Type})");
+        await Console.Error.WriteLineAsync($"  {field.Dump()}");
         var comments = CommentsProvider.GetComments(file, message, field);
         var processFieldValue = ProcessFieldValue(field, comments);
         processedFields.Append(processFieldValue);
     }
-
+    await Console.Error.WriteLineAsync($"}}");
     tcDUT.WriteStructDeclaration(processedFields);
 
     List<CodeGeneratorResponse.Types.File> responses =
@@ -95,16 +95,18 @@ async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromEnumAsync(F
     var enumComment = CommentsProvider.GetComments(file, enumDescriptor);
     var tcDUT = TcDutFactory.CreateEnum(enumDescriptor, enumComment, file.GetPrefixes());
     var processedFields = new StringBuilder();
-
+    await Console.Error.WriteLineAsync($"enum {enumDescriptor.Name} {{");
     for (var i = 0; i < enumDescriptor.Value.Count; i++)
     {
         var enumValue = enumDescriptor.Value[i];
-        await Console.Error.WriteLineAsync($"Name: {enumValue.Name} (Number: {enumValue.Number})");
+        await Console.Error.WriteLineAsync($"  {enumValue.Name} = {enumValue.Number};");
         var comments = CommentsProvider.GetComments(file, enumDescriptor, enumValue);
         var isLast = i == enumDescriptor.Value.Count - 1;
         var processEnumValue = ProcessEnumValue(enumValue, comments, isLast);
         processedFields.Append(processEnumValue);
     }
+
+    await Console.Error.WriteLineAsync($"}}");
 
     var options = enumDescriptor.Options;
     if (options.TryGetExtension(TchaxxExtensionsExtensions.EnumIntegerType, out var extensionValue))
