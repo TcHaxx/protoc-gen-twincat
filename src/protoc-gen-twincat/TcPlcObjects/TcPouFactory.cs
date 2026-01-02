@@ -38,7 +38,8 @@ internal static class TcPouFactory
         pou.POU.Method =
         [
             GenerateMethod(CalculateSize.From(message, prefixes)),
-            GenerateMethod(MergeFrom.From(message, prefixes))
+            GenerateMethod(MergeFrom.From(message, prefixes)),
+            GenerateMethod(WriteTo.From(message, prefixes))
         ];
         pou.POU.Property =
         [
