@@ -116,10 +116,24 @@ END_VAR]]>,
           },
           Name: Get
         }
+      },
+      {
+        Declaration:
+<![CDATA[(* Writer for this message.*)
+PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
+        Name: Writer,
+        Id: Guid_5,
+        Get: {
+          Declaration: <![CDATA[]]>,
+          Implementation: {
+            ST: <![CDATA[Writer REF= THIS^._fbMessageWriter;]]>
+          },
+          Name: Get
+        }
       }
     ],
     Name: FB_TestSimpleMessage,
-    Id: Guid_5,
+    Id: Guid_6,
     SpecialFunc: None
   },
   Version: 1.1.0.1
