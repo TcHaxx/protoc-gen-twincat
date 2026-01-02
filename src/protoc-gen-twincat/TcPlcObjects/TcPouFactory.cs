@@ -6,6 +6,7 @@ using TcHaxx.ProtocGenTc.Fields;
 using TcHaxx.ProtocGenTc.Message;
 using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTc.TcPlcObjects.Methods;
+using TcHaxx.ProtocGenTc.TcPlcObjects.Properties;
 
 namespace TcHaxx.ProtocGenTc.TcPlcObjects;
 
@@ -38,6 +39,10 @@ internal static class TcPouFactory
         [
             GenerateMethod(CalculateSize.From(message, prefixes)),
             GenerateMethod(MergeFrom.From(message, prefixes))
+        ];
+        pou.POU.Property =
+        [
+            GenerateProperty(Parser.From(message, prefixes))
         ];
         return pou;
     }
@@ -88,6 +93,7 @@ internal static class TcPouFactory
         var header = Helper.GetApplicationHeader(Assembly.GetExecutingAssembly());
         pou.POU.Declaration ??= new XmlDocument().CreateCDataSection(header);
     }
+
     private static Method GenerateMethod(IMethodProcessor methodProcessor)
     {
         return new Method()
@@ -96,6 +102,18 @@ internal static class TcPouFactory
             Id = Guid.NewGuid().ToString(),
             Declaration = methodProcessor.Declaration,
             Implementation = methodProcessor.Implementation
+        };
+    }
+
+    private static Property GenerateProperty(IPropertyProcessor propertyProcessor)
+    {
+        return new Property()
+        {
+            Name = propertyProcessor.Name,
+            Id = Guid.NewGuid().ToString(),
+            Declaration = propertyProcessor.Declaration,
+            Get = propertyProcessor.Getter,
+            Set = propertyProcessor.Setter
         };
     }
 }

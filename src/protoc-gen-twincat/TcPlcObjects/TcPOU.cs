@@ -59,18 +59,15 @@ public class Property
 
     [XmlElement(ElementName = "Declaration")]
     public XmlCDataSection Declaration { get; set; }
-
-    [XmlElement(ElementName = "Get")]
-    public Get Get { get; set; }
-
+    
     [XmlAttribute(AttributeName = "Name")]
     public string Name { get; set; }
 
     [XmlAttribute(AttributeName = "Id")]
     public string Id { get; set; }
-
-    [XmlText]
-    public string Text { get; set; }
+    
+    [XmlElement(ElementName = "Get")]
+    public Get Get { get; set; }
 
     [XmlElement(ElementName = "Set")]
     public Set Set { get; set; }

@@ -80,8 +80,22 @@ END_REPEAT
         Id: Guid_2
       }
     ],
+    Property: [
+      {
+        Declaration: <![CDATA[PROPERTY PUBLIC Parser : REFERENCE TO FB_MessageParser]]>,
+        Name: Parser,
+        Id: Guid_3,
+        Get: {
+          Declaration: <![CDATA[]]>,
+          Implementation: {
+            ST: <![CDATA[Parser REF= THIS^._fbMessageParser;]]>
+          },
+          Name: Parser
+        }
+      }
+    ],
     Name: FB_TestNestedMessage,
-    Id: Guid_3,
+    Id: Guid_4,
     SpecialFunc: None
   },
   Version: 1.1.0.1
