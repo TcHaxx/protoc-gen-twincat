@@ -9,4 +9,6 @@ internal static class Constants
     public const string PROPERTY_NAME_MESSAGE_VALUE = "MessageValue";
     public const string PROPERTY_NAME_PARSER = "Parser";
     public const string PROPERTY_WRITER = "Writer";
+    public const string PROPERTY_GET = "Get";
+    public const string PROPERTY_SET = "Set";
 }

@@ -2,26 +2,31 @@
   Global: {
     GlobalFbPrefix: {
       Type: FB_FILE_,
-      Instance: _fb_file_
+      Instance: _fb_file_,
+      Property: 
     },
     GlobalStPrefix: {
       Type: ST_FILE_,
-      Instance: _st_file_
+      Instance: _st_file_,
+      Property: 
     },
     GlobalEnumPrefix: {
       Type: E_FILE_,
-      Instance: _e_file_
+      Instance: _e_file_,
+      Property: 
     }
   },
   Message: {
     { "name": "TestMessagePrefix", "field": [ { "name": "id", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_UINT32", "jsonName": "id" } ], "options": { } }: {
       MessageFbPrefix: {
         Type: FB_MSG_,
-        Instance: _fb_msg_
+        Instance: _fb_msg_,
+        Property: 
       },
       MessageStPrefix: {
         Type: ST_MSG_,
-        Instance: _st_msg_
+        Instance: _st_msg_,
+        Property: 
       }
     },
     { "name": "TestMessageNoPrefix", "field": [ { "name": "id", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_UINT32", "jsonName": "id" } ] }: {}
@@ -30,7 +35,8 @@
     { "name": "TestEnumPrefix", "value": [ { "name": "E_VALUE_DEFAULT", "number": 0 }, { "name": "E_VALUE_ONE", "number": 1 } ], "options": { } }: {
       EnumPrefix: {
         Type: E_ENUM_,
-        Instance: _e_enum_
+        Instance: _e_enum_,
+        Property: 
       }
     },
     { "name": "TestEnumNoPrefix", "value": [ { "name": "E_NP_VALUE_DEFAULT", "number": 0 }, { "name": "E_NP_VALUE_ONE", "number": 1 } ] }: {}

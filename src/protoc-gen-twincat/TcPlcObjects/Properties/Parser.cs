@@ -29,7 +29,7 @@ internal class Parser : IPropertyProcessor
     {
         return new Get()
         {
-            Name = Constants.PROPERTY_NAME_PARSER,
+            Name = Constants.PROPERTY_GET,
             Declaration = BuildGetterDeclaration(message, prefixes),
             Implementation = BuildGetterImplementation(message, prefixes)
         };

@@ -82,20 +82,43 @@ END_REPEAT
     ],
     Property: [
       {
+        Declaration: <![CDATA[PROPERTY PUBLIC stTestNestedMessage : ST_TestNestedMessage]]>,
+        Name: stTestNestedMessage,
+        Id: Guid_3,
+        Get: {
+          Declaration:
+<![CDATA[VAR
+END_VAR]]>,
+          Implementation: {
+            ST: <![CDATA[stTestNestedMessage := _stTestNestedMessage;]]>
+          },
+          Name: Get
+        },
+        Set: {
+          Declaration:
+<![CDATA[VAR
+END_VAR]]>,
+          Implementation: {
+            ST: <![CDATA[_stTestNestedMessage := stTestNestedMessage;]]>
+          },
+          Name: Set
+        }
+      },
+      {
         Declaration: <![CDATA[PROPERTY PUBLIC Parser : REFERENCE TO FB_MessageParser]]>,
         Name: Parser,
-        Id: Guid_3,
+        Id: Guid_4,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
             ST: <![CDATA[Parser REF= THIS^._fbMessageParser;]]>
           },
-          Name: Parser
+          Name: Get
         }
       }
     ],
     Name: FB_TestNestedMessage,
-    Id: Guid_4,
+    Id: Guid_5,
     SpecialFunc: None
   },
   Version: 1.1.0.1
