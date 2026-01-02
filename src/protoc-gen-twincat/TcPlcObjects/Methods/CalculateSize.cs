@@ -53,10 +53,11 @@ internal class CalculateSize : IMethodProcessor
             }
             else if (field.Label == FieldDescriptorProto.Types.Label.Repeated)
             {
-                var instanceName = $"fbRepeated{field.Name}";
+                var suffix = $"Id{field.Number}";
+                var instanceName = $"_fbRepeated{suffix}";
                 sb.AppendLine($$"""
                                 {{instanceName}}.CalculatePackedDataSize(nPackedDataSize => nRepeatedFieldSize);
-                                nSize := nSize + {{field.GetFieldTagLength()}} + nRepeatedFieldSize;")
+                                nSize := nSize + {{field.GetFieldTagLength()}} + nRepeatedFieldSize;
                                 """);
             }
             else

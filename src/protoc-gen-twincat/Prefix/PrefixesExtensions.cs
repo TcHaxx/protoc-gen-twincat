@@ -21,6 +21,7 @@ internal static class PrefixesExtensions
                 ? $"{prefixedName.Type}{strippedName}"
                 : strippedName;
         }
+
         internal string GetFbNameWithInstancePrefix(DescriptorProto message)
         {
             return prefixes.TryGetPrefixForFb(message, out var prefixedName)
@@ -54,6 +55,14 @@ internal static class PrefixesExtensions
                 : message.Name;
         }
 
+        internal string GetStNameWithTypePrefix(FieldDescriptorProto fieldMessage)
+        {
+            var strippedName = StripNestedTypeName(fieldMessage.TypeName);
+            return prefixes.TryGetPrefixForStByName(strippedName, out var prefixedName)
+                ? $"{prefixedName.Type}{strippedName}"
+                : strippedName;
+        }
+
         internal string GetStNameWithInstancePrefix(DescriptorProto message)
         {
             return prefixes.TryGetPrefixForSt(message, out var prefixedName)
@@ -66,6 +75,14 @@ internal static class PrefixesExtensions
             return prefixes.TryGetPrefixForSt(message, out var prefixedName)
                 ? $"{prefixedName.Property}{message.Name}"
                 : message.Name;
+        }
+
+        internal string GetStNameWithPropertyPrefix(FieldDescriptorProto fieldMessage)
+        {
+            var strippedName = StripNestedTypeName(fieldMessage.TypeName);
+            return prefixes.TryGetPrefixForStByName(strippedName, out var prefixedName)
+                ? $"{prefixedName.Property}{strippedName}"
+                : strippedName;
         }
 
         internal string GetStNameWithInstancePrefix(FieldDescriptorProto fieldMessage)

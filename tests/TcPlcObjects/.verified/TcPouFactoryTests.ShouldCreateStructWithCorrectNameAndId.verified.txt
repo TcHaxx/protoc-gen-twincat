@@ -12,7 +12,9 @@ VAR
     _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
     _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
     _stTestSimpleMessage : ST_TestSimpleMessage;
-    _fbRepeatednumbers : FB_RepeatedField(anyArray:= F_ToAnyType(_stTestSimpleMessage.numbers), anyFirstElem:= F_ToAnyType(_stTestSimpleMessage.numbers[0]));
+    // repeated uint32 numbers = 2;
+    _fbFieldCodecId2 : FB_FieldCodecUint32(nTag:= 16#10);
+    _fbRepeatedId2 : FB_RepeatedField(anyArray:= F_ToAnyType(_stTestSimpleMessage.numbers), anyFirstElem:= F_ToAnyType(_stTestSimpleMessage.numbers[0]));
     END_VAR
 ]]>,
     Implementation: {
@@ -33,8 +35,8 @@ END_VAR
 <![CDATA[// uint32 id = 1;
 nSize := nSize + 1 + F_ComputeUInt32Size(nValue:= _stTestSimpleMessage.id);
 // repeated uint32 numbers = 2;
-fbRepeatednumbers.CalculatePackedDataSize(nPackedDataSize => nRepeatedFieldSize);
-nSize := nSize + 1 + nRepeatedFieldSize;")
+_fbRepeatedId2.CalculatePackedDataSize(nPackedDataSize => nRepeatedFieldSize);
+nSize := nSize + 1 + nRepeatedFieldSize;
 CalculateSize := nSize;
 ]]>
         },
@@ -68,7 +70,7 @@ CASE nTag OF
     16#08:    // uint32 id = 1;
         MergeFrom := fbParseCtx.ReadUInt32(nValue=> _stTestSimpleMessage.id); 
     16#10:    // repeated uint32 numbers = 2;
-          MergeFrom := _fbRepeatednumbers.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbRepeatednumbersCodec);
+          MergeFrom := _fbRepeatedId2.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId2);
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();
 END_CASE
@@ -79,13 +81,43 @@ END_REPEAT
         },
         Name: MergeFrom,
         Id: Guid_2
+      },
+      {
+        Declaration:
+<![CDATA[(* Writes the data to the given coded output stream.*)
+METHOD WriteTo : HRESULT
+VAR_IN_OUT
+	(* Coded output stream to write the data to. *)
+	fbWriteCtx	: FB_WriteContext;
+END_VAR
+]]>,
+        Implementation: {
+          ST:
+<![CDATA[// uint32 id = 1;
+    WriteTo := fbWriteCtx.WriteTag(1, E_WireType.Varint);
+    IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+WriteTo := fbWriteCtx.WriteUInt32(nValue:= _stTestSimpleMessage.id);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+// repeated uint32 numbers = 2;
+WriteTo := _fbRepeatedId2.WriteTo(fbWriteCtx:= fbWriteCtx, ipFieldCodec:= _fbFieldCodecId2);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+]]>
+        },
+        Name: WriteTo,
+        Id: Guid_3
       }
     ],
     Property: [
       {
         Declaration: <![CDATA[PROPERTY PUBLIC stTestSimpleMessage : ST_TestSimpleMessage]]>,
         Name: stTestSimpleMessage,
-        Id: Guid_3,
+        Id: Guid_4,
         Get: {
           Declaration:
 <![CDATA[VAR
@@ -108,7 +140,7 @@ END_VAR]]>,
       {
         Declaration: <![CDATA[PROPERTY PUBLIC Parser : REFERENCE TO FB_MessageParser]]>,
         Name: Parser,
-        Id: Guid_4,
+        Id: Guid_5,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
@@ -122,7 +154,7 @@ END_VAR]]>,
 <![CDATA[(* Writer for this message.*)
 PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
         Name: Writer,
-        Id: Guid_5,
+        Id: Guid_6,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
@@ -132,9 +164,9 @@ PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
         }
       },
       {
-        Declaration: <![CDATA[PROPERTY INTERNAL MessageValue : T_Any]]>,
+        Declaration: <![CDATA[PROPERTY PUBLIC MessageValue : T_Any]]>,
         Name: MessageValue,
-        Id: Guid_6,
+        Id: Guid_7,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
@@ -145,7 +177,7 @@ PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
       }
     ],
     Name: FB_TestSimpleMessage,
-    Id: Guid_7,
+    Id: Guid_8,
     SpecialFunc: None
   },
   Version: 1.1.0.1

@@ -11,4 +11,5 @@ internal static class Constants
     public const string PROPERTY_WRITER = "Writer";
     public const string PROPERTY_GET = "Get";
     public const string PROPERTY_SET = "Set";
+    public const string ENUM_WIRE_TYPE = "E_WireType";
 }

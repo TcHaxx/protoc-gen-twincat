@@ -38,7 +38,7 @@ internal class MessageValue : IPropertyProcessor
     private static XmlCDataSection BuildDeclaration(DescriptorProto message, Prefixes prefixes)
     {
         return CData.From($"""
-                           PROPERTY INTERNAL {Constants.PROPERTY_NAME_MESSAGE_VALUE} : T_Any
+                           PROPERTY PUBLIC {Constants.PROPERTY_NAME_MESSAGE_VALUE} : T_Any
                            """);
     }
 

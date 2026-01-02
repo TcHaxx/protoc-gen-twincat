@@ -61,7 +61,6 @@ internal static class TcDutFactory
         sb.Append($"""
             TYPE {dut.DUT.Name} :
             STRUCT
-            
             """);
         sb.Append(declaration);
         sb.Append($"""

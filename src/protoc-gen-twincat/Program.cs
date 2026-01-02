@@ -61,15 +61,16 @@ async Task<IEnumerable<CodeGeneratorResponse.Types.File>> GenerateResponseFilesA
 async Task<List<CodeGeneratorResponse.Types.File>> GenerateResponseFileFromMessageAsync(FileDescriptorProto file, DescriptorProto message)
 {
     var msgComment = CommentsProvider.GetComments(file, message);
-    var tcDUT = TcDutFactory.CreateStruct(message, msgComment, file.GetPrefixes());
-    var tcPOU = TcPouFactory.Create(message, msgComment, file.GetPrefixes());
+    var prefixes = file.GetPrefixes();
+    var tcDUT = TcDutFactory.CreateStruct(message, msgComment, prefixes);
+    var tcPOU = TcPouFactory.Create(message, msgComment, prefixes);
     var processedFields = new StringBuilder();
     await Console.Error.WriteLineAsync($"message {message.Name} {{");
     foreach (var field in message.Field)
     {
         await Console.Error.WriteLineAsync($"  {field.Dump()}");
         var comments = CommentsProvider.GetComments(file, message, field);
-        var processFieldValue = ProcessFieldValue(field, comments);
+        var processFieldValue = ProcessFieldValue(field, comments, prefixes);
         processedFields.Append(processFieldValue);
     }
     await Console.Error.WriteLineAsync($"}}");
@@ -126,7 +127,7 @@ async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromEnumAsync(F
     };
 }
 
-static string ProcessFieldValue(FieldDescriptorProto field, Comments comments)
+static string ProcessFieldValue(FieldDescriptorProto field, Comments comments, Prefixes prefixes)
 {
 #pragma warning disable IDE0072 // Add missing cases
     var processFieldValue = field.Type switch
@@ -134,14 +135,14 @@ static string ProcessFieldValue(FieldDescriptorProto field, Comments comments)
         FieldDescriptorProto.Types.Type.Bool => BooleanFieldProvider.ProcessField(field, comments),
         FieldDescriptorProto.Types.Type.Bytes => BytesFieldProvider.ProcessField(field, comments),
         FieldDescriptorProto.Types.Type.Double => DoubleFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Enum => GenericFieldProvider.ProcessField(field, comments),
+        FieldDescriptorProto.Types.Type.Enum => GenericFieldProvider.ProcessField(field, comments, prefixes),
         FieldDescriptorProto.Types.Type.Fixed32 => IntegerFieldProvider.ProcessField(field, comments),
         FieldDescriptorProto.Types.Type.Fixed64 => IntegerFieldProvider.ProcessField(field, comments),
         FieldDescriptorProto.Types.Type.Float => FloatFieldProvider.ProcessField(field, comments),
         FieldDescriptorProto.Types.Type.Group => ProcessUnknownField(field),
         FieldDescriptorProto.Types.Type.Int32 => IntegerFieldProvider.ProcessField(field, comments),
         FieldDescriptorProto.Types.Type.Int64 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Message => GenericFieldProvider.ProcessField(field, comments),
+        FieldDescriptorProto.Types.Type.Message => GenericFieldProvider.ProcessField(field, comments, prefixes),
         FieldDescriptorProto.Types.Type.Sfixed32 => IntegerFieldProvider.ProcessField(field, comments),
         FieldDescriptorProto.Types.Type.Sfixed64 => IntegerFieldProvider.ProcessField(field, comments),
         FieldDescriptorProto.Types.Type.Sint32 => IntegerFieldProvider.ProcessField(field, comments),

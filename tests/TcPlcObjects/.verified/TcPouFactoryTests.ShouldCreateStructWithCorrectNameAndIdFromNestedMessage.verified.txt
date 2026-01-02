@@ -65,7 +65,7 @@ END_IF
 CASE nTag OF
     16#0A:    // TestSimpleMessage simple_message = 1;
         MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbTestSimpleMessage);
-        THIS^._stTestNestedMessage.simple_message := _fbTestSimpleMessage.simple_message;
+        THIS^._stTestNestedMessage.simple_message := _fbTestSimpleMessage.stTestSimpleMessage;
     16#10:    // uint32 id = 2;
         MergeFrom := fbParseCtx.ReadUInt32(nValue=> _stTestNestedMessage.id); 
 ELSE
@@ -78,13 +78,48 @@ END_REPEAT
         },
         Name: MergeFrom,
         Id: Guid_2
+      },
+      {
+        Declaration:
+<![CDATA[(* Writes the data to the given coded output stream.*)
+METHOD WriteTo : HRESULT
+VAR_IN_OUT
+	(* Coded output stream to write the data to. *)
+	fbWriteCtx	: FB_WriteContext;
+END_VAR
+]]>,
+        Implementation: {
+          ST:
+<![CDATA[// TestSimpleMessage simple_message = 1;
+WriteTo := fbWriteCtx.WriteTag(1, E_WireType.LengthDelimited);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbTestSimpleMessage);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+THIS^._stTestNestedMessage.simple_message := _fbTestSimpleMessage.stTestSimpleMessage;
+// uint32 id = 2;
+    WriteTo := fbWriteCtx.WriteTag(2, E_WireType.Varint);
+    IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+WriteTo := fbWriteCtx.WriteUInt32(nValue:= _stTestNestedMessage.id);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+]]>
+        },
+        Name: WriteTo,
+        Id: Guid_3
       }
     ],
     Property: [
       {
         Declaration: <![CDATA[PROPERTY PUBLIC stTestNestedMessage : ST_TestNestedMessage]]>,
         Name: stTestNestedMessage,
-        Id: Guid_3,
+        Id: Guid_4,
         Get: {
           Declaration:
 <![CDATA[VAR
@@ -107,7 +142,7 @@ END_VAR]]>,
       {
         Declaration: <![CDATA[PROPERTY PUBLIC Parser : REFERENCE TO FB_MessageParser]]>,
         Name: Parser,
-        Id: Guid_4,
+        Id: Guid_5,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
@@ -121,7 +156,7 @@ END_VAR]]>,
 <![CDATA[(* Writer for this message.*)
 PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
         Name: Writer,
-        Id: Guid_5,
+        Id: Guid_6,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
@@ -131,9 +166,9 @@ PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
         }
       },
       {
-        Declaration: <![CDATA[PROPERTY INTERNAL MessageValue : T_Any]]>,
+        Declaration: <![CDATA[PROPERTY PUBLIC MessageValue : T_Any]]>,
         Name: MessageValue,
-        Id: Guid_6,
+        Id: Guid_7,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
@@ -144,7 +179,7 @@ PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
       }
     ],
     Name: FB_TestNestedMessage,
-    Id: Guid_7,
+    Id: Guid_8,
     SpecialFunc: None
   },
   Version: 1.1.0.1

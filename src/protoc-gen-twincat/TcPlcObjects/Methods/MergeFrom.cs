@@ -88,17 +88,19 @@ internal class MergeFrom : IMethodProcessor
     private static string ProcessMessage(DescriptorProto message, FieldDescriptorProto subMessage, Prefixes prefixes)
     {
         var subMsgFbName = prefixes.GetFbNameWithInstancePrefix(subMessage);
+        var subMsgPropertyName = prefixes.GetStNameWithPropertyPrefix(subMessage);
         var msgStName = prefixes.GetStNameWithInstancePrefix(message);
         return $"""
                          MergeFrom := fbParseCtx.ReadMessage(ipMessage:= {subMsgFbName});
-                         THIS^.{msgStName}.{subMessage.Name} := {subMsgFbName}.{subMessage.Name};
+                         THIS^.{msgStName}.{subMessage.Name} := {subMsgFbName}.{subMsgPropertyName};
                  """;
     }
 
     private static string ProcessRepeatedField(DescriptorProto message, FieldDescriptorProto repeatedField, Prefixes prefixes)
     {
+        var suffix = $"Id{repeatedField.Number}";
         return $"""
-                        MergeFrom := _fbRepeated{repeatedField.Name}.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbRepeated{repeatedField.Name}Codec);
+                        MergeFrom := _fbRepeated{suffix}.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodec{suffix});
               """;
     }
 
@@ -107,7 +109,7 @@ internal class MergeFrom : IMethodProcessor
         var msgStName = prefixes.GetStNameWithInstancePrefix(message);
         var tcType = field.MapFieldTypeToTcTypeName();
         return $"""
-                        MergeFrom := fbParseCtx.Read{tcType}(nValue=> {msgStName}.{field.Name}); 
+                        MergeFrom := fbParseCtx.Read{tcType}({field.GetFieldAssignVarString("merge")}=> {msgStName}.{field.Name}); 
                 """;
     }
 }

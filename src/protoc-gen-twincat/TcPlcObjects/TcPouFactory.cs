@@ -62,22 +62,27 @@ internal static class TcPouFactory
                             _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
                             {{prefixes.GetStNameWithInstancePrefix(message)}} : {{prefixes.GetStNameWithTypePrefix(message)}};
                         """);
+
         foreach (var repeatedField in message.Field.Where(f => f.Label == FieldDescriptorProto.Types.Label.Repeated))
         {
             var msgName = prefixes.GetStNameWithInstancePrefix(message);
+            var suffix = $"Id{repeatedField.Number}";
             if (repeatedField.Type == FieldDescriptorProto.Types.Type.Message)
             {
                 var varName = prefixes.GetStNameWithInstancePrefix(repeatedField);
                 var fbName = prefixes.GetFbNameWithInstancePrefix(repeatedField);
                 sb.AppendLine($$"""
-                                    _fbRepeated{{repeatedField.Name}}Codec : FB_FieldCodecMessage(nTag:= 16#{{repeatedField.GetFieldTagValue().ToString("X2")}}, ipMessage:= {{fbName}});
-                                    _fbRepeated{{repeatedField.Name}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{varName}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{varName}}[0]));
+                                    // {{repeatedField.Dump()}}
+                                    _fbFieldCodec{{suffix}} : FB_FieldCodec{{repeatedField.Type}}(nTag:= 16#{{repeatedField.GetFieldTagValue().ToString("X2")}}, ipMessage:= {{fbName}});
+                                    _fbRepeated{{suffix}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{varName}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{varName}}[0]));
                                 """);
             }
             else
             {
                 sb.AppendLine($$"""
-                                    _fbRepeated{{repeatedField.Name}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}[0]));
+                                    // {{repeatedField.Dump()}}
+                                    _fbFieldCodec{{suffix}} : FB_FieldCodec{{repeatedField.Type}}(nTag:= 16#{{repeatedField.GetFieldTagValue().ToString("X2")}});
+                                    _fbRepeated{{suffix}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}[0]));
                                 """);
             }
         }
