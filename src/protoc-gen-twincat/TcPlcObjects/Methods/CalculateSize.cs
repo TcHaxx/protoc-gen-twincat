@@ -8,7 +8,7 @@ namespace TcHaxx.ProtocGenTc.TcPlcObjects.Methods;
 
 internal class CalculateSize : IMethodProcessor
 {
-    private CalculateSize(XmlCDataSection decl, TcPlcObjectPOUMethodImplementation impl)
+    private CalculateSize(XmlCDataSection decl, Implementation impl)
     {
         Declaration = decl;
         Implementation = impl;
@@ -24,7 +24,7 @@ internal class CalculateSize : IMethodProcessor
     public string Name => Constants.METHOD_NAME_CALCULATE_SIZE;
 
     public XmlCDataSection Declaration { get; }
-    public TcPlcObjectPOUMethodImplementation Implementation { get; }
+    public Implementation Implementation { get; }
 
     private static XmlCDataSection BuildDeclaration(DescriptorProto message, Prefixes prefixes)
     {
@@ -40,7 +40,7 @@ internal class CalculateSize : IMethodProcessor
         return CData.From(sb.ToString());
     }
 
-    private static TcPlcObjectPOUMethodImplementation BuildImplementation(DescriptorProto message, Prefixes prefixes)
+    private static Implementation BuildImplementation(DescriptorProto message, Prefixes prefixes)
     {
         var sb = new StringBuilder();
         foreach (var field in message.Field)

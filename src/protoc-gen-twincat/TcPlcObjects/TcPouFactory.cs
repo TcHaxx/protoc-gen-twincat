@@ -11,13 +11,13 @@ namespace TcHaxx.ProtocGenTc.TcPlcObjects;
 
 internal static class TcPouFactory
 {
-    public static TcPOU Create(DescriptorProto message, Comments comments, Prefixes prefixes)
+    public static TcPlcObject Create(DescriptorProto message, Comments comments, Prefixes prefixes)
     {
         var name = prefixes.GetFbNameWithTypePrefix(message);
-        var pou = new TcPOU
+        var pou = new TcPlcObject()
         {
             Version = Constants.TC_PLC_OBJECT_VERSION,
-            POU = new TcPlcObjectPOU()
+            POU = new TcPOU()
             {
                 Name = name,
                 Id = Guid.NewGuid().ToString(),
@@ -33,7 +33,7 @@ internal static class TcPouFactory
         var subMessages = message.GetSubMessages();
 
         pou.POU.Declaration.Data += EmitPouDeclaration(message, subMessages, prefixes);
-        pou.POU.Implementation = TcPlcObjectPOUImplementation.Empty;
+        pou.POU.Implementation = Implementation.Empty;
         pou.POU.Method =
         [
             GenerateMethod(CalculateSize.From(message, prefixes)),
@@ -83,14 +83,14 @@ internal static class TcPouFactory
 
     }
 
-    private static void WriteHeader(this TcPOU pou)
+    private static void WriteHeader(this TcPlcObject pou)
     {
         var header = Helper.GetApplicationHeader(Assembly.GetExecutingAssembly());
         pou.POU.Declaration ??= new XmlDocument().CreateCDataSection(header);
     }
-    private static TcPlcObjectPOUMethod GenerateMethod(IMethodProcessor methodProcessor)
+    private static Method GenerateMethod(IMethodProcessor methodProcessor)
     {
-        return new TcPlcObjectPOUMethod
+        return new Method()
         {
             Name = methodProcessor.Name,
             Id = Guid.NewGuid().ToString(),

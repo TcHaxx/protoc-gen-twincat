@@ -6,5 +6,5 @@ public interface IMethodProcessor
 {
     string Name { get; }
     XmlCDataSection Declaration { get; }
-    TcPlcObjectPOUMethodImplementation Implementation { get; }
+    Implementation Implementation { get; }
 }

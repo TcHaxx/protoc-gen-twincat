@@ -8,7 +8,7 @@ namespace TcHaxx.ProtocGenTc.TcPlcObjects.Methods;
 
 internal class MergeFrom : IMethodProcessor
 {
-    private MergeFrom(XmlCDataSection decl, TcPlcObjectPOUMethodImplementation impl)
+    private MergeFrom(XmlCDataSection decl, Implementation impl)
     {
         Declaration = decl;
         Implementation = impl;
@@ -23,7 +23,7 @@ internal class MergeFrom : IMethodProcessor
 
     public string Name => Constants.METHOD_NAME_MERGE_FROM;
     public XmlCDataSection Declaration { get; }
-    public TcPlcObjectPOUMethodImplementation Implementation { get; }
+    public Implementation Implementation { get; }
 
     private static XmlCDataSection BuildDeclaration(DescriptorProto message, Prefixes prefixes)
     {
@@ -40,7 +40,7 @@ internal class MergeFrom : IMethodProcessor
                         """);
         return CData.From(sb.ToString());
     }
-    private static TcPlcObjectPOUMethodImplementation BuildImplementation(DescriptorProto message, Prefixes prefixes)
+    private static Implementation BuildImplementation(DescriptorProto message, Prefixes prefixes)
     {
         var sb = new StringBuilder();
         sb.AppendLine("""
