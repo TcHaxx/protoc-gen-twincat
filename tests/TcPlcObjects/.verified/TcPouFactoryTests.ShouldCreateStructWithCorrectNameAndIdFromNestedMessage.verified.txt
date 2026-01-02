@@ -129,10 +129,22 @@ PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
           },
           Name: Get
         }
+      },
+      {
+        Declaration: <![CDATA[PROPERTY INTERNAL MessageValue : T_Any]]>,
+        Name: MessageValue,
+        Id: Guid_6,
+        Get: {
+          Declaration: <![CDATA[]]>,
+          Implementation: {
+            ST: <![CDATA[MessageValue := F_ToAnyType(anyArg:= _stTestNestedMessage);]]>
+          },
+          Name: Get
+        }
       }
     ],
     Name: FB_TestNestedMessage,
-    Id: Guid_6,
+    Id: Guid_7,
     SpecialFunc: None
   },
   Version: 1.1.0.1

@@ -44,7 +44,8 @@ internal static class TcPouFactory
         [
             GenerateProperty(DataType.From(message, prefixes)),
             GenerateProperty(Parser.From(message, prefixes)),
-            GenerateProperty(Writer.From(message, prefixes))
+            GenerateProperty(Writer.From(message, prefixes)),
+            GenerateProperty(MessageValue.From(message, prefixes))
         ];
         return pou;
     }
