@@ -70,7 +70,7 @@ CASE nTag OF
     16#08:    // uint32 id = 1;
         MergeFrom := fbParseCtx.ReadUInt32(nValue=> _stTestSimpleMessage.id); 
     16#10:    // repeated uint32 numbers = 2;
-          MergeFrom := _fbRepeatedId2.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId2);
+        MergeFrom := _fbRepeatedId2.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId2);
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();
 END_CASE
@@ -94,8 +94,8 @@ END_VAR
         Implementation: {
           ST:
 <![CDATA[// uint32 id = 1;
-    WriteTo := fbWriteCtx.WriteTag(1, E_WireType.Varint);
-    IF FAILED(WriteTo) THEN
+WriteTo := fbWriteCtx.WriteTag(1, E_WireType.Varint);
+IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
 WriteTo := fbWriteCtx.WriteUInt32(nValue:= _stTestSimpleMessage.id);

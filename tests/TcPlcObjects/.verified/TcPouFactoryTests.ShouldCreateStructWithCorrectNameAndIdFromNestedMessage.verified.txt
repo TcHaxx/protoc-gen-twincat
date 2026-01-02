@@ -101,8 +101,8 @@ IF FAILED(WriteTo) THEN
 END_IF
 THIS^._stTestNestedMessage.simple_message := _fbTestSimpleMessage.stTestSimpleMessage;
 // uint32 id = 2;
-    WriteTo := fbWriteCtx.WriteTag(2, E_WireType.Varint);
-    IF FAILED(WriteTo) THEN
+WriteTo := fbWriteCtx.WriteTag(2, E_WireType.Varint);
+IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
 WriteTo := fbWriteCtx.WriteUInt32(nValue:= _stTestNestedMessage.id);

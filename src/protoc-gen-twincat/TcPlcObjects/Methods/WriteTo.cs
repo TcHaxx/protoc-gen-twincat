@@ -8,7 +8,8 @@ namespace TcHaxx.ProtocGenTc.TcPlcObjects.Methods;
 
 internal class WriteTo : IMethodProcessor
 {
-    private const string RETURN_WHEN_FAILED = """
+    private const string RETURN_WHEN_FAILED =
+        """
         IF FAILED(WriteTo) THEN
             RETURN;
         END_IF
@@ -85,9 +86,9 @@ internal class WriteTo : IMethodProcessor
     {
         var suffix = $"Id{repeatedField.Number}";
         return $"""
-              WriteTo := _fbRepeated{suffix}.WriteTo(fbWriteCtx:= fbWriteCtx, ipFieldCodec:= _fbFieldCodec{suffix});
-              {RETURN_WHEN_FAILED}
-              """;
+                WriteTo := _fbRepeated{suffix}.WriteTo(fbWriteCtx:= fbWriteCtx, ipFieldCodec:= _fbFieldCodec{suffix});
+                {RETURN_WHEN_FAILED}
+                """;
     }
 
     private static string ProcessScalarField(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
@@ -95,10 +96,10 @@ internal class WriteTo : IMethodProcessor
         var msgStName = prefixes.GetStNameWithInstancePrefix(message);
         var tcType = field.MapFieldTypeToTcTypeName();
         return $"""
-               {WriteScalarTag(field)}
-               WriteTo := fbWriteCtx.Write{tcType}({field.GetFieldAssignVarString("write")}:= {msgStName}.{field.Name});
-               {RETURN_WHEN_FAILED}
-               """;
+                {WriteScalarTag(field)}
+                WriteTo := fbWriteCtx.Write{tcType}({field.GetFieldAssignVarString("write")}:= {msgStName}.{field.Name});
+                {RETURN_WHEN_FAILED}
+                """;
     }
 
     private static string WriteScalarTag(FieldDescriptorProto field)
@@ -106,7 +107,7 @@ internal class WriteTo : IMethodProcessor
         return $"""
                 WriteTo := fbWriteCtx.WriteTag({field.Number}, {Constants.ENUM_WIRE_TYPE}.{field.GetWireType()});
                 {RETURN_WHEN_FAILED}
-            """;
+                """;
     }
 
 }
