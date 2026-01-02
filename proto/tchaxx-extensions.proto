@@ -71,4 +71,5 @@ enum EnumIntegerTypes {
 message Prefix {
   string type = 1;
   string instance = 2;
+  string property = 3;
 }

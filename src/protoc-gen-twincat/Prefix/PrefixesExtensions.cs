@@ -61,6 +61,13 @@ internal static class PrefixesExtensions
                 : message.Name;
         }
 
+        internal string GetStNameWithPropertyPrefix(DescriptorProto message)
+        {
+            return prefixes.TryGetPrefixForSt(message, out var prefixedName)
+                ? $"{prefixedName.Property}{message.Name}"
+                : message.Name;
+        }
+
         internal string GetStNameWithInstancePrefix(FieldDescriptorProto fieldMessage)
         {
             var strippedName = StripNestedTypeName(fieldMessage.TypeName);
