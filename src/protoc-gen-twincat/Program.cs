@@ -72,6 +72,10 @@ async Task<List<CodeGeneratorResponse.Types.File>> GenerateResponseFileFromMessa
         var comments = CommentsProvider.GetComments(file, message, field);
         var processFieldValue = ProcessFieldValue(field, comments, prefixes);
         processedFields.Append(processFieldValue);
+        if (field.Label == FieldDescriptorProto.Types.Label.Repeated)
+        {
+            processedFields.AppendLine(RepeatedFieldHelper.WriteCountField(field, prefixes));
+        }
     }
     await Console.Error.WriteLineAsync($"}}");
     tcDUT.WriteStructDeclaration(processedFields);

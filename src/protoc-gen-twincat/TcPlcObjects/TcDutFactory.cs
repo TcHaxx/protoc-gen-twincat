@@ -58,8 +58,9 @@ internal static class TcDutFactory
     public static void WriteStructDeclaration(this TcDUT dut, StringBuilder declaration)
     {
         var sb = new StringBuilder();
-        sb.Append($"""
-            TYPE {dut.DUT.Name} :
+        sb.Append($$"""
+            {attribute 'no-analysis'}
+            TYPE {{dut.DUT.Name}} :
             STRUCT
             """);
         sb.Append(declaration);

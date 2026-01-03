@@ -55,7 +55,8 @@ internal static class TcPouFactory
     {
         var sb = new StringBuilder();
         sb.AppendLine($$"""
-                        {attribute 'no_explicit_call' := 'do not call this POU directly'} 
+                        {attribute 'no_explicit_call' := 'do not call this POU directly'}
+                        {attribute 'no-analysis'}
                         FUNCTION_BLOCK INTERNAL FINAL {{prefixes.GetFbNameWithTypePrefix(message)}} IMPLEMENTS I_Message
                         VAR
                             _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
@@ -81,7 +82,7 @@ internal static class TcPouFactory
             {
                 sb.AppendLine($$"""
                                     // {{repeatedField.Dump()}}
-                                    _fbFieldCodec{{suffix}} : FB_FieldCodec{{repeatedField.Type}}(nTag:= 16#{{repeatedField.GetFieldTagValue().ToString("X2")}});
+                                    _fbFieldCodec{{suffix}} : FB_FieldCodec{{repeatedField.Type}}(nTag:= 16#{{repeatedField.GetPackedRepetatedFieldTagValue().ToString("X2")}});
                                     _fbRepeated{{suffix}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}[0]));
                                 """);
             }

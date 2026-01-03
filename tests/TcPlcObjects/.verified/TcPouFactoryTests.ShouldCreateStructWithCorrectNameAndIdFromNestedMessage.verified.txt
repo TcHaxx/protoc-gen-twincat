@@ -5,7 +5,8 @@
                           protoc-gen-twincat V0.0.0.0                           
                   https://github.com/TcHaxx/protoc-gen-twincat                  
 *******************************************************************************)
-{attribute 'no_explicit_call' := 'do not call this POU directly'} 
+{attribute 'no_explicit_call' := 'do not call this POU directly'}
+{attribute 'no-analysis'}
 FUNCTION_BLOCK INTERNAL FINAL FB_TestNestedMessage IMPLEMENTS I_Message
 VAR
     _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
@@ -30,7 +31,7 @@ END_VAR
         Implementation: {
           ST:
 <![CDATA[// TestSimpleMessage simple_message = 1;
-nSize := nSize + F_ComputeMessageSize(iMessage:= _fbTestSimpleMessage);
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbTestSimpleMessage);
 // uint32 id = 2;
 nSize := nSize + 1 + F_ComputeUint32Size(nValue:= _stTestNestedMessage.id);
 CalculateSize := nSize;
@@ -100,7 +101,6 @@ WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbTestSimpleMessage);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
- := _fbTestSimpleMessage.stTestSimpleMessage;
 // uint32 id = 2;
 WriteTo := fbWriteCtx.WriteTag(2, E_WireType.Varint);
 IF FAILED(WriteTo) THEN

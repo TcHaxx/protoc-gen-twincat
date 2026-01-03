@@ -12,6 +12,11 @@ public static class FieldExtensions
             return ((uint)field.Number << 3) | (uint)field.GetWireType();
         }
 
+        internal uint GetPackedRepetatedFieldTagValue()
+        {
+            return ((uint)field.Number << 3) | (uint)WireFormat.WireType.LengthDelimited;
+        }
+
         internal WireFormat.WireType GetWireType()
         {
             return field.Type switch

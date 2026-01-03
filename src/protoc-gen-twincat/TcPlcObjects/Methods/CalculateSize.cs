@@ -49,15 +49,15 @@ internal class CalculateSize : IMethodProcessor
             if (field.Type == FieldDescriptorProto.Types.Type.Message)
             {
                 sb.AppendLine(
-                    $"nSize := nSize + F_ComputeMessageSize(iMessage:= {prefixes.GetFbNameWithInstancePrefix(field)});");
+                    $"nSize := nSize + {field.GetFieldTagLength()} + F_ComputeMessageSize(iMessage:= {prefixes.GetFbNameWithInstancePrefix(field)});");
             }
             else if (field.Label == FieldDescriptorProto.Types.Label.Repeated)
             {
                 var suffix = $"Id{field.Number}";
                 var instanceName = $"_fbRepeated{suffix}";
                 sb.AppendLine($$"""
-                                {{instanceName}}.CalculatePackedDataSize(nPackedDataSize => nRepeatedFieldSize);
-                                nSize := nSize + {{field.GetFieldTagLength()}} + nRepeatedFieldSize;
+                                {{instanceName}}.CalculateSize(nSize => nRepeatedFieldSize);
+                                nSize := nSize + nRepeatedFieldSize;
                                 """);
             }
             else

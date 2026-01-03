@@ -85,8 +85,9 @@ internal class WriteTo : IMethodProcessor
     private static string ProcessRepeatedField(DescriptorProto message, FieldDescriptorProto repeatedField, Prefixes prefixes)
     {
         var suffix = $"Id{repeatedField.Number}";
+        var countVar = $"{prefixes.GetStNameWithInstancePrefix(message)}.{RepeatedFieldHelper.GetCountFieldName(repeatedField)}";
         return $"""
-                WriteTo := _fbRepeated{suffix}.WriteTo(fbWriteCtx:= fbWriteCtx, ipFieldCodec:= _fbFieldCodec{suffix});
+                WriteTo := _fbRepeated{suffix}.WriteToWithCount(fbWriteCtx:= fbWriteCtx, ipFieldCodec:= _fbFieldCodec{suffix}, nCount:= {countVar});
                 {RETURN_WHEN_FAILED}
                 """;
     }
