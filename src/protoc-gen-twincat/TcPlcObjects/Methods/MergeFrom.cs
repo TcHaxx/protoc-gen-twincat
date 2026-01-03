@@ -107,9 +107,8 @@ internal class MergeFrom : IMethodProcessor
     private static string ProcessdField(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
     {
         var msgStName = prefixes.GetStNameWithInstancePrefix(message);
-        var tcType = field.MapFieldTypeToTcTypeName();
         return $"""
-                        MergeFrom := fbParseCtx.Read{tcType}({field.GetFieldAssignVarString("merge")}=> {msgStName}.{field.Name}); 
+                        MergeFrom := fbParseCtx.Read{field.Type}({field.GetFieldAssignVarString("merge")}=> {msgStName}.{field.Name}); 
                 """;
     }
 }

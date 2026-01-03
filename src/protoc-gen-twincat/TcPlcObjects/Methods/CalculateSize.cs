@@ -63,10 +63,9 @@ internal class CalculateSize : IMethodProcessor
             else
             {
                 var instanceName = prefixes.GetStNameWithInstancePrefix(message);
-                var computeSizeType = field.MapFieldTypeToTcTypeName();
                 var parameterName = field.GetFieldAssignVarString(string.Empty);
                 sb.AppendLine(
-                    $"nSize := nSize + {field.GetFieldTagLength()} + F_Compute{computeSizeType}Size({parameterName}:= {instanceName}.{field.Name});");
+                    $"nSize := nSize + {field.GetFieldTagLength()} + F_Compute{field.Type}Size({parameterName}:= {instanceName}.{field.Name});");
             }
         }
 

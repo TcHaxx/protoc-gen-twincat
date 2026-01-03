@@ -97,7 +97,7 @@ internal class WriteTo : IMethodProcessor
         var tcType = field.MapFieldTypeToTcTypeName();
         return $"""
                 {WriteScalarTag(field)}
-                WriteTo := fbWriteCtx.Write{tcType}({field.GetFieldAssignVarString("write")}:= {msgStName}.{field.Name});
+                WriteTo := fbWriteCtx.Write{field.Type}({field.GetFieldAssignVarString("write")}:= {msgStName}.{field.Name});
                 {RETURN_WHEN_FAILED}
                 """;
     }

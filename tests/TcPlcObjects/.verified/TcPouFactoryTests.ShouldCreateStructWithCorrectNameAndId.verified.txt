@@ -33,7 +33,7 @@ END_VAR
         Implementation: {
           ST:
 <![CDATA[// uint32 id = 1;
-nSize := nSize + 1 + F_ComputeUInt32Size(nValue:= _stTestSimpleMessage.id);
+nSize := nSize + 1 + F_ComputeUint32Size(nValue:= _stTestSimpleMessage.id);
 // repeated uint32 numbers = 2;
 _fbRepeatedId2.CalculatePackedDataSize(nPackedDataSize => nRepeatedFieldSize);
 nSize := nSize + 1 + nRepeatedFieldSize;
@@ -68,7 +68,7 @@ END_IF
 
 CASE nTag OF
     16#08:    // uint32 id = 1;
-        MergeFrom := fbParseCtx.ReadUInt32(nValue=> _stTestSimpleMessage.id); 
+        MergeFrom := fbParseCtx.ReadUint32(nValue=> _stTestSimpleMessage.id); 
     16#10:    // repeated uint32 numbers = 2;
         MergeFrom := _fbRepeatedId2.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId2);
 ELSE
@@ -98,7 +98,7 @@ WriteTo := fbWriteCtx.WriteTag(1, E_WireType.Varint);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteUInt32(nValue:= _stTestSimpleMessage.id);
+WriteTo := fbWriteCtx.WriteUint32(nValue:= _stTestSimpleMessage.id);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
