@@ -9,7 +9,7 @@ internal static class FloatFieldProvider
     {
         var sb = new StringBuilder();
 
-        sb.AppendLine(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
+        sb.AppendLineIfNotNullOrEmpty(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
 
         if (field.GetArrayLengthWhenRepeatedLabelOrFail(out var length))
         {
@@ -20,9 +20,8 @@ internal static class FloatFieldProvider
             sb.Append($"\t{field.Name} : REAL;");
         }
 
-        sb.Append(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
+        sb.AppendLine(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
 
-        sb.AppendLine();
         return sb.ToString();
     }
 }

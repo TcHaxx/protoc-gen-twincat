@@ -10,7 +10,7 @@ internal static class StringFieldProvider
     {
         var sb = new StringBuilder();
 
-        sb.AppendLine(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
+        sb.AppendLineIfNotNullOrEmpty(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
 
         var options = field.Options;
         if (options is null)
@@ -31,9 +31,8 @@ internal static class StringFieldProvider
             }
         }
 
-        sb.Append(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
+        sb.AppendLine(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
 
-        sb.AppendLine();
         return sb.ToString();
     }
 }

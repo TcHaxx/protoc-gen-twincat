@@ -9,7 +9,7 @@ internal static class DoubleFieldProvider
     {
         var sb = new StringBuilder();
 
-        sb.AppendLine(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
+        sb.AppendLineIfNotNullOrEmpty(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
 
         if (field.GetArrayLengthWhenRepeatedLabelOrFail(out var length))
         {
@@ -20,9 +20,8 @@ internal static class DoubleFieldProvider
             sb.Append($"\t{field.Name} : LREAL;");
         }
 
-        sb.Append(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
+        sb.AppendLine(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
 
-        sb.AppendLine();
         return sb.ToString();
     }
 }

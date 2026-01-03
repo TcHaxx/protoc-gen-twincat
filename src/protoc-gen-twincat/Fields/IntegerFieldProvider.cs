@@ -12,8 +12,7 @@ internal static class IntegerFieldProvider
     {
         var sb = new StringBuilder();
 
-        sb.AppendLine(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
-
+        sb.AppendLineIfNotNullOrEmpty(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
 
         var options = field.Options;
         if (ExtensionsHelper.TryGetAttributeDisplayMode(options, out var displaymodeAttribute))
@@ -53,8 +52,8 @@ internal static class IntegerFieldProvider
             sb.Append($"\t{field.Name} : {dataType};");
         }
 
-        sb.Append(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
-        sb.AppendLine();
+        sb.AppendLine(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
+
         return sb.ToString();
     }
 

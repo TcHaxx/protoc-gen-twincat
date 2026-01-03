@@ -14,7 +14,7 @@ internal class RepeatedFieldHelper
     {
         var instanceName = GetCountFieldName(field);
         return $"""
-                {instanceName} : UDINT; // Implict generated field for actual number of items in array {field.Name}
-            """;
+               {"\t"}{instanceName} : UDINT; // Implict generated field for actual number of items in array {field.Name}
+               """;
     }
 }

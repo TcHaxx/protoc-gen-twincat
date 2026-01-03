@@ -58,16 +58,16 @@ internal static class TcDutFactory
     public static void WriteStructDeclaration(this TcDUT dut, StringBuilder declaration)
     {
         var sb = new StringBuilder();
-        sb.Append($$"""
-            {attribute 'no-analysis'}
-            TYPE {{dut.DUT.Name}} :
-            STRUCT
-            """);
+        sb.AppendLine($$"""
+                        {attribute 'no-analysis'}
+                        TYPE {{dut.DUT.Name}} :
+                        STRUCT
+                        """);
         sb.Append(declaration);
-        sb.Append($"""
-            END_STRUCT
-            END_TYPE
-            """);
+        sb.Append("""
+                  END_STRUCT
+                  END_TYPE
+                  """);
 
         dut.DUT.Declaration ??= new XmlDocument().CreateCDataSection(string.Empty);
         dut.DUT.Declaration.AppendData(sb.ToString());
@@ -77,14 +77,14 @@ internal static class TcDutFactory
     {
         var sb = new StringBuilder();
         sb.AppendLine($"""
-            TYPE {dut.DUT.Name} :
-            (
-            """);
+                      TYPE {dut.DUT.Name} :
+                      (
+                      """);
         sb.Append(declaration);
         sb.Append($"""
-            ) {(string.IsNullOrWhiteSpace(enumIntegerType) ? string.Empty : enumIntegerType)};           
-            END_TYPE
-            """);
+                  ) {(string.IsNullOrWhiteSpace(enumIntegerType) ? string.Empty : enumIntegerType)};
+                  END_TYPE
+                  """);
 
         dut.DUT.Declaration ??= new XmlDocument().CreateCDataSection(string.Empty);
         dut.DUT.Declaration.AppendData(sb.ToString());

@@ -9,10 +9,7 @@ internal static class BooleanFieldProvider
     {
         var sb = new StringBuilder();
 
-        if (!string.IsNullOrWhiteSpace(comments.LeadingComments))
-        {
-            sb.AppendLine(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
-        }
+        sb.AppendLineIfNotNullOrEmpty(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
 
         if (field.GetArrayLengthWhenRepeatedLabelOrFail(out var length))
         {
@@ -23,12 +20,8 @@ internal static class BooleanFieldProvider
             sb.Append($"\t{field.Name} : BOOL;");
         }
 
-        if (!string.IsNullOrWhiteSpace(comments.TrailingComments))
-        {
-            sb.Append(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
-        }
+        sb.AppendLine(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
 
-        sb.AppendLine();
         return sb.ToString();
     }
 }

@@ -10,7 +10,7 @@ internal static class GenericFieldProvider
     {
         var sb = new StringBuilder();
 
-        sb.AppendLine(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
+        sb.AppendLineIfNotNullOrEmpty(CommentProvider.TransformComment(comments.LeadingComments, "\t"));
 
         var nameType = prefixes.GetStNameWithTypePrefix(field);
         if (field.GetArrayLengthWhenRepeatedLabelOrFail(out var length))
@@ -22,9 +22,8 @@ internal static class GenericFieldProvider
             sb.Append($"\t{field.Name} : {nameType};");
         }
 
-        sb.Append(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
+        sb.AppendLine(CommentProvider.TransformComment(comments.TrailingComments, "\t"));
 
-        sb.AppendLine();
         return sb.ToString();
     }
 }
