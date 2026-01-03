@@ -76,9 +76,9 @@ internal class WriteTo : IMethodProcessor
         return $"""
                 WriteTo := fbWriteCtx.WriteTag({subMessage.Number}, {Constants.ENUM_WIRE_TYPE}.LengthDelimited);
                 {RETURN_WHEN_FAILED}
+                {subMsgFbName}.{subMsgPropertyName} := THIS^.{msgStName}.{subMessage.Name};
                 WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^.{subMsgFbName});
                 {RETURN_WHEN_FAILED}
-                THIS^.{msgStName}.{subMessage.Name} := {subMsgFbName}.{subMsgPropertyName};
                 """;
     }
 
@@ -94,7 +94,6 @@ internal class WriteTo : IMethodProcessor
     private static string ProcessScalarField(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
     {
         var msgStName = prefixes.GetStNameWithInstancePrefix(message);
-        var tcType = field.MapFieldTypeToTcTypeName();
         return $"""
                 {WriteScalarTag(field)}
                 WriteTo := fbWriteCtx.Write{field.Type}({field.GetFieldAssignVarString("write")}:= {msgStName}.{field.Name});
