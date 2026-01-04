@@ -1,0 +1,20 @@
+﻿{
+  DUT: {
+    Declaration:
+<![CDATA[(*******************************************************************************
+                          protoc-gen-twincat V0.0.0.0                           
+                  https://github.com/TcHaxx/protoc-gen-twincat                  
+*******************************************************************************)
+// Nested
+{attribute 'no-analysis'}
+TYPE ST_TestNestedMessageDut :
+STRUCT
+	simple_message : ST_TestSimpleMessageDut;	// nested field 1
+	id : UDINT;	// nested field 2
+END_STRUCT
+END_TYPE]]>,
+    Name: ST_TestNestedMessageDut,
+    Id: Guid_1
+  },
+  Version: 1.1.0.1
+}

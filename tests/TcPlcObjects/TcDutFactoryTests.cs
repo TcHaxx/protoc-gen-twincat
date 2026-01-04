@@ -5,18 +5,18 @@ using Google.Protobuf.Reflection;
 using TcHaxx.ProtocGenTc;
 using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTcTests.VerifySetup;
-using Test.Prefix.Pou;
 using TcHaxx.ProtocGenTc.TcPlcObjects;
+using Test.Prefix.Dut;
 
 namespace TcHaxx.ProtocGenTcTests.TcPlcObjects;
 
-public class TcPouFactoryTests : VerifyBase
+public class TcDutFactoryTests : VerifyBase
 {
     private readonly VerifySettings _localSettings;
-    private const string TEST_PROTO = "test-tcpoufactory.proto";
+    private const string TEST_PROTO = "test-tcdutfactory.proto";
     private readonly FileDescriptorProto? _sut;
 
-    public TcPouFactoryTests() : base()
+    public TcDutFactoryTests() : base()
     {
         _localSettings = VerifyGlobalSettings.GetGlobalSettings();
         _localSettings.AlwaysIncludeMembersWithType<XmlCDataSection>();
@@ -40,19 +40,30 @@ public class TcPouFactoryTests : VerifyBase
     public async Task ShouldCreateStructWithCorrectNameAndId()
     {
         Assert.NotNull(_sut);
-        var md = _sut.MessageType.Single(m => m.Name == nameof(TestSimpleMessage));
+        var md = _sut.MessageType.Single(m => m.Name == nameof(TestSimpleMessageDut));
         Assert.NotNull(md);
-        var pou = TcPouFactory.Create(_sut, md, _sut.GetPrefixes());
-        await Verify(pou, _localSettings);
+        var dut = TcDutFactory.CreateStruct(_sut, md, _sut.GetPrefixes());
+        await Verify(dut, _localSettings);
     }
 
     [Fact]
     public async Task ShouldCreateStructWithCorrectNameAndIdFromNestedMessage()
     {
         Assert.NotNull(_sut);
-        var md = _sut.MessageType.Single(m => m.Name == nameof(TestNestedMessage));
+        var md = _sut.MessageType.Single(m => m.Name == nameof(TestNestedMessageDut));
         Assert.NotNull(md);
-        var pou = TcPouFactory.Create(_sut, md, _sut.GetPrefixes());
-        await Verify(pou, _localSettings);
+        var dut = TcDutFactory.CreateStruct(_sut, md, _sut.GetPrefixes());
+        await Verify(dut, _localSettings);
+    }
+
+    [Fact]
+    public async Task ShouldCreateEnumWithCorrectNameAndId()
+    {
+        Assert.NotNull(_sut);
+        var ed = _sut.EnumType.Single(m => m.Name == nameof(TestEnum));
+        Assert.NotNull(ed);
+        var dut = TcDutFactory.CreateEnum(_sut, ed, _sut.GetPrefixes());
+
+        await Verify(dut, _localSettings);
     }
 }

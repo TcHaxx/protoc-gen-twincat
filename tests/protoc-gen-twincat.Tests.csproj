@@ -40,6 +40,7 @@
         <Protobuf Include="proto/test-bool.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
         <Protobuf Include="proto/test-prefix.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
         <Protobuf Include="proto/test-tcpoufactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+        <Protobuf Include="proto/test-tcdutfactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Prefix\.verified\" />

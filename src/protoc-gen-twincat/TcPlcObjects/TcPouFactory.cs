@@ -12,8 +12,9 @@ namespace TcHaxx.ProtocGenTc.TcPlcObjects;
 
 internal static class TcPouFactory
 {
-    public static TcPlcObject Create(DescriptorProto message, Comments comments, Prefixes prefixes)
+    public static TcPlcObject Create(FileDescriptorProto file, DescriptorProto message, Prefixes prefixes)
     {
+        var comments = CommentsProvider.GetComments(file, message);
         var name = prefixes.GetFbNameWithTypePrefix(message);
         var pou = new TcPlcObject()
         {

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "tchaxx-extensions.proto";
 
-package test.prefix;
+package test.prefix.pou;
 
 option (tchaxx.global_fb_prefix) = {type: "FB_", instance: "_fb"};
 option (tchaxx.global_st_prefix) = {type: "ST_", instance: "_st", property: "st"};

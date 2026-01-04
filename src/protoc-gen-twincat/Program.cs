@@ -1,10 +1,7 @@
-﻿using System.Text;
-using Google.Protobuf;
+﻿using Google.Protobuf;
 using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
-using TcHaxx.Extensions.v1;
 using TcHaxx.ProtocGenTc;
-using TcHaxx.ProtocGenTc.Fields;
 using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTc.TcPlcObjects;
 
@@ -60,25 +57,9 @@ async Task<IEnumerable<CodeGeneratorResponse.Types.File>> GenerateResponseFilesA
 
 async Task<List<CodeGeneratorResponse.Types.File>> GenerateResponseFileFromMessageAsync(FileDescriptorProto file, DescriptorProto message)
 {
-    var msgComment = CommentsProvider.GetComments(file, message);
     var prefixes = file.GetPrefixes();
-    var tcDUT = TcDutFactory.CreateStruct(message, msgComment, prefixes);
-    var tcPOU = TcPouFactory.Create(message, msgComment, prefixes);
-    var processedFields = new StringBuilder();
-    await Console.Error.WriteLineAsync($"message {message.Name} {{");
-    foreach (var field in message.Field)
-    {
-        await Console.Error.WriteLineAsync($"  {field.Dump()}");
-        var comments = CommentsProvider.GetComments(file, message, field);
-        var processFieldValue = ProcessFieldValue(field, comments, prefixes);
-        processedFields.Append(processFieldValue);
-        if (field.Label == FieldDescriptorProto.Types.Label.Repeated)
-        {
-            processedFields.AppendLine(RepeatedFieldHelper.WriteCountField(field, prefixes));
-        }
-    }
-    await Console.Error.WriteLineAsync($"}}");
-    tcDUT.WriteStructDeclaration(processedFields);
+    var tcDUT = await TcDutFactory.CreateStruct(file, message, prefixes);
+    var tcPOU = TcPouFactory.Create(file, message, prefixes);
 
     List<CodeGeneratorResponse.Types.File> responses =
     [
@@ -97,90 +78,11 @@ async Task<List<CodeGeneratorResponse.Types.File>> GenerateResponseFileFromMessa
 
 async Task<CodeGeneratorResponse.Types.File> GenerateResponseFileFromEnumAsync(FileDescriptorProto file, EnumDescriptorProto enumDescriptor)
 {
-    var enumComment = CommentsProvider.GetComments(file, enumDescriptor);
-    var tcDUT = TcDutFactory.CreateEnum(enumDescriptor, enumComment, file.GetPrefixes());
-    var processedFields = new StringBuilder();
-    await Console.Error.WriteLineAsync($"enum {enumDescriptor.Name} {{");
-    for (var i = 0; i < enumDescriptor.Value.Count; i++)
-    {
-        var enumValue = enumDescriptor.Value[i];
-        await Console.Error.WriteLineAsync($"  {enumValue.Name} = {enumValue.Number};");
-        var comments = CommentsProvider.GetComments(file, enumDescriptor, enumValue);
-        var isLast = i == enumDescriptor.Value.Count - 1;
-        var processEnumValue = ProcessEnumValue(enumValue, comments, isLast);
-        processedFields.Append(processEnumValue);
-    }
-
-    await Console.Error.WriteLineAsync($"}}");
-
-    var options = enumDescriptor.Options;
-    if (options.TryGetExtension(TchaxxExtensionsExtensions.EnumIntegerType, out var extensionValue))
-    {
-        ProtoMapper.TryGetTwinCatDataTypeFromEnumInterTypes(extensionValue, out var dataType);
-        tcDUT.WriteEnumDeclaration(processedFields, dataType);
-    }
-    else
-    {
-        tcDUT.WriteEnumDeclaration(processedFields);
-    }
+    var tcDUT = await TcDutFactory.CreateEnum(file, enumDescriptor, file.GetPrefixes());
 
     return new CodeGeneratorResponse.Types.File
     {
         Name = tcDUT.DUT.Name + ".TcDUT",
         Content = PlcObjectSerializer.Serialize(tcDUT),
     };
-}
-
-static string ProcessFieldValue(FieldDescriptorProto field, Comments comments, Prefixes prefixes)
-{
-#pragma warning disable IDE0072 // Add missing cases
-    var processFieldValue = field.Type switch
-    {
-        FieldDescriptorProto.Types.Type.Bool => BooleanFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Bytes => BytesFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Double => DoubleFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Enum => GenericFieldProvider.ProcessField(field, comments, prefixes),
-        FieldDescriptorProto.Types.Type.Fixed32 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Fixed64 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Float => FloatFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Group => ProcessUnknownField(field),
-        FieldDescriptorProto.Types.Type.Int32 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Int64 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Message => GenericFieldProvider.ProcessField(field, comments, prefixes),
-        FieldDescriptorProto.Types.Type.Sfixed32 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Sfixed64 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Sint32 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Sint64 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.String => StringFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Uint32 => IntegerFieldProvider.ProcessField(field, comments),
-        FieldDescriptorProto.Types.Type.Uint64 => IntegerFieldProvider.ProcessField(field, comments),
-        _ => ProcessUnknownField(field),
-    };
-#pragma warning restore IDE0072 // Add missing cases
-    return processFieldValue;
-}
-
-static string ProcessEnumValue(EnumValueDescriptorProto enumValue, Comments comments, bool isLastValue)
-{
-    var builder = new StringBuilder();
-    if (!string.IsNullOrWhiteSpace(comments.LeadingComments))
-    {
-        builder.AppendLine(comments.NormalizedComments(CommentType.Leading));
-    }
-
-    builder.Append($"{enumValue.Name} := {enumValue.Number}{(isLastValue ? string.Empty : ",")}");
-    if (!string.IsNullOrWhiteSpace(comments.TrailingComments))
-    {
-        builder.Append($" {comments.NormalizedComments(CommentType.Trailing)}");
-    }
-
-    builder.AppendLine();
-    return builder.ToString();
-}
-
-static string ProcessUnknownField(FieldDescriptorProto field)
-{
-    var error = $"Unhandled field type: {field.Name} : {field.Type}";
-    Console.Error.WriteLine(error);
-    return $"// {error}\r\n";
 }
