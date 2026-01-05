@@ -27,6 +27,7 @@ internal static class TcPouFactory
             }
         };
         pou.WriteHeader();
+        pou.POU.Declaration.Data += GetMessageAttributes(message.Options);
         if (!string.IsNullOrWhiteSpace(comments.LeadingComments))
         {
             pou.POU.Declaration.Data += comments.NormalizedComments(CommentType.Leading) + Environment.NewLine;
@@ -56,8 +57,6 @@ internal static class TcPouFactory
     {
         var sb = new StringBuilder();
         sb.AppendLine($$"""
-                        {attribute 'no_explicit_call' := 'do not call this POU directly'}
-                        {attribute 'no-analysis'}
                         FUNCTION_BLOCK INTERNAL FINAL {{prefixes.GetFbNameWithTypePrefix(message)}} IMPLEMENTS I_Message
                         VAR
                             _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
@@ -93,10 +92,21 @@ internal static class TcPouFactory
         return sb.ToString();
     }
 
-
-    public static void WriteMethod(this TcPOU tcPOU, StringBuilder declaration)
+    private static string GetMessageAttributes(MessageOptions? options)
     {
+        var sbAttributes = new StringBuilder();
+        sbAttributes.AppendLine("""
+                                {attribute 'no_explicit_call' := 'do not call this POU directly'}
+                                {attribute 'no-analysis'}
+                                """);
 
+        if (options is null)
+        {
+            return sbAttributes.ToString();
+        }
+
+        // TODO: Add more message-specific attributes here if required in the future
+        return sbAttributes.ToString();
     }
 
     private static void WriteHeader(this TcPlcObject pou)
