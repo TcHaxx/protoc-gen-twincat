@@ -5,10 +5,10 @@
                           protoc-gen-twincat V0.0.0.0                           
                   https://github.com/TcHaxx/protoc-gen-twincat                  
 *******************************************************************************)
-// TestEnum comment
 {attribute 'qualified_only'}
 {attribute 'strict'}
 {attribute 'to_string'}
+// TestEnum comment
 TYPE E_TestEnum :
 (
 TE_DEFAULT := 0, // value 0

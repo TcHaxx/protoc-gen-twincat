@@ -21,12 +21,13 @@ internal static class TcDutFactory
             DUT = new TcPlcObjectDUT() { Name = name, Id = Guid.NewGuid().ToString(), }
         };
         dut.WriteHeader();
+        dut.DUT.Declaration.Data += GetDutEnumAttributes(enumDescriptor.Options);
+
         if (!string.IsNullOrWhiteSpace(comments.LeadingComments))
         {
             dut.DUT.Declaration.Data += comments.NormalizedComments(CommentType.Leading) + Environment.NewLine;
         }
 
-        dut.DUT.Declaration.Data += GetDutEnumAttributes(enumDescriptor.Options);
         var processedFields = new StringBuilder();
         await Console.Error.WriteLineAsync($"enum {enumDescriptor.Name} {{");
         for (var i = 0; i < enumDescriptor.Value.Count; i++)
@@ -64,12 +65,11 @@ internal static class TcDutFactory
             DUT = new TcPlcObjectDUT() { Name = name, Id = Guid.NewGuid().ToString(), }
         };
         dut.WriteHeader();
+        dut.DUT.Declaration.Data += GetMessageAttributes(message.Options);
         if (!string.IsNullOrWhiteSpace(comments.LeadingComments))
         {
             dut.DUT.Declaration.Data += comments.NormalizedComments(CommentType.Leading) + Environment.NewLine;
         }
-
-        dut.DUT.Declaration.Data += GetMessageAttributes(message.Options);
 
         var processedFields = new StringBuilder();
         await Console.Error.WriteLineAsync($"message {message.Name} {{");
@@ -95,7 +95,6 @@ internal static class TcDutFactory
     {
         var sb = new StringBuilder();
         sb.AppendLine($$"""
-                        {attribute 'no-analysis'}
                         TYPE {{dut.DUT.Name}} :
                         STRUCT
                         """);
@@ -128,12 +127,16 @@ internal static class TcDutFactory
 
     private static string GetMessageAttributes(MessageOptions? options)
     {
+        var sbDutAttributes = new StringBuilder();
+        sbDutAttributes.AppendLine("""
+                                   {attribute 'no-analysis'}
+                                   """);
+
         if (options is null)
         {
-            return string.Empty;
+            return sbDutAttributes.ToString();
         }
 
-        var sbDutAttributes = new StringBuilder();
         if (TryGetAttributePackMode(options, out var packmodeAttribute))
         {
             sbDutAttributes.AppendLine($"{packmodeAttribute}");

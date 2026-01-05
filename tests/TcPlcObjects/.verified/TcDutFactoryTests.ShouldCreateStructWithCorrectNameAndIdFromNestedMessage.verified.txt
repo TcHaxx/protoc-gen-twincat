@@ -5,8 +5,8 @@
                           protoc-gen-twincat V0.0.0.0                           
                   https://github.com/TcHaxx/protoc-gen-twincat                  
 *******************************************************************************)
-// Nested
 {attribute 'no-analysis'}
+// Nested
 TYPE ST_TestNestedMessageDut :
 STRUCT
 	simple_message : ST_TestSimpleMessageDut;	// nested field 1
