@@ -79,7 +79,7 @@ internal static class TcDutFactory
             var commentsField = CommentsProvider.GetComments(file, message, field);
             var processFieldValue = ProcessFieldValue(field, commentsField, prefixes);
             processedFields.Append(processFieldValue);
-            if (field.Label == FieldDescriptorProto.Types.Label.Repeated)
+            if (field.Label == FieldDescriptorProto.Types.Label.Repeated || field.Type == FieldDescriptorProto.Types.Type.Bytes)
             {
                 processedFields.AppendLine(RepeatedFieldHelper.WriteCountField(field, prefixes));
             }
@@ -196,7 +196,7 @@ internal static class TcDutFactory
             FieldDescriptorProto.Types.Type.Bool => BooleanFieldProvider.ProcessField(field, comments),
             FieldDescriptorProto.Types.Type.Bytes => BytesFieldProvider.ProcessField(field, comments),
             FieldDescriptorProto.Types.Type.Double => DoubleFieldProvider.ProcessField(field, comments),
-            FieldDescriptorProto.Types.Type.Enum => GenericFieldProvider.ProcessField(field, comments, prefixes),
+            FieldDescriptorProto.Types.Type.Enum => EnumFieldProvider.ProcessField(field, comments, prefixes),
             FieldDescriptorProto.Types.Type.Fixed32 => IntegerFieldProvider.ProcessField(field, comments),
             FieldDescriptorProto.Types.Type.Fixed64 => IntegerFieldProvider.ProcessField(field, comments),
             FieldDescriptorProto.Types.Type.Float => FloatFieldProvider.ProcessField(field, comments),
@@ -230,13 +230,13 @@ internal static class TcDutFactory
         var builder = new StringBuilder();
         if (!string.IsNullOrWhiteSpace(comments.LeadingComments))
         {
-            builder.AppendLine(comments.NormalizedComments(CommentType.Leading));
+            builder.AppendLine($"\t{comments.NormalizedComments(CommentType.Leading)}");
         }
 
-        builder.Append($"{enumValue.Name} := {enumValue.Number}{(isLastValue ? string.Empty : ",")}");
+        builder.Append($"\t{enumValue.Name} := {enumValue.Number}{(isLastValue ? string.Empty : ",")}");
         if (!string.IsNullOrWhiteSpace(comments.TrailingComments))
         {
-            builder.Append($" {comments.NormalizedComments(CommentType.Trailing)}");
+            builder.Append($"  {comments.NormalizedComments(CommentType.Trailing)}");
         }
 
         builder.AppendLine();

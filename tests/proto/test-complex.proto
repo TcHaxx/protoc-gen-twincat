@@ -54,7 +54,7 @@ message Motor {
   }
   
   string name = 1 [(tchaxx.max_string_len) = 128];
-  Color status = 2;
+  Status status = 2;
   uint32 speed = 3 [(tchaxx.integer_type) = EIT_DWORD];
   repeated int32 sensor_readings = 4 [(tchaxx.array_len) = 8, (tchaxx.integer_type) = EIT_SINT];
   bytes config = 5 [(tchaxx.array_len) = 32];

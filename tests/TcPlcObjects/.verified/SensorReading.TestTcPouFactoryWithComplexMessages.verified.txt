@@ -34,7 +34,7 @@ nSize := nSize + 1 + F_ComputeDoubleSize(fValue:= _stSensorReading.value);
 // float precision = 2;
 nSize := nSize + 1 + F_ComputeFloatSize(fValue:= _stSensorReading.precision);
 // int64 timestamp = 3;
-nSize := nSize + 1 + F_ComputeInt64Size(nValue:= _stSensorReading.timestamp);
+nSize := nSize + 1 + F_ComputeInt64Size(anyLint:= _stSensorReading.timestamp);
 CalculateSize := nSize;
 ]]>
         },
@@ -70,7 +70,7 @@ CASE nTag OF
     16#15:    // float precision = 2;
         MergeFrom := fbParseCtx.ReadFloat(fValue=> _stSensorReading.precision); 
     16#18:    // int64 timestamp = 3;
-        MergeFrom := fbParseCtx.ReadInt64(nValue=> _stSensorReading.timestamp); 
+        MergeFrom := fbParseCtx.ReadInt64(anyLint:= _stSensorReading.timestamp); 
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();
 END_CASE
@@ -116,7 +116,7 @@ WriteTo := fbWriteCtx.WriteTag(3, E_WireType.Varint);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteInt64(nValue:= _stSensorReading.timestamp);
+WriteTo := fbWriteCtx.WriteInt64(anyLint:= _stSensorReading.timestamp);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF

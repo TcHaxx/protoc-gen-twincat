@@ -34,7 +34,7 @@ END_VAR
         Implementation: {
           ST:
 <![CDATA[// uint32 id = 1;
-nSize := nSize + 1 + F_ComputeUint32Size(nValue:= _stTestSimpleMessage.id);
+nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stTestSimpleMessage.id);
 // repeated uint32 numbers = 2;
 _fbRepeatedId2.CalculateSize(nSize => nRepeatedFieldSize);
 nSize := nSize + nRepeatedFieldSize;
@@ -69,9 +69,9 @@ END_IF
 
 CASE nTag OF
     16#08:    // uint32 id = 1;
-        MergeFrom := fbParseCtx.ReadUint32(nValue=> _stTestSimpleMessage.id); 
+        MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stTestSimpleMessage.id); 
     16#10:    // repeated uint32 numbers = 2;
-        MergeFrom := _fbRepeatedId2.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId2);
+        MergeFrom := _fbRepeatedId2.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId2,nCount=> _stTestSimpleMessage.numbers_count);
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();
 END_CASE
@@ -99,7 +99,7 @@ WriteTo := fbWriteCtx.WriteTag(1, E_WireType.Varint);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteUint32(nValue:= _stTestSimpleMessage.id);
+WriteTo := fbWriteCtx.WriteUint32(anyUdint:= _stTestSimpleMessage.id);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF

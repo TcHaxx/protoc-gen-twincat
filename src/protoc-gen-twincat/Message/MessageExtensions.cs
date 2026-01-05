@@ -19,6 +19,11 @@ public static class MessageExtensions
         {
             return messageType.SelectMany(Enumerate);
         }
+
+        internal IEnumerable<EnumDescriptorProto> GetAllNestedEnums()
+        {
+            return messageType.SelectMany(EnumerateEnumType);
+        }
     }
 
     private static IEnumerable<DescriptorProto> Enumerate(DescriptorProto message)
@@ -27,6 +32,23 @@ public static class MessageExtensions
         foreach (var nested in message.NestedType)
         {
             foreach (var n in Enumerate(nested))
+            {
+                yield return n;
+            }
+        }
+    }
+
+    private static IEnumerable<EnumDescriptorProto> EnumerateEnumType(DescriptorProto message)
+    {
+
+        foreach (var enumType in message.EnumType)
+        {
+            yield return enumType;
+        }
+
+        foreach (var nested in message.NestedType)
+        {
+            foreach (var n in EnumerateEnumType(nested))
             {
                 yield return n;
             }

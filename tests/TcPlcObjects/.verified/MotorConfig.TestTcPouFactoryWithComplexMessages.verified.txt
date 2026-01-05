@@ -34,7 +34,7 @@ nSize := nSize + 1 + F_ComputeFloatSize(fValue:= _stMotorConfig.max_speed);
 // double acceleration = 2;
 nSize := nSize + 1 + F_ComputeDoubleSize(fValue:= _stMotorConfig.acceleration);
 // uint32 timeout_ms = 3;
-nSize := nSize + 1 + F_ComputeUint32Size(nValue:= _stMotorConfig.timeout_ms);
+nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stMotorConfig.timeout_ms);
 CalculateSize := nSize;
 ]]>
         },
@@ -70,7 +70,7 @@ CASE nTag OF
     16#11:    // double acceleration = 2;
         MergeFrom := fbParseCtx.ReadDouble(fValue=> _stMotorConfig.acceleration); 
     16#18:    // uint32 timeout_ms = 3;
-        MergeFrom := fbParseCtx.ReadUint32(nValue=> _stMotorConfig.timeout_ms); 
+        MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stMotorConfig.timeout_ms); 
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();
 END_CASE
@@ -116,7 +116,7 @@ WriteTo := fbWriteCtx.WriteTag(3, E_WireType.Varint);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteUint32(nValue:= _stMotorConfig.timeout_ms);
+WriteTo := fbWriteCtx.WriteUint32(anyUdint:= _stMotorConfig.timeout_ms);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF

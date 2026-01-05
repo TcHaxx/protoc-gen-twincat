@@ -68,9 +68,21 @@ internal class MergeFrom : IMethodProcessor
             {
                 sb.AppendLine(ProcessMessage(message, field, prefixes));
             }
+            else if (field.Type == FieldDescriptorProto.Types.Type.Enum)
+            {
+                sb.AppendLine(ProcessEnum(message, field, prefixes));
+            }
+            else if (field.Type == FieldDescriptorProto.Types.Type.String)
+            {
+                sb.AppendLine(ProcessString(message, field, prefixes));
+            }
+            else if (field.Type == FieldDescriptorProto.Types.Type.Bytes)
+            {
+                sb.AppendLine(ProcessBytes(message, field, prefixes));
+            }
             else
             {
-                sb.AppendLine(ProcessdField(message, field, prefixes));
+                sb.AppendLine(ProcessField(message, field, prefixes));
             }
         }
 
@@ -99,16 +111,43 @@ internal class MergeFrom : IMethodProcessor
     private static string ProcessRepeatedField(DescriptorProto message, FieldDescriptorProto repeatedField, Prefixes prefixes)
     {
         var suffix = $"Id{repeatedField.Number}";
+        var countVar = $"{prefixes.GetStNameWithInstancePrefix(message)}.{RepeatedFieldHelper.GetCountFieldName(repeatedField)}";
         return $"""
-                        MergeFrom := _fbRepeated{suffix}.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodec{suffix});
+                        MergeFrom := _fbRepeated{suffix}.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodec{suffix},nCount=> {countVar});
                 """;
     }
 
-    private static string ProcessdField(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
+    private static string ProcessField(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
+    {
+        var msgStName = prefixes.GetStNameWithInstancePrefix(message);
+        var (assignVar, op) = field.GetFieldAssignVarString("merge");    // e.g., "anyDint:=" or "nValue=>"
+        return $"""
+                        MergeFrom := fbParseCtx.Read{field.Type}({assignVar}{op} {msgStName}.{field.Name}); 
+                """;
+    }
+
+    private static string ProcessEnum(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
     {
         var msgStName = prefixes.GetStNameWithInstancePrefix(message);
         return $"""
-                        MergeFrom := fbParseCtx.Read{field.Type}({field.GetFieldAssignVarString("merge")}=> {msgStName}.{field.Name}); 
+                        MergeFrom := fbParseCtx.ReadEnum(anyEnum:= {msgStName}.{field.Name}); 
+                """;
+    }
+
+    private static string ProcessString(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
+    {
+        var msgStName = prefixes.GetStNameWithInstancePrefix(message);
+        return $"""
+                        MergeFrom := fbParseCtx.ReadString(anyStringOut:= {msgStName}.{field.Name}); 
+                """;
+    }
+
+    private static string ProcessBytes(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
+    {
+        var msgStName = prefixes.GetStNameWithInstancePrefix(message);
+        var countVar = $"{prefixes.GetStNameWithInstancePrefix(message)}.{RepeatedFieldHelper.GetCountFieldName(field)}";
+        return $"""
+                        MergeFrom := fbParseCtx.ReadBytes(aBytes:= {msgStName}.{field.Name}, nCount=> {countVar}); 
                 """;
     }
 }

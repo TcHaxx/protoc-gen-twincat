@@ -70,12 +70,11 @@ internal static class TcPouFactory
             var suffix = $"Id{repeatedField.Number}";
             if (repeatedField.Type == FieldDescriptorProto.Types.Type.Message)
             {
-                var varName = prefixes.GetStNameWithInstancePrefix(repeatedField);
                 var fbName = prefixes.GetFbNameWithInstancePrefix(repeatedField);
                 sb.AppendLine($$"""
                                     // {{repeatedField.Dump()}}
                                     _fbFieldCodec{{suffix}} : FB_FieldCodec{{repeatedField.Type}}(nTag:= 16#{{repeatedField.GetFieldTagValue().ToString("X2")}}, ipMessage:= {{fbName}});
-                                    _fbRepeated{{suffix}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{varName}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{varName}}[0]));
+                                    _fbRepeated{{suffix}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}[0]));
                                 """);
             }
             else

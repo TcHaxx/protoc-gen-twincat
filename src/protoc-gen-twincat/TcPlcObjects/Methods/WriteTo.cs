@@ -60,6 +60,14 @@ internal class WriteTo : IMethodProcessor
             {
                 sb.AppendLine(ProcessMessage(message, field, prefixes));
             }
+            else if (field.Type == FieldDescriptorProto.Types.Type.Enum)
+            {
+                sb.AppendLine(ProcessEnumField(message, field, prefixes));
+            }
+            else if (field.Type == FieldDescriptorProto.Types.Type.Bytes)
+            {
+                sb.AppendLine(ProcessBytesField(message, field, prefixes));
+            }
             else
             {
                 sb.AppendLine(ProcessScalarField(message, field, prefixes));
@@ -92,12 +100,33 @@ internal class WriteTo : IMethodProcessor
                 """;
     }
 
+    private static string ProcessBytesField(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
+    {
+        var msgStName = prefixes.GetStNameWithInstancePrefix(message);
+        var countVar = $"{prefixes.GetStNameWithInstancePrefix(message)}.{RepeatedFieldHelper.GetCountFieldName(field)}";
+        return $"""
+                WriteTo := fbWriteCtx.WriteBytes(aBytes:= {msgStName}.{field.Name}, nCount:= {countVar});
+                {RETURN_WHEN_FAILED}
+                """;
+    }
+
     private static string ProcessScalarField(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
+    {
+        var msgStName = prefixes.GetStNameWithInstancePrefix(message);
+        var (assignVar, _) = field.GetFieldAssignVarString("write");    // e.g., "anyDint:=" or "nValue=>"
+        return $"""
+                {WriteScalarTag(field)}
+                WriteTo := fbWriteCtx.Write{field.Type}({assignVar}:= {msgStName}.{field.Name});
+                {RETURN_WHEN_FAILED}
+                """;
+    }
+
+    private static string ProcessEnumField(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
     {
         var msgStName = prefixes.GetStNameWithInstancePrefix(message);
         return $"""
                 {WriteScalarTag(field)}
-                WriteTo := fbWriteCtx.Write{field.Type}({field.GetFieldAssignVarString("write")}:= {msgStName}.{field.Name});
+                WriteTo := fbWriteCtx.WriteEnum(anyEnum:= {msgStName}.{field.Name});
                 {RETURN_WHEN_FAILED}
                 """;
     }

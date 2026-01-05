@@ -11,10 +11,10 @@
 // TestEnum comment
 TYPE E_TestEnum :
 (
-TE_DEFAULT := 0, // value 0
-TE_OPTION1 := 1, // value1
-// value 2
-TE_OPTION2 := 2
+	TE_DEFAULT := 0,  // value 0
+	TE_OPTION1 := 1,  // value1
+	// value 2
+	TE_OPTION2 := 2
 ) ;
 END_TYPE]]>,
     Name: E_TestEnum,

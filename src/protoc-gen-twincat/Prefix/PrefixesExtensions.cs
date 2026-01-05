@@ -108,6 +108,14 @@ internal static class PrefixesExtensions
             return prefixes.TryGetEnumPrefix(@enum, out var prefixedName) ? $"{prefixedName.Type}{@enum.Name}" : @enum.Name;
         }
 
+        internal string GetEnumNameWithTypePrefix(FieldDescriptorProto fieldEnum)
+        {
+            var strippedName = StripNestedTypeName(fieldEnum.TypeName);
+            return prefixes.TryGetPrefixForEnumByName(strippedName, out var prefixedName)
+                ? $"{prefixedName.Type}{strippedName}"
+                : strippedName;
+        }
+
         internal string GetEnumNameWithInstancePrefix(EnumDescriptorProto @enum)
         {
             return prefixes.TryGetEnumPrefix(@enum, out var prefixedName)
@@ -141,6 +149,15 @@ internal static class PrefixesExtensions
             var msgPrefix = prefixes.Message.Where(x => x.Key.Name == name).Select(x => x.Value.MessageStPrefix)
                 .FirstOrDefault();
             prefix = msgPrefix ?? prefix;
+            return prefix is not null;
+        }
+
+        private bool TryGetPrefixForEnumByName(string name, [NotNullWhen(true)] out Extensions.v1.Prefix? prefix)
+        {
+            prefix = prefixes.Global.GlobalEnumPrefix;
+            var enumPrefix = prefixes.Enum.Where(x => x.Key.Name == name).Select(x => x.Value.EnumPrefix)
+                .FirstOrDefault();
+            prefix = enumPrefix ?? prefix;
             return prefix is not null;
         }
     }

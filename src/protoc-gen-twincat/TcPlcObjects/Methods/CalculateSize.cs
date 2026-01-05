@@ -60,10 +60,16 @@ internal class CalculateSize : IMethodProcessor
                                 nSize := nSize + nRepeatedFieldSize;
                                 """);
             }
+            else if (field.Type == FieldDescriptorProto.Types.Type.Enum)
+            {
+                var instanceName = prefixes.GetStNameWithInstancePrefix(message);
+                sb.AppendLine(
+                    $"nSize := nSize + {field.GetFieldTagLength()} + F_ComputeEnumSize(anyEnum:= {instanceName}.{field.Name});");
+            }
             else
             {
                 var instanceName = prefixes.GetStNameWithInstancePrefix(message);
-                var parameterName = field.GetFieldAssignVarString(string.Empty);
+                var (parameterName, _) = field.GetFieldAssignVarString(string.Empty);
                 sb.AppendLine(
                     $"nSize := nSize + {field.GetFieldTagLength()} + F_Compute{field.Type}Size({parameterName}:= {instanceName}.{field.Name});");
             }

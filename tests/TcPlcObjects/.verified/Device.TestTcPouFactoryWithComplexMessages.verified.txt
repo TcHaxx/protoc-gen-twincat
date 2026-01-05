@@ -36,12 +36,12 @@ END_VAR
 <![CDATA[// string name = 1;
 nSize := nSize + 1 + F_ComputeStringSize(anyString:= _stDevice.name);
 // uint32 id = 2;
-nSize := nSize + 1 + F_ComputeUint32Size(nValue:= _stDevice.id);
+nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stDevice.id);
 // repeated uint32 error_codes = 3;
 _fbRepeatedId3.CalculateSize(nSize => nRepeatedFieldSize);
 nSize := nSize + nRepeatedFieldSize;
 // int32 temperature = 4;
-nSize := nSize + 1 + F_ComputeInt32Size(nValue:= _stDevice.temperature);
+nSize := nSize + 1 + F_ComputeInt32Size(anyDint:= _stDevice.temperature);
 // bytes data = 5;
 nSize := nSize + 1 + F_ComputeBytesSize(aBytes:= _stDevice.data);
 CalculateSize := nSize;
@@ -75,15 +75,15 @@ END_IF
 
 CASE nTag OF
     16#0A:    // string name = 1;
-        MergeFrom := fbParseCtx.ReadString(anyStringOut=> _stDevice.name); 
+        MergeFrom := fbParseCtx.ReadString(anyStringOut:= _stDevice.name); 
     16#10:    // uint32 id = 2;
-        MergeFrom := fbParseCtx.ReadUint32(nValue=> _stDevice.id); 
+        MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stDevice.id); 
     16#18:    // repeated uint32 error_codes = 3;
-        MergeFrom := _fbRepeatedId3.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId3);
+        MergeFrom := _fbRepeatedId3.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId3,nCount=> _stDevice.error_codes_count);
     16#20:    // int32 temperature = 4;
-        MergeFrom := fbParseCtx.ReadInt32(nValue=> _stDevice.temperature); 
+        MergeFrom := fbParseCtx.ReadInt32(anyDint:= _stDevice.temperature); 
     16#2A:    // bytes data = 5;
-        MergeFrom := fbParseCtx.ReadBytes(aBytes=> _stDevice.data); 
+        MergeFrom := fbParseCtx.ReadBytes(aBytes:= _stDevice.data, nCount=> _stDevice.data_count); 
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();
 END_CASE
@@ -120,7 +120,7 @@ WriteTo := fbWriteCtx.WriteTag(2, E_WireType.Varint);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteUint32(nValue:= _stDevice.id);
+WriteTo := fbWriteCtx.WriteUint32(anyUdint:= _stDevice.id);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
@@ -134,16 +134,12 @@ WriteTo := fbWriteCtx.WriteTag(4, E_WireType.Varint);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteInt32(nValue:= _stDevice.temperature);
+WriteTo := fbWriteCtx.WriteInt32(anyDint:= _stDevice.temperature);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
 // bytes data = 5;
-WriteTo := fbWriteCtx.WriteTag(5, E_WireType.LengthDelimited);
-IF FAILED(WriteTo) THEN
-    RETURN;
-END_IF
-WriteTo := fbWriteCtx.WriteBytes(aBytes:= _stDevice.data);
+WriteTo := fbWriteCtx.WriteBytes(aBytes:= _stDevice.data, nCount:= _stDevice.data_count);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF

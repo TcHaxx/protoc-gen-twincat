@@ -36,10 +36,10 @@ END_VAR
           ST:
 <![CDATA[// string name = 1;
 nSize := nSize + 1 + F_ComputeStringSize(anyString:= _stMotor.name);
-// Color status = 2;
-nSize := nSize + 1 + F_ComputeEnumSize(nValue:= _stMotor.status);
+// Status status = 2;
+nSize := nSize + 1 + F_ComputeEnumSize(anyEnum:= _stMotor.status);
 // uint32 speed = 3;
-nSize := nSize + 1 + F_ComputeUint32Size(nValue:= _stMotor.speed);
+nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stMotor.speed);
 // repeated int32 sensor_readings = 4;
 _fbRepeatedId4.CalculateSize(nSize => nRepeatedFieldSize);
 nSize := nSize + nRepeatedFieldSize;
@@ -78,15 +78,15 @@ END_IF
 
 CASE nTag OF
     16#0A:    // string name = 1;
-        MergeFrom := fbParseCtx.ReadString(anyStringOut=> _stMotor.name); 
-    16#10:    // Color status = 2;
-        MergeFrom := fbParseCtx.ReadEnum(nValue=> _stMotor.status); 
+        MergeFrom := fbParseCtx.ReadString(anyStringOut:= _stMotor.name); 
+    16#10:    // Status status = 2;
+        MergeFrom := fbParseCtx.ReadEnum(anyEnum:= _stMotor.status); 
     16#18:    // uint32 speed = 3;
-        MergeFrom := fbParseCtx.ReadUint32(nValue=> _stMotor.speed); 
+        MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stMotor.speed); 
     16#20:    // repeated int32 sensor_readings = 4;
-        MergeFrom := _fbRepeatedId4.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId4);
+        MergeFrom := _fbRepeatedId4.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId4,nCount=> _stMotor.sensor_readings_count);
     16#2A:    // bytes config = 5;
-        MergeFrom := fbParseCtx.ReadBytes(aBytes=> _stMotor.config); 
+        MergeFrom := fbParseCtx.ReadBytes(aBytes:= _stMotor.config, nCount=> _stMotor.config_count); 
     16#32:    // MotorConfig motor_config = 6;
         MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbMotorConfig);
         THIS^._stMotor.motor_config := _fbMotorConfig.MotorConfig;
@@ -121,12 +121,12 @@ WriteTo := fbWriteCtx.WriteString(sStringToWrite:= _stMotor.name);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-// Color status = 2;
+// Status status = 2;
 WriteTo := fbWriteCtx.WriteTag(2, E_WireType.Varint);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteEnum(nValue:= _stMotor.status);
+WriteTo := fbWriteCtx.WriteEnum(anyEnum:= _stMotor.status);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
@@ -135,7 +135,7 @@ WriteTo := fbWriteCtx.WriteTag(3, E_WireType.Varint);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteUint32(nValue:= _stMotor.speed);
+WriteTo := fbWriteCtx.WriteUint32(anyUdint:= _stMotor.speed);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
@@ -145,11 +145,7 @@ IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
 // bytes config = 5;
-WriteTo := fbWriteCtx.WriteTag(5, E_WireType.LengthDelimited);
-IF FAILED(WriteTo) THEN
-    RETURN;
-END_IF
-WriteTo := fbWriteCtx.WriteBytes(aBytes:= _stMotor.config);
+WriteTo := fbWriteCtx.WriteBytes(aBytes:= _stMotor.config, nCount:= _stMotor.config_count);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF

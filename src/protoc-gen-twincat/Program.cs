@@ -47,6 +47,12 @@ async Task<IEnumerable<CodeGeneratorResponse.Types.File>> GenerateResponseFilesA
         result.Add(responseFile);
     }
 
+    foreach (var enumType in file.MessageType.GetAllNestedEnums())
+    {
+        var responseFile = await GenerateResponseFileFromEnumAsync(file, enumType);
+        result.Add(responseFile);
+    }
+
     foreach (var message in file.MessageType.GetAllMessages())
     {
         var responseFiles = await GenerateResponseFileFromMessageAsync(file, message);
