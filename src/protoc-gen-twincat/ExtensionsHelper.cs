@@ -34,17 +34,6 @@ internal static class ExtensionsHelper
         return true;
     }
 
-    public static bool TryGetAttributePackMode(MessageOptions? options, [NotNullWhen(true)] out string value)
-    {
-        value = string.Empty;
-        if (options.TryGetExtension(AttributePackMode, out var packMode))
-        {
-            value = $@"{{attribute 'pack_mode' := '{packMode}'}}";
-            return true;
-        }
-        return false;
-    }
-
     public static bool HasRepeatedLabel(this FieldDescriptorProto field)
     {
         return field.Label == FieldDescriptorProto.Types.Label.Repeated;

@@ -175,7 +175,7 @@ internal static class TcDutFactory
         value = string.Empty;
         if (options.TryGetExtension(TchaxxExtensionsExtensions.AttributePackMode, out var packMode))
         {
-            value = $"{{attribute 'pack_mode' := '{packMode}'}}";
+            value = $"{{attribute 'pack_mode' := '{(int)packMode}'}}";
             return true;
         }
 
