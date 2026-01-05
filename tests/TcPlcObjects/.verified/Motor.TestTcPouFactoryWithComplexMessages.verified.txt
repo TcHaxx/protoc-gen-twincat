@@ -1,0 +1,240 @@
+﻿{
+  POU: {
+    Declaration:
+<![CDATA[(*******************************************************************************
+                          protoc-gen-twincat V0.0.0.0                           
+                  https://github.com/TcHaxx/protoc-gen-twincat                  
+*******************************************************************************)
+{attribute 'no_explicit_call' := 'do not call this POU directly'}
+{attribute 'no-analysis'}
+// Message with fb_prefix option (function block)
+FUNCTION_BLOCK INTERNAL FINAL FB_Motor IMPLEMENTS I_Message
+VAR
+    _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
+    _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
+    _stMotor : ST_Motor;
+    // repeated int32 sensor_readings = 4;
+    _fbFieldCodecId4 : FB_FieldCodecInt32(nTag:= 16#22);
+    _fbRepeatedId4 : FB_RepeatedField(anyArray:= F_ToAnyType(_stMotor.sensor_readings), anyFirstElem:= F_ToAnyType(_stMotor.sensor_readings[0]));
+    _fbMotorConfig : FB_MotorConfig;
+    END_VAR
+]]>,
+    Implementation: {
+      ST: <![CDATA[]]>
+    },
+    Method: [
+      {
+        Declaration:
+<![CDATA[(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
+METHOD CalculateSize : UDINT
+VAR
+    nSize : UDINT;
+    nRepeatedFieldSize : UDINT;
+END_VAR
+]]>,
+        Implementation: {
+          ST:
+<![CDATA[// string name = 1;
+nSize := nSize + 1 + F_ComputeStringSize(anyString:= _stMotor.name);
+// Color status = 2;
+nSize := nSize + 1 + F_ComputeEnumSize(nValue:= _stMotor.status);
+// uint32 speed = 3;
+nSize := nSize + 1 + F_ComputeUint32Size(nValue:= _stMotor.speed);
+// repeated int32 sensor_readings = 4;
+_fbRepeatedId4.CalculateSize(nSize => nRepeatedFieldSize);
+nSize := nSize + nRepeatedFieldSize;
+// bytes config = 5;
+nSize := nSize + 1 + F_ComputeBytesSize(aBytes:= _stMotor.config);
+// MotorConfig motor_config = 6;
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbMotorConfig);
+CalculateSize := nSize;
+]]>
+        },
+        Name: CalculateSize,
+        Id: Guid_1
+      },
+      {
+        Declaration:
+<![CDATA[(* Merges the data from the specified coded input stream with the current message.*)
+METHOD MergeFrom : HRESULT
+VAR_IN_OUT
+    fbParseCtx : FB_ParseContext;
+END_VAR
+VAR
+    nTag : UDINT;
+END_VAR
+]]>,
+        Implementation: {
+          ST:
+<![CDATA[REPEAT
+MergeFrom := fbParseCtx.ReadTag(nTag=> nTag);
+IF SUCCEEDED(MergeFrom) AND nTag = 0 THEN
+    EXIT;
+END_IF;
+
+IF FAILED(MergeFrom) THEN
+    RETURN;
+END_IF
+
+CASE nTag OF
+    16#0A:    // string name = 1;
+        MergeFrom := fbParseCtx.ReadString(anyStringOut=> _stMotor.name); 
+    16#10:    // Color status = 2;
+        MergeFrom := fbParseCtx.ReadEnum(nValue=> _stMotor.status); 
+    16#18:    // uint32 speed = 3;
+        MergeFrom := fbParseCtx.ReadUint32(nValue=> _stMotor.speed); 
+    16#20:    // repeated int32 sensor_readings = 4;
+        MergeFrom := _fbRepeatedId4.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId4);
+    16#2A:    // bytes config = 5;
+        MergeFrom := fbParseCtx.ReadBytes(aBytes=> _stMotor.config); 
+    16#32:    // MotorConfig motor_config = 6;
+        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbMotorConfig);
+        THIS^._stMotor.motor_config := _fbMotorConfig.MotorConfig;
+ELSE
+    MergeFrom := fbParseCtx.SkipLastField();
+END_CASE
+
+UNTIL (FAILED(MergeFrom) OR nTag = 0)
+END_REPEAT
+]]>
+        },
+        Name: MergeFrom,
+        Id: Guid_2
+      },
+      {
+        Declaration:
+<![CDATA[(* Writes the data to the given coded output stream.*)
+METHOD WriteTo : HRESULT
+VAR_IN_OUT
+	(* Coded output stream to write the data to. *)
+	fbWriteCtx	: FB_WriteContext;
+END_VAR
+]]>,
+        Implementation: {
+          ST:
+<![CDATA[// string name = 1;
+WriteTo := fbWriteCtx.WriteTag(1, E_WireType.LengthDelimited);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+WriteTo := fbWriteCtx.WriteString(sStringToWrite:= _stMotor.name);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+// Color status = 2;
+WriteTo := fbWriteCtx.WriteTag(2, E_WireType.Varint);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+WriteTo := fbWriteCtx.WriteEnum(nValue:= _stMotor.status);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+// uint32 speed = 3;
+WriteTo := fbWriteCtx.WriteTag(3, E_WireType.Varint);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+WriteTo := fbWriteCtx.WriteUint32(nValue:= _stMotor.speed);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+// repeated int32 sensor_readings = 4;
+WriteTo := _fbRepeatedId4.WriteToWithCount(fbWriteCtx:= fbWriteCtx, ipFieldCodec:= _fbFieldCodecId4, nCount:= _stMotor.sensor_readings_count);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+// bytes config = 5;
+WriteTo := fbWriteCtx.WriteTag(5, E_WireType.LengthDelimited);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+WriteTo := fbWriteCtx.WriteBytes(aBytes:= _stMotor.config);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+// MotorConfig motor_config = 6;
+WriteTo := fbWriteCtx.WriteTag(6, E_WireType.LengthDelimited);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+_fbMotorConfig.MotorConfig := THIS^._stMotor.motor_config;
+WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbMotorConfig);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+]]>
+        },
+        Name: WriteTo,
+        Id: Guid_3
+      }
+    ],
+    Property: [
+      {
+        Declaration: <![CDATA[PROPERTY PUBLIC Motor : ST_Motor]]>,
+        Name: Motor,
+        Id: Guid_4,
+        Get: {
+          Declaration:
+<![CDATA[VAR
+END_VAR]]>,
+          Implementation: {
+            ST: <![CDATA[Motor := _stMotor;]]>
+          },
+          Name: Get
+        },
+        Set: {
+          Declaration:
+<![CDATA[VAR
+END_VAR]]>,
+          Implementation: {
+            ST: <![CDATA[_stMotor := Motor;]]>
+          },
+          Name: Set
+        }
+      },
+      {
+        Declaration: <![CDATA[PROPERTY PUBLIC Parser : REFERENCE TO FB_MessageParser]]>,
+        Name: Parser,
+        Id: Guid_5,
+        Get: {
+          Declaration: <![CDATA[]]>,
+          Implementation: {
+            ST: <![CDATA[Parser REF= THIS^._fbMessageParser;]]>
+          },
+          Name: Get
+        }
+      },
+      {
+        Declaration:
+<![CDATA[(* Writer for this message.*)
+PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
+        Name: Writer,
+        Id: Guid_6,
+        Get: {
+          Declaration: <![CDATA[]]>,
+          Implementation: {
+            ST: <![CDATA[Writer REF= THIS^._fbMessageWriter;]]>
+          },
+          Name: Get
+        }
+      },
+      {
+        Declaration: <![CDATA[PROPERTY PUBLIC MessageValue : T_Any]]>,
+        Name: MessageValue,
+        Id: Guid_7,
+        Get: {
+          Declaration: <![CDATA[]]>,
+          Implementation: {
+            ST: <![CDATA[MessageValue := F_ToAnyType(anyArg:= _stMotor);]]>
+          },
+          Name: Get
+        }
+      }
+    ],
+    Name: FB_Motor,
+    Id: Guid_8,
+    SpecialFunc: None
+  },
+  Version: 1.1.0.1
+}

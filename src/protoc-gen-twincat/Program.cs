@@ -2,6 +2,7 @@
 using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
 using TcHaxx.ProtocGenTc;
+using TcHaxx.ProtocGenTc.Message;
 using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTc.TcPlcObjects;
 
@@ -46,7 +47,7 @@ async Task<IEnumerable<CodeGeneratorResponse.Types.File>> GenerateResponseFilesA
         result.Add(responseFile);
     }
 
-    foreach (var message in file.MessageType)
+    foreach (var message in file.MessageType.GetAllMessages())
     {
         var responseFiles = await GenerateResponseFileFromMessageAsync(file, message);
         result.AddRange(responseFiles);

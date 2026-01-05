@@ -33,7 +33,7 @@ internal static class TcPouFactory
             pou.POU.Declaration.Data += comments.NormalizedComments(CommentType.Leading) + Environment.NewLine;
         }
 
-        var subMessages = message.GetSubMessages();
+        var subMessages = message.GetMessageFields();
 
         pou.POU.Declaration.Data += EmitPouDeclaration(message, subMessages, prefixes);
         pou.POU.Implementation = Implementation.Empty;
