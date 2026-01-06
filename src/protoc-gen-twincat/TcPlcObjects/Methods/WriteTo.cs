@@ -105,6 +105,7 @@ internal class WriteTo : IMethodProcessor
         var msgStName = prefixes.GetStNameWithInstancePrefix(message);
         var countVar = $"{prefixes.GetStNameWithInstancePrefix(message)}.{RepeatedFieldHelper.GetCountFieldName(field)}";
         return $"""
+                {WriteScalarTag(field)}
                 WriteTo := fbWriteCtx.WriteBytes(aBytes:= {msgStName}.{field.Name}, nCount:= {countVar});
                 {RETURN_WHEN_FAILED}
                 """;

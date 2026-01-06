@@ -139,6 +139,10 @@ IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
 // bytes data = 5;
+WriteTo := fbWriteCtx.WriteTag(5, E_WireType.LengthDelimited);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
 WriteTo := fbWriteCtx.WriteBytes(aBytes:= _stDevice.data, nCount:= _stDevice.data_count);
 IF FAILED(WriteTo) THEN
     RETURN;

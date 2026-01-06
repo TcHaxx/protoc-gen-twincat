@@ -185,6 +185,10 @@ IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
 // bytes raw_bytes = 7;
+WriteTo := fbWriteCtx.WriteTag(7, E_WireType.LengthDelimited);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
 WriteTo := fbWriteCtx.WriteBytes(aBytes:= _stComplexData.raw_bytes, nCount:= _stComplexData.raw_bytes_count);
 IF FAILED(WriteTo) THEN
     RETURN;
