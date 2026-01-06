@@ -1,4 +1,4 @@
-using System.Xml;
+﻿using System.Xml;
 using Google.Protobuf;
 using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
@@ -48,4 +48,27 @@ public class ComplexTests : VerifyBase
         }
     }
 
+    [Fact]
+    public async Task TestTcDutFactoryStructWithComplexMessages()
+    {
+        Assert.NotNull(_sut);
+        Assert.NotEmpty(_sut.MessageType);
+        foreach (var message in _sut.MessageType.GetAllMessages())
+        {
+            var pou = TcDutFactory.CreateStruct(_sut, message, _sut.GetPrefixes());
+            await Verify(pou, _localSettings).UseTypeName(message.Name);
+        }
+    }
+
+    [Fact]
+    public async Task TestTcDutFactoryEnumWithComplexMessages()
+    {
+        Assert.NotNull(_sut);
+        Assert.NotEmpty(_sut.MessageType);
+        foreach (var enumType in _sut.EnumType.Concat(_sut.MessageType.GetAllNestedEnums()))
+        {
+            var pou = TcDutFactory.CreateEnum(_sut, enumType, _sut.GetPrefixes());
+            await Verify(pou, _localSettings).UseTypeName(enumType.Name);
+        }
+    }
 }

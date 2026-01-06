@@ -1,0 +1,33 @@
+﻿{
+  DUT: {
+    Declaration:
+<![CDATA[(*******************************************************************************
+                          protoc-gen-twincat V0.0.0.0                           
+                  https://github.com/TcHaxx/protoc-gen-twincat                  
+*******************************************************************************)
+{attribute 'no-analysis'}
+{attribute 'pack_mode' := '2'}
+// Another message demonstrating all field options
+TYPE ST_ComplexData :
+STRUCT
+	label : STRING(512);
+	value_dint : DINT;
+	value_int : INT;
+	value_word : WORD;
+	array_data : ARRAY[0..15] OF BYTE;
+	array_data_count : UDINT; // Implict generated field for actual number of items in array array_data
+	state : E_Status;
+	raw_bytes : ARRAY[0..127] OF BYTE;
+	raw_bytes_count : UDINT; // Implict generated field for actual number of items in array raw_bytes
+	measurement : LREAL;
+	calibration_factor : REAL;
+	readings : ARRAY[0..31] OF ST_SensorReading;
+	readings_count : UDINT; // Implict generated field for actual number of items in array readings
+	data_type : E_DataType;
+END_STRUCT
+END_TYPE]]>,
+    Name: ST_ComplexData,
+    Id: Guid_1
+  },
+  Version: 1.1.0.1
+}

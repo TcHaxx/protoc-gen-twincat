@@ -43,7 +43,7 @@ public static class FieldExtensions
             };
         }
 
-        internal (string, string) GetFieldAssignVarString(string context)
+        internal (string assignVar, string op) GetFieldAssignVarString(string context)
         {
             return (field.Type, context) switch
             {

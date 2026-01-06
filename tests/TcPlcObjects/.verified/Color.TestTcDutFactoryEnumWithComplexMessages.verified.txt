@@ -1,0 +1,24 @@
+﻿{
+  DUT: {
+    Declaration:
+<![CDATA[(*******************************************************************************
+                          protoc-gen-twincat V0.0.0.0                           
+                  https://github.com/TcHaxx/protoc-gen-twincat                  
+*******************************************************************************)
+{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+// Enum with enum_prefix and enum_integer_type options
+TYPE E_Color :
+(
+	COLOR_DEFAULT := 0,
+	COLOR_RED := 1,
+	COLOR_GREEN := 2,
+	COLOR_BLUE := 3
+) WORD;
+END_TYPE]]>,
+    Name: E_Color,
+    Id: Guid_1
+  },
+  Version: 1.1.0.1
+}

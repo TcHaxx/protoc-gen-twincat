@@ -1,0 +1,20 @@
+﻿{
+  DUT: {
+    Declaration:
+<![CDATA[(*******************************************************************************
+                          protoc-gen-twincat V0.0.0.0                           
+                  https://github.com/TcHaxx/protoc-gen-twincat                  
+*******************************************************************************)
+{attribute 'no-analysis'}
+TYPE ST_MotorConfig :
+STRUCT
+	max_speed : REAL;
+	acceleration : LREAL;
+	timeout_ms : DWORD;
+END_STRUCT
+END_TYPE]]>,
+    Name: ST_MotorConfig,
+    Id: Guid_1
+  },
+  Version: 1.1.0.1
+}

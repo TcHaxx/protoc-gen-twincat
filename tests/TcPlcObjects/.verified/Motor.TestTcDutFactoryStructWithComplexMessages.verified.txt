@@ -1,0 +1,27 @@
+﻿{
+  DUT: {
+    Declaration:
+<![CDATA[(*******************************************************************************
+                          protoc-gen-twincat V0.0.0.0                           
+                  https://github.com/TcHaxx/protoc-gen-twincat                  
+*******************************************************************************)
+{attribute 'no-analysis'}
+{attribute 'pack_mode' := '4'}
+// Message with fb_prefix option (function block)
+TYPE ST_Motor :
+STRUCT
+	name : STRING(128);
+	status : E_Status;
+	speed : DWORD;
+	sensor_readings : ARRAY[0..7] OF SINT;
+	sensor_readings_count : UDINT; // Implict generated field for actual number of items in array sensor_readings
+	config : ARRAY[0..31] OF BYTE;
+	config_count : UDINT; // Implict generated field for actual number of items in array config
+	motor_config : ST_MotorConfig;
+END_STRUCT
+END_TYPE]]>,
+    Name: ST_Motor,
+    Id: Guid_1
+  },
+  Version: 1.1.0.1
+}

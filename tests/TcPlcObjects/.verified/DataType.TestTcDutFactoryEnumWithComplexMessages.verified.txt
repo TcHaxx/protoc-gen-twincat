@@ -1,0 +1,23 @@
+﻿{
+  DUT: {
+    Declaration:
+<![CDATA[(*******************************************************************************
+                          protoc-gen-twincat V0.0.0.0                           
+                  https://github.com/TcHaxx/protoc-gen-twincat                  
+*******************************************************************************)
+{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_DataType :
+(
+	DATA_TYPE_UNKNOWN := 0,
+	DATA_TYPE_TEMPERATURE := 1,
+	DATA_TYPE_PRESSURE := 2,
+	DATA_TYPE_HUMIDITY := 3
+) BYTE;
+END_TYPE]]>,
+    Name: E_DataType,
+    Id: Guid_1
+  },
+  Version: 1.1.0.1
+}
