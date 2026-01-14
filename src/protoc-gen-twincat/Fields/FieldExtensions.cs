@@ -9,6 +9,11 @@ public static class FieldExtensions
     {
         internal uint GetFieldTagValue()
         {
+            if (field.Label == FieldDescriptorProto.Types.Label.Repeated)
+            {
+                return field.GetPackedRepetatedFieldTagValue();
+            }
+
             return ((uint)field.Number << 3) | (uint)field.GetWireType();
         }
 

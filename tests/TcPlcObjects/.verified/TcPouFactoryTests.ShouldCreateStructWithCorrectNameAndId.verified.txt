@@ -70,7 +70,7 @@ END_IF
 CASE nTag OF
     16#08:    // uint32 id = 1;
         MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stTestSimpleMessage.id); 
-    16#10:    // repeated uint32 numbers = 2;
+    16#12:    // repeated uint32 numbers = 2;
         MergeFrom := _fbRepeatedId2.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId2,nCount=> _stTestSimpleMessage.numbers_count);
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();

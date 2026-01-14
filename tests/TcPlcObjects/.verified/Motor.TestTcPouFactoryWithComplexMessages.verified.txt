@@ -83,7 +83,7 @@ CASE nTag OF
         MergeFrom := fbParseCtx.ReadEnum(anyEnum:= _stMotor.status); 
     16#18:    // uint32 speed = 3;
         MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stMotor.speed); 
-    16#20:    // repeated int32 sensor_readings = 4;
+    16#22:    // repeated int32 sensor_readings = 4;
         MergeFrom := _fbRepeatedId4.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId4,nCount=> _stMotor.sensor_readings_count);
     16#2A:    // bytes config = 5;
         MergeFrom := fbParseCtx.ReadBytes(aBytes:= _stMotor.config, nCount=> _stMotor.config_count); 

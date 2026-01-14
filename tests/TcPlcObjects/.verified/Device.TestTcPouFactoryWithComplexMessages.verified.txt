@@ -78,7 +78,7 @@ CASE nTag OF
         MergeFrom := fbParseCtx.ReadString(anyStringOut:= _stDevice.name); 
     16#10:    // uint32 id = 2;
         MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stDevice.id); 
-    16#18:    // repeated uint32 error_codes = 3;
+    16#1A:    // repeated uint32 error_codes = 3;
         MergeFrom := _fbRepeatedId3.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId3,nCount=> _stDevice.error_codes_count);
     16#20:    // int32 temperature = 4;
         MergeFrom := fbParseCtx.ReadInt32(anyDint:= _stDevice.temperature); 

@@ -98,7 +98,7 @@ CASE nTag OF
         MergeFrom := fbParseCtx.ReadInt32(anyDint:= _stComplexData.value_int); 
     16#20:    // uint32 value_word = 4;
         MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stComplexData.value_word); 
-    16#28:    // repeated uint32 array_data = 5;
+    16#2A:    // repeated uint32 array_data = 5;
         MergeFrom := _fbRepeatedId5.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId5,nCount=> _stComplexData.array_data_count);
     16#30:    // Status state = 6;
         MergeFrom := fbParseCtx.ReadEnum(anyEnum:= _stComplexData.state); 
