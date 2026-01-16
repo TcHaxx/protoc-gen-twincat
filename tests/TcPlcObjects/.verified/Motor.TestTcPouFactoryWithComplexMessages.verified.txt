@@ -66,7 +66,8 @@ END_VAR
 ]]>,
         Implementation: {
           ST:
-<![CDATA[REPEAT
+<![CDATA[_fbRepeatedId4.Initialize();
+REPEAT
 MergeFrom := fbParseCtx.ReadTag(nTag=> nTag);
 IF SUCCEEDED(MergeFrom) AND nTag = 0 THEN
     EXIT;

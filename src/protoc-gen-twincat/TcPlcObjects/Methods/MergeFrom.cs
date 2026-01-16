@@ -62,7 +62,9 @@ internal class MergeFrom : IMethodProcessor
 
             if (field.Label == FieldDescriptorProto.Types.Label.Repeated)
             {
-                sb.AppendLine(ProcessRepeatedField(message, field, prefixes));
+                var (call, init) = ProcessRepeatedField(message, field, prefixes);
+                sb.AppendLine(call);
+                sb.Insert(0, init);
             }
             else if (field.Type == FieldDescriptorProto.Types.Type.Message)
             {
@@ -108,13 +110,14 @@ internal class MergeFrom : IMethodProcessor
                 """;
     }
 
-    private static string ProcessRepeatedField(DescriptorProto message, FieldDescriptorProto repeatedField, Prefixes prefixes)
+    private static (string call, string init) ProcessRepeatedField(DescriptorProto message, FieldDescriptorProto repeatedField, Prefixes prefixes)
     {
         var suffix = $"Id{repeatedField.Number}";
         var countVar = $"{prefixes.GetStNameWithInstancePrefix(message)}.{RepeatedFieldHelper.GetCountFieldName(repeatedField)}";
-        return $"""
+        return (call: $"""
                         MergeFrom := _fbRepeated{suffix}.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodec{suffix},nCount=> {countVar});
-                """;
+                """,
+                init: $"_fbRepeated{suffix}.Initialize();{Environment.NewLine}");
     }
 
     private static string ProcessField(DescriptorProto message, FieldDescriptorProto field, Prefixes prefixes)
