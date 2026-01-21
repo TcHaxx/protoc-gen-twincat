@@ -46,9 +46,13 @@ jobs:
         with:
           dotnet-version: ${{ env.dotnet_versions }}
 
-      - name: Publish AOT
+      # - name: Publish AOT
+      #   run: |
+      #         dotnet publish ${{ env.csproj }} -c Release -r ${{ matrix.runtime }} -o ${{ matrix.dist_dir }} --self-contained true /p:PublishAot=true /p:SuppressTrimAnalysisWarnings=true /p:SuppressAotAnalysisWarnings=true /p:Version=${{ env.new_release_version }}
+      
+      - name: Publish self-contained
         run: |
-              dotnet publish ${{ env.csproj }} -c Release -r ${{ matrix.runtime }} -o ${{ matrix.dist_dir }} --self-contained true /p:PublishAot=true /p:SuppressTrimAnalysisWarnings=true /p:SuppressAotAnalysisWarnings=true -p:Version=${{ env.new_release_version }}
+              dotnet publish ${{ env.csproj }} -c Release -r ${{ matrix.runtime }} -o ${{ matrix.dist_dir }} --self-contained true /p:PublishTrimmed=true /p:TrimMode=partial /p:PublishSingleFile=true /p:SuppressTrimAnalysisWarnings=true /p:Version=${{ env.new_release_version }}
 
       - name: Copy tchaxx-extensions.proto
         run: |
