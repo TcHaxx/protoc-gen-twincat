@@ -1,0 +1,24 @@
+﻿{
+  DUT: {
+    Declaration:
+<![CDATA[(*******************************************************************************
+                          protoc-gen-twincat V0.0.0.0                           
+                  https://github.com/TcHaxx/protoc-gen-twincat                  
+*******************************************************************************)
+{attribute 'no-analysis'}
+TYPE TestCustomType :
+STRUCT
+	// Reinterpret the field as a custom type using the tchaxx.custom_type option
+	custom_type_as_time : TIME;
+	// MY_TYPE is a string
+	custom_type_as_mytype : MY_TYPE;
+	custom_type_as_repeated_myftype : ARRAY[0..2] OF MY_FTYPE;
+	// MY_FTYPE is a repeated float
+	custom_type_as_repeated_myftype_count : UDINT; // Implict generated field for actual number of items in array custom_type_as_repeated_myftype
+END_STRUCT
+END_TYPE]]>,
+    Name: TestCustomType,
+    Id: Guid_1
+  },
+  Version: 1.1.0.1
+}

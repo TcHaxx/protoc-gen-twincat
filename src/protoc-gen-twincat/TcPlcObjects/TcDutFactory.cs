@@ -190,6 +190,11 @@ internal static class TcDutFactory
 
     private static string ProcessFieldValue(FieldDescriptorProto field, Comments comments, Prefixes prefixes)
     {
+        if (field.Options != null && field.Options.HasExtension(TchaxxExtensionsExtensions.CustomType))
+        {
+            return CustomTypeFieldProvider.ProcessField(field, comments, prefixes);
+        }
+
 #pragma warning disable IDE0072 // Add missing cases
         var processFieldValue = field.Type switch
         {

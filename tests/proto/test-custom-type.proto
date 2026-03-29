@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "tchaxx-extensions.proto";
+
+package test.custom_type;
+
+message TestCustomType {
+  // Reinterpret the field as a custom type using the tchaxx.custom_type option
+  uint32 custom_type_as_time = 1 [(tchaxx.custom_type) = "TIME"];
+  // MY_TYPE is a string
+  string custom_type_as_mytype = 2 [(tchaxx.custom_type) = "MY_TYPE"];
+  repeated float custom_type_as_repeated_myftype = 3 [(tchaxx.array_len) = 3, (tchaxx.custom_type) = "MY_FTYPE"];  // MY_FTYPE is a repeated float
+
+}

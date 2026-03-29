@@ -1,54 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <RootNamespace>TcHaxx.ProtocGenTcTests</RootNamespace>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.4">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-        <PackageReference Include="Verify.Xunit" Version="31.7.3" />
-        <PackageReference Include="xunit" Version="2.9.3" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Google.Protobuf" Version="3.33.1" />
-        <PackageReference Include="Grpc.Tools" Version="2.76.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Using Include="Xunit" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="../src/protoc-gen-twincat/protoc-gen-twincat.csproj" />
-    </ItemGroup>
-
-<!-- Compile protos for Unit-Tests -->
-    <PropertyGroup>
-        <ProtobufDescriptorSetOutDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/$(TargetFramework)/.protobufs</ProtobufDescriptorSetOutDir>
-    </PropertyGroup>
-    <ItemGroup>
-        <Protobuf Include="proto/test-extensions-helper.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
-        <Protobuf Include="proto/test-bool.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
-        <Protobuf Include="proto/test-complex.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
-        <Protobuf Include="proto/test-prefix.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
-        <Protobuf Include="proto/test-tcpoufactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
-        <Protobuf Include="proto/test-tcdutfactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
-        <Protobuf Include="proto/test-scalars.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Prefix\.verified\" />
-    </ItemGroup>
-    <Target Name="ProtocGenTc_BeforeCompile" BeforeTargets="Build">
-        <MakeDir Directories="$(ProtobufDescriptorSetOutDir)/proto" />
-        <Exec Command="protoc -I../proto -Iproto --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(Protobuf.Identity).pb ./%(Protobuf.Identity)" />
-    </Target>
+  <PropertyGroup>
+    <RootNamespace>TcHaxx.ProtocGenTcTests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageReference Include="Verify.Xunit" Version="31.12.5" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Google.Protobuf" Version="3.34.1" />
+    <PackageReference Include="Grpc.Tools" Version="2.78.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../src/protoc-gen-twincat/protoc-gen-twincat.csproj" />
+  </ItemGroup>
+  <!-- Compile protos for Unit-Tests -->
+  <PropertyGroup>
+    <ProtobufDescriptorSetOutDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/$(TargetFramework)/.protobufs</ProtobufDescriptorSetOutDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Protobuf Include="proto/test-extensions-helper.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+    <Protobuf Include="proto/test-bool.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+    <Protobuf Include="proto/test-complex.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+    <Protobuf Include="proto/test-custom-type.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+    <Protobuf Include="proto/test-prefix.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+    <Protobuf Include="proto/test-tcpoufactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+    <Protobuf Include="proto/test-tcdutfactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+    <Protobuf Include="proto/test-scalars.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+    <Protobuf Include="proto\test-custom-type.proto" GrpcServices="None" ProtoCompile="True">
+      <ProtoRoot>.;../proto</ProtoRoot>
+    </Protobuf>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Prefix\.verified\" />
+  </ItemGroup>
+  <Target Name="ProtocGenTc_BeforeCompile" BeforeTargets="Build">
+    <MakeDir Directories="$(ProtobufDescriptorSetOutDir)/proto" />
+    <Exec Command="protoc -I../proto -Iproto --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(Protobuf.Identity).pb ./%(Protobuf.Identity)" />
+  </Target>
 </Project>

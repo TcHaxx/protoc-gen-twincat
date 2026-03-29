@@ -10,13 +10,13 @@ using TcHaxx.ProtocGenTc.TcPlcObjects;
 
 namespace TcHaxx.ProtocGenTcTests.TcPlcObjects;
 
-public class ScalarTypesTest : VerifyBase
+public class CustomTypeTests : VerifyBase
 {
     private readonly VerifySettings _localSettings;
-    private const string TEST_PROTO = "test-scalars.proto";
+    private const string TEST_PROTO = "test-custom-type.proto";
     private readonly FileDescriptorProto? _sut;
 
-    public ScalarTypesTest() : base()
+    public CustomTypeTests() : base()
     {
         _localSettings = VerifyGlobalSettings.GetGlobalSettings();
         _localSettings.AlwaysIncludeMembersWithType<XmlCDataSection>();
@@ -37,7 +37,7 @@ public class ScalarTypesTest : VerifyBase
     }
 
     [Fact]
-    public async Task TestTcPouFactoryWithScalarTypesMessages()
+    public async Task TestTcPouFactoryWithCustomTypesMessages()
     {
         Assert.NotNull(_sut);
         Assert.NotEmpty(_sut.MessageType);
@@ -49,7 +49,7 @@ public class ScalarTypesTest : VerifyBase
     }
 
     [Fact]
-    public async Task TestTcDutFactoryWithScalarTypesMessages()
+    public async Task TestTcDutFactoryWithCustomTypesMessages()
     {
         Assert.NotNull(_sut);
         Assert.NotEmpty(_sut.MessageType);

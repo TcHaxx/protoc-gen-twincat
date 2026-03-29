@@ -17,6 +17,7 @@ extend google.protobuf.FieldOptions {
   optional EnumIntegerTypes integer_type = 50101;           // integer data types, e.g. WORD, ULINT, etc.
   optional int32 max_string_len = 50102;                    // max. string len, e.g. STRING(256)
   optional EnumDisplayMode attribute_display_mode = 50103;  // display mode, e.g. {attribute 'displaymode':='dec'}
+  optional string custom_type = 50110;                      // custom type name, e.g. "LTIME" 
 }
 
 extend google.protobuf.ServiceOptions {
