@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: ${{env.dotnet_versions}}
+          global-json-file: ./global.json
 
       - name: Restore dependencies
         run: dotnet restore ${{ env.solution }}
