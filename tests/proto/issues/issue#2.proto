@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package Issue2;
+
+import "tchaxx-extensions.proto";
+
+message MyStruct {
+int32 value = 1;
+}
+
+message ExtendedStruct {
+MyStruct Data_A = 1;
+MyStruct Data_B = 2;
+}

@@ -17,9 +17,9 @@ VAR
     _fbFieldCodecId5 : FB_FieldCodecUint32(nTag:= 16#2A);
     _fbRepeatedId5 : FB_RepeatedField(anyArray:= F_ToAnyType(_stComplexData.array_data), anyFirstElem:= F_ToAnyType(_stComplexData.array_data[0]));
     // repeated SensorReading readings = 10;
-    _fbFieldCodecId10 : FB_FieldCodecMessage(nTag:= 16#52, ipMessage:= _fbSensorReading);
+    _fbFieldCodecId10 : FB_FieldCodecMessage(nTag:= 16#52, ipMessage:= _fbreadings);
     _fbRepeatedId10 : FB_RepeatedField(anyArray:= F_ToAnyType(_stComplexData.readings), anyFirstElem:= F_ToAnyType(_stComplexData.readings[0]));
-    _fbSensorReading : FB_SensorReading;
+    _fbreadings : FB_SensorReading;
     END_VAR
 ]]>,
     Implementation: {
@@ -57,7 +57,7 @@ nSize := nSize + 1 + F_ComputeDoubleSize(fValue:= _stComplexData.measurement);
 // float calibration_factor = 9;
 nSize := nSize + 1 + F_ComputeFloatSize(fValue:= _stComplexData.calibration_factor);
 // repeated SensorReading readings = 10;
-nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbSensorReading);
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbreadings);
 // DataType data_type = 11;
 nSize := nSize + 1 + F_ComputeEnumSize(anyEnum:= _stComplexData.data_type);
 CalculateSize := nSize;

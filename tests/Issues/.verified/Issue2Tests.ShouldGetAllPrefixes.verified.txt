@@ -7,16 +7,13 @@
 *******************************************************************************)
 {attribute 'no_explicit_call' := 'do not call this POU directly'}
 {attribute 'no-analysis'}
-// Message with fb_prefix option (function block)
-FUNCTION_BLOCK INTERNAL FINAL FB_Motor IMPLEMENTS I_Message
+FUNCTION_BLOCK INTERNAL FINAL ExtendedStruct IMPLEMENTS I_Message
 VAR
     _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
     _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
-    _stMotor : ST_Motor;
-    // repeated int32 sensor_readings = 4;
-    _fbFieldCodecId4 : FB_FieldCodecInt32(nTag:= 16#22);
-    _fbRepeatedId4 : FB_RepeatedField(anyArray:= F_ToAnyType(_stMotor.sensor_readings), anyFirstElem:= F_ToAnyType(_stMotor.sensor_readings[0]));
-    _fbmotor_config : FB_MotorConfig;
+    ExtendedStruct : ExtendedStruct;
+    Data_A : MyStruct;
+    Data_B : MyStruct;
     END_VAR
 ]]>,
     Implementation: {
@@ -34,19 +31,10 @@ END_VAR
 ]]>,
         Implementation: {
           ST:
-<![CDATA[// string name = 1;
-nSize := nSize + 1 + F_ComputeStringSize(anyString:= _stMotor.name);
-// Status status = 2;
-nSize := nSize + 1 + F_ComputeEnumSize(anyEnum:= _stMotor.status);
-// uint32 speed = 3;
-nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stMotor.speed);
-// repeated int32 sensor_readings = 4;
-_fbRepeatedId4.CalculateSize(nSize => nRepeatedFieldSize);
-nSize := nSize + nRepeatedFieldSize;
-// bytes config = 5;
-nSize := nSize + 1 + F_ComputeBytesSize(aBytes:= _stMotor.config);
-// MotorConfig motor_config = 6;
-nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbmotor_config);
+<![CDATA[// MyStruct Data_A = 1;
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= Data_A);
+// MyStruct Data_B = 2;
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= Data_B);
 CalculateSize := nSize;
 ]]>
         },
@@ -66,8 +54,7 @@ END_VAR
 ]]>,
         Implementation: {
           ST:
-<![CDATA[_fbRepeatedId4.Initialize();
-REPEAT
+<![CDATA[REPEAT
 MergeFrom := fbParseCtx.ReadTag(nTag=> nTag);
 IF SUCCEEDED(MergeFrom) AND nTag = 0 THEN
     EXIT;
@@ -78,19 +65,12 @@ IF FAILED(MergeFrom) THEN
 END_IF
 
 CASE nTag OF
-    16#0A:    // string name = 1;
-        MergeFrom := fbParseCtx.ReadString(anyStringOut:= _stMotor.name); 
-    16#10:    // Status status = 2;
-        MergeFrom := fbParseCtx.ReadEnum(anyEnum:= _stMotor.status); 
-    16#18:    // uint32 speed = 3;
-        MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stMotor.speed); 
-    16#22:    // repeated int32 sensor_readings = 4;
-        MergeFrom := _fbRepeatedId4.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId4,nCount=> _stMotor.sensor_readings_count);
-    16#2A:    // bytes config = 5;
-        MergeFrom := fbParseCtx.ReadBytes(aBytes:= _stMotor.config, nCount=> _stMotor.config_count); 
-    16#32:    // MotorConfig motor_config = 6;
-        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbmotor_config);
-        THIS^._stMotor.motor_config := _fbmotor_config.MotorConfig;
+    16#0A:    // MyStruct Data_A = 1;
+        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= Data_A);
+        THIS^.ExtendedStruct.Data_A := Data_A.MyStruct;
+    16#12:    // MyStruct Data_B = 2;
+        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= Data_B);
+        THIS^.ExtendedStruct.Data_B := Data_B.MyStruct;
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();
 END_CASE
@@ -113,54 +93,23 @@ END_VAR
 ]]>,
         Implementation: {
           ST:
-<![CDATA[// string name = 1;
+<![CDATA[// MyStruct Data_A = 1;
 WriteTo := fbWriteCtx.WriteTag(1, E_WireType.LengthDelimited);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteString(sStringToWrite:= _stMotor.name);
+Data_A.MyStruct := THIS^.ExtendedStruct.Data_A;
+WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^.Data_A);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-// Status status = 2;
-WriteTo := fbWriteCtx.WriteTag(2, E_WireType.Varint);
+// MyStruct Data_B = 2;
+WriteTo := fbWriteCtx.WriteTag(2, E_WireType.LengthDelimited);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteEnum(anyEnum:= _stMotor.status);
-IF FAILED(WriteTo) THEN
-    RETURN;
-END_IF
-// uint32 speed = 3;
-WriteTo := fbWriteCtx.WriteTag(3, E_WireType.Varint);
-IF FAILED(WriteTo) THEN
-    RETURN;
-END_IF
-WriteTo := fbWriteCtx.WriteUint32(anyUdint:= _stMotor.speed);
-IF FAILED(WriteTo) THEN
-    RETURN;
-END_IF
-// repeated int32 sensor_readings = 4;
-WriteTo := _fbRepeatedId4.WriteToWithCount(fbWriteCtx:= fbWriteCtx, ipFieldCodec:= _fbFieldCodecId4, nCount:= _stMotor.sensor_readings_count);
-IF FAILED(WriteTo) THEN
-    RETURN;
-END_IF
-// bytes config = 5;
-WriteTo := fbWriteCtx.WriteTag(5, E_WireType.LengthDelimited);
-IF FAILED(WriteTo) THEN
-    RETURN;
-END_IF
-WriteTo := fbWriteCtx.WriteBytes(aBytes:= _stMotor.config, nCount:= _stMotor.config_count);
-IF FAILED(WriteTo) THEN
-    RETURN;
-END_IF
-// MotorConfig motor_config = 6;
-WriteTo := fbWriteCtx.WriteTag(6, E_WireType.LengthDelimited);
-IF FAILED(WriteTo) THEN
-    RETURN;
-END_IF
-_fbmotor_config.MotorConfig := THIS^._stMotor.motor_config;
-WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbmotor_config);
+Data_B.MyStruct := THIS^.ExtendedStruct.Data_B;
+WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^.Data_B);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
@@ -172,15 +121,15 @@ END_IF
     ],
     Property: [
       {
-        Declaration: <![CDATA[PROPERTY PUBLIC Motor : ST_Motor]]>,
-        Name: Motor,
+        Declaration: <![CDATA[PROPERTY PUBLIC ExtendedStruct : ExtendedStruct]]>,
+        Name: ExtendedStruct,
         Id: Guid_4,
         Get: {
           Declaration:
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[Motor := _stMotor;]]>
+            ST: <![CDATA[ExtendedStruct := ExtendedStruct;]]>
           },
           Name: Get
         },
@@ -189,7 +138,7 @@ END_VAR]]>,
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[_stMotor := Motor;]]>
+            ST: <![CDATA[ExtendedStruct := ExtendedStruct;]]>
           },
           Name: Set
         }
@@ -227,13 +176,13 @@ PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
-            ST: <![CDATA[MessageValue := F_ToAnyType(anyArg:= _stMotor);]]>
+            ST: <![CDATA[MessageValue := F_ToAnyType(anyArg:= ExtendedStruct);]]>
           },
           Name: Get
         }
       }
     ],
-    Name: FB_Motor,
+    Name: ExtendedStruct,
     Id: Guid_8,
     SpecialFunc: None
   },

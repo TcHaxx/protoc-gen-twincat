@@ -39,8 +39,9 @@
     <Protobuf Include="proto/test-tcpoufactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
     <Protobuf Include="proto/test-tcdutfactory.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
     <Protobuf Include="proto/test-scalars.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
-    <Protobuf Include="proto\test-custom-type.proto" GrpcServices="None" ProtoCompile="True">
-      <ProtoRoot>.;../proto</ProtoRoot>
+    <Protobuf Include="proto\issues\issue#2.proto" GrpcServices="None" ProtoCompile="True" ProtoRoot=".;../proto" />
+      <Protobuf Include="proto\test-custom-type.proto" GrpcServices="None" ProtoCompile="True">
+          <ProtoRoot>.;../proto</ProtoRoot>
     </Protobuf>
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +49,7 @@
   </ItemGroup>
   <Target Name="ProtocGenTc_BeforeCompile" BeforeTargets="Build">
     <MakeDir Directories="$(ProtobufDescriptorSetOutDir)/proto" />
+    <MakeDir Directories="$(ProtobufDescriptorSetOutDir)/proto/issues" />
     <Exec Command="protoc -I../proto -Iproto --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(Protobuf.Identity).pb ./%(Protobuf.Identity)" />
   </Target>
 </Project>

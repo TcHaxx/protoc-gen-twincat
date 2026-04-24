@@ -31,10 +31,10 @@ internal static class PrefixesExtensions
 
         internal string GetFbNameWithInstancePrefix(FieldDescriptorProto fieldMessage)
         {
-            var strippedName = StripNestedTypeName(fieldMessage.TypeName);
-            return prefixes.TryGetPrefixForFbByName(strippedName, out var prefixedName)
-                ? $"{prefixedName.Instance}{strippedName}"
-                : strippedName;
+            var name = fieldMessage.Name;
+            return prefixes.TryGetPrefixForFbByName(name, out var prefixedName)
+                ? $"{prefixedName.Instance}{name}"
+                : name;
         }
 
         internal bool TryGetPrefixForFb(DescriptorProto message, [NotNullWhen(true)] out Extensions.v1.Prefix? prefix)

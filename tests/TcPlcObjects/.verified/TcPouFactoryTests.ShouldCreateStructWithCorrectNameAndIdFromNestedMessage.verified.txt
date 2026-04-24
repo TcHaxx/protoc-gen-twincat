@@ -12,7 +12,7 @@ VAR
     _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
     _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
     _stTestNestedMessage : ST_TestNestedMessage;
-    _fbTestSimpleMessage : FB_TestSimpleMessage;
+    _fbsimple_message : FB_TestSimpleMessage;
     END_VAR
 ]]>,
     Implementation: {
@@ -31,7 +31,7 @@ END_VAR
         Implementation: {
           ST:
 <![CDATA[// TestSimpleMessage simple_message = 1;
-nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbTestSimpleMessage);
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbsimple_message);
 // uint32 id = 2;
 nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stTestNestedMessage.id);
 CalculateSize := nSize;
@@ -65,8 +65,8 @@ END_IF
 
 CASE nTag OF
     16#0A:    // TestSimpleMessage simple_message = 1;
-        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbTestSimpleMessage);
-        THIS^._stTestNestedMessage.simple_message := _fbTestSimpleMessage.stTestSimpleMessage;
+        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbsimple_message);
+        THIS^._stTestNestedMessage.simple_message := _fbsimple_message.stTestSimpleMessage;
     16#10:    // uint32 id = 2;
         MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stTestNestedMessage.id); 
 ELSE
@@ -96,8 +96,8 @@ WriteTo := fbWriteCtx.WriteTag(1, E_WireType.LengthDelimited);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-_fbTestSimpleMessage.stTestSimpleMessage := THIS^._stTestNestedMessage.simple_message;
-WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbTestSimpleMessage);
+_fbsimple_message.stTestSimpleMessage := THIS^._stTestNestedMessage.simple_message;
+WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbsimple_message);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
