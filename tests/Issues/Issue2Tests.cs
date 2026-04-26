@@ -1,11 +1,11 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Compiler;
 using Google.Protobuf.Reflection;
+using Issue2;
 using TcHaxx.ProtocGenTc;
 using TcHaxx.ProtocGenTc.Prefix;
 using TcHaxx.ProtocGenTc.TcPlcObjects;
 using TcHaxx.ProtocGenTcTests.VerifySetup;
-using Issue2;
 
 namespace TcHaxx.ProtocGenTcTests.Issues;
 
@@ -35,12 +35,22 @@ public class Issue2Tests : VerifyBase
     }
 
     [Fact]
-    public async Task ShouldGetAllPrefixes()
+    public async Task ShoulCreatePou()
     {
         Assert.NotNull(_sut);
         var md = _sut.MessageType.Single(m => m.Name == nameof(ExtendedStruct));
         Assert.NotNull(md);
         var pou = TcPouFactory.Create(_sut, md, _sut.GetPrefixes());
         await Verify(pou, _localSettings);
+    }
+
+    [Fact]
+    public async Task ShouldCreateDut()
+    {
+        Assert.NotNull(_sut);
+        var md = _sut.MessageType.Single(m => m.Name == nameof(ExtendedStruct));
+        Assert.NotNull(md);
+        var dut = TcDutFactory.CreateStruct(_sut, md, _sut.GetPrefixes());
+        await Verify(dut, _localSettings);
     }
 }

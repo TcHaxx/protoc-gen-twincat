@@ -7,13 +7,15 @@
 *******************************************************************************)
 {attribute 'no_explicit_call' := 'do not call this POU directly'}
 {attribute 'no-analysis'}
-FUNCTION_BLOCK INTERNAL FINAL ExtendedStruct IMPLEMENTS I_Message
+FUNCTION_BLOCK INTERNAL FINAL FB_ExtendedStruct IMPLEMENTS I_Message
 VAR
     _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
     _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
-    ExtendedStruct : ExtendedStruct;
-    Data_A : MyStruct;
-    Data_B : MyStruct;
+    _stExtendedStruct : ST_ExtendedStruct;
+    _fbData_A : Class_MyStruct;
+    _fbData_B : Class_MyStruct;
+    _fbData_C : FB_NoPrefix;
+    _fbData_D : FB_NoPrefix;
     END_VAR
 ]]>,
     Implementation: {
@@ -32,9 +34,13 @@ END_VAR
         Implementation: {
           ST:
 <![CDATA[// MyStruct Data_A = 1;
-nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= Data_A);
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbData_A);
 // MyStruct Data_B = 2;
-nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= Data_B);
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbData_B);
+// NoPrefix Data_C = 3;
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbData_C);
+// NoPrefix Data_D = 4;
+nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbData_D);
 CalculateSize := nSize;
 ]]>
         },
@@ -66,11 +72,17 @@ END_IF
 
 CASE nTag OF
     16#0A:    // MyStruct Data_A = 1;
-        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= Data_A);
-        THIS^.ExtendedStruct.Data_A := Data_A.MyStruct;
+        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbData_A);
+        THIS^._stExtendedStruct.Data_A := _fbData_A.MyStruct;
     16#12:    // MyStruct Data_B = 2;
-        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= Data_B);
-        THIS^.ExtendedStruct.Data_B := Data_B.MyStruct;
+        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbData_B);
+        THIS^._stExtendedStruct.Data_B := _fbData_B.MyStruct;
+    16#1A:    // NoPrefix Data_C = 3;
+        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbData_C);
+        THIS^._stExtendedStruct.Data_C := _fbData_C.NoPrefix;
+    16#22:    // NoPrefix Data_D = 4;
+        MergeFrom := fbParseCtx.ReadMessage(ipMessage:= _fbData_D);
+        THIS^._stExtendedStruct.Data_D := _fbData_D.NoPrefix;
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();
 END_CASE
@@ -98,8 +110,8 @@ WriteTo := fbWriteCtx.WriteTag(1, E_WireType.LengthDelimited);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-Data_A.MyStruct := THIS^.ExtendedStruct.Data_A;
-WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^.Data_A);
+_fbData_A.MyStruct := THIS^._stExtendedStruct.Data_A;
+WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbData_A);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
@@ -108,8 +120,28 @@ WriteTo := fbWriteCtx.WriteTag(2, E_WireType.LengthDelimited);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-Data_B.MyStruct := THIS^.ExtendedStruct.Data_B;
-WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^.Data_B);
+_fbData_B.MyStruct := THIS^._stExtendedStruct.Data_B;
+WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbData_B);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+// NoPrefix Data_C = 3;
+WriteTo := fbWriteCtx.WriteTag(3, E_WireType.LengthDelimited);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+_fbData_C.NoPrefix := THIS^._stExtendedStruct.Data_C;
+WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbData_C);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+// NoPrefix Data_D = 4;
+WriteTo := fbWriteCtx.WriteTag(4, E_WireType.LengthDelimited);
+IF FAILED(WriteTo) THEN
+    RETURN;
+END_IF
+_fbData_D.NoPrefix := THIS^._stExtendedStruct.Data_D;
+WriteTo := fbWriteCtx.WriteMessage(ipMessage:= THIS^._fbData_D);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
@@ -121,7 +153,7 @@ END_IF
     ],
     Property: [
       {
-        Declaration: <![CDATA[PROPERTY PUBLIC ExtendedStruct : ExtendedStruct]]>,
+        Declaration: <![CDATA[PROPERTY PUBLIC ExtendedStruct : ST_ExtendedStruct]]>,
         Name: ExtendedStruct,
         Id: Guid_4,
         Get: {
@@ -129,7 +161,7 @@ END_IF
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[ExtendedStruct := ExtendedStruct;]]>
+            ST: <![CDATA[ExtendedStruct := _stExtendedStruct;]]>
           },
           Name: Get
         },
@@ -138,7 +170,7 @@ END_VAR]]>,
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[ExtendedStruct := ExtendedStruct;]]>
+            ST: <![CDATA[_stExtendedStruct := ExtendedStruct;]]>
           },
           Name: Set
         }
@@ -176,13 +208,13 @@ PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
-            ST: <![CDATA[MessageValue := F_ToAnyType(anyArg:= ExtendedStruct);]]>
+            ST: <![CDATA[MessageValue := F_ToAnyType(anyArg:= _stExtendedStruct);]]>
           },
           Name: Get
         }
       }
     ],
-    Name: ExtendedStruct,
+    Name: FB_ExtendedStruct,
     Id: Guid_8,
     SpecialFunc: None
   },

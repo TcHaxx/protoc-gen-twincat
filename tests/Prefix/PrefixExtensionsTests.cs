@@ -38,7 +38,6 @@ public class PrefixExtensionsTests : VerifyBase
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessagePrefix));
         Assert.True(prefixes.TryGetPrefixForFb(msg, out var prefix));
         Assert.Equal("FB_MSG_", prefix.Type);
-        Assert.Equal("_fb_msg_", prefix.Instance);
     }
 
     [Fact]
@@ -49,7 +48,6 @@ public class PrefixExtensionsTests : VerifyBase
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessagePrefix));
         Assert.True(prefixes.TryGetPrefixForSt(msg, out var prefix));
         Assert.Equal("ST_MSG_", prefix.Type);
-        Assert.Equal("_st_msg_", prefix.Instance);
     }
 
     [Fact]
@@ -60,7 +58,6 @@ public class PrefixExtensionsTests : VerifyBase
         var @enum = _sut.EnumType.First(x => x.Name == nameof(TestEnumPrefix));
         Assert.True(prefixes.TryGetEnumPrefix(@enum, out var prefix));
         Assert.Equal("E_ENUM_", prefix.Type);
-        Assert.Equal("_e_enum_", prefix.Instance);
     }
 
     [Fact]
@@ -71,7 +68,6 @@ public class PrefixExtensionsTests : VerifyBase
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessageNoPrefix));
         Assert.True(prefixes.TryGetPrefixForFb(msg, out var prefix));
         Assert.Equal("FB_FILE_", prefix.Type);
-        Assert.Equal("_fb_file_", prefix.Instance);
     }
 
     [Fact]
@@ -82,7 +78,6 @@ public class PrefixExtensionsTests : VerifyBase
         var msg = _sut.MessageType.First(x => x.Name == nameof(TestMessageNoPrefix));
         Assert.True(prefixes.TryGetPrefixForSt(msg, out var prefix));
         Assert.Equal("ST_FILE_", prefix.Type);
-        Assert.Equal("_st_file_", prefix.Instance);
     }
     [Fact]
     public void ShouldGetGlobalPrefixedFbName()
@@ -128,7 +123,6 @@ public class PrefixExtensionsTests : VerifyBase
         var @enum = _sut.EnumType.First(x => x.Name == nameof(TestEnumNoPrefix));
         Assert.True(prefixes.TryGetEnumPrefix(@enum, out var prefix));
         Assert.Equal("E_FILE_", prefix.Type);
-        Assert.Equal("_e_file_", prefix.Instance);
     }
 
     [Fact]

@@ -6,18 +6,15 @@
                   https://github.com/TcHaxx/protoc-gen-twincat                  
 *******************************************************************************)
 {attribute 'no-analysis'}
-TYPE ST_TestCustomType :
+TYPE ST_ExtendedStruct :
 STRUCT
-	// Reinterpret the field as a custom type using the tchaxx.custom_type option
-	custom_type_as_time : TIME;
-	// MY_TYPE is a string
-	custom_type_as_mytype : MY_TYPE;
-	custom_type_as_repeated_myftype : ARRAY[0..2] OF MY_FTYPE;
-	// MY_FTYPE is a repeated float
-	custom_type_as_repeated_myftype_count : UDINT; // Implict generated field for actual number of items in array custom_type_as_repeated_myftype
+	Data_A : ST_Class_MyStruct;
+	Data_B : ST_Class_MyStruct;
+	Data_C : ST_NoPrefix;
+	Data_D : ST_NoPrefix;
 END_STRUCT
 END_TYPE]]>,
-    Name: ST_TestCustomType,
+    Name: ST_ExtendedStruct,
     Id: Guid_1
   },
   Version: 1.1.0.1

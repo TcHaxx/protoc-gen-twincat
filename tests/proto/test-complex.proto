@@ -5,13 +5,13 @@ import "tchaxx-extensions.proto";
 package test.complex;
 
 // File-level options - testing global prefixes for all types
-option (tchaxx.global_st_prefix) = {type: "ST_" instance: "_st"};
-option (tchaxx.global_fb_prefix) = {type: "FB_" instance: "_fb"};
-option (tchaxx.global_enum_prefix) = {type: "E_" instance: "_e"};
+option (tchaxx.global_st_prefix) = {type: "ST_"};
+option (tchaxx.global_fb_prefix) = {type: "FB_"};
+option (tchaxx.global_enum_prefix) = {type: "E_"};
 
 // Enum with enum_prefix and enum_integer_type options
 enum Color {
-  option (tchaxx.enum_prefix) = {type: "E_" instance: "e"};
+  option (tchaxx.enum_prefix) = {type: "E_"};
   option (tchaxx.enum_integer_type) = EIT_WORD;
   COLOR_DEFAULT = 0;
   COLOR_RED = 1;
@@ -21,7 +21,7 @@ enum Color {
 
 // Another enum for testing
 enum Status {
-  option (tchaxx.enum_prefix) = {type: "E_" instance: "e"};
+  option (tchaxx.enum_prefix) = {type: "E_"};
   option (tchaxx.enum_integer_type) = EIT_DWORD;
   STATUS_IDLE = 0;
   STATUS_RUNNING = 1;
@@ -30,7 +30,7 @@ enum Status {
 
 // Message with st_prefix and attribute_pack_mode options
 message Device {
-  option (tchaxx.st_prefix) = {type: "ST_" instance: "_st"};
+  option (tchaxx.st_prefix) = {type: "ST_"};
   option (tchaxx.attribute_pack_mode) = EPM_ONE_BYTE_ALIGNED;
   
   string name = 1 [(tchaxx.max_string_len) = 256];
@@ -42,12 +42,12 @@ message Device {
 
 // Message with fb_prefix option (function block)
 message Motor {
-  option (tchaxx.fb_prefix) = {type: "FB_" instance: "_fb"};
+  option (tchaxx.fb_prefix) = {type: "FB_"};
   option (tchaxx.attribute_pack_mode) = EPM_FOUR_BYTES_ALIGNED;
   
   // Nested message for motor configuration
   message MotorConfig {
-    option (tchaxx.st_prefix) = {type: "ST_" instance: "_st"};
+    option (tchaxx.st_prefix) = {type: "ST_"};
     float max_speed = 1;
     double acceleration = 2;
     uint32 timeout_ms = 3 [(tchaxx.integer_type) = EIT_DWORD];
@@ -63,12 +63,12 @@ message Motor {
 
 // Another message demonstrating all field options
 message ComplexData {
-  option (tchaxx.st_prefix) = {type: "ST_" instance: "_st"};
+  option (tchaxx.st_prefix) = {type: "ST_"};
   option (tchaxx.attribute_pack_mode) = EPM_TWO_BYTES_ALIGNED;
   
   // Nested message for sensor data
   message SensorReading {
-    option (tchaxx.st_prefix) = {type: "ST_" instance: "_st"};
+    option (tchaxx.st_prefix) = {type: "ST_"};
     double value = 1;
     float precision = 2;
     int64 timestamp = 3 [(tchaxx.integer_type) = EIT_LINT];

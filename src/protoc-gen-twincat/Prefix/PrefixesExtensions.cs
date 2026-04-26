@@ -22,19 +22,10 @@ internal static class PrefixesExtensions
                 : strippedName;
         }
 
-        internal string GetFbNameWithInstancePrefix(DescriptorProto message)
-        {
-            return prefixes.TryGetPrefixForFb(message, out var prefixedName)
-                ? $"{prefixedName.Instance}{message.Name}"
-                : message.Name;
-        }
-
         internal string GetFbNameWithInstancePrefix(FieldDescriptorProto fieldMessage)
         {
             var name = fieldMessage.Name;
-            return prefixes.TryGetPrefixForFbByName(name, out var prefixedName)
-                ? $"{prefixedName.Instance}{name}"
-                : name;
+            return $"{GlobalDefaultPrefixes.FB_INSTANCE_PREFIX}{name}";
         }
 
         internal bool TryGetPrefixForFb(DescriptorProto message, [NotNullWhen(true)] out Extensions.v1.Prefix? prefix)
@@ -65,9 +56,7 @@ internal static class PrefixesExtensions
 
         internal string GetStNameWithInstancePrefix(DescriptorProto message)
         {
-            return prefixes.TryGetPrefixForSt(message, out var prefixedName)
-                ? $"{prefixedName.Instance}{message.Name}"
-                : message.Name;
+            return $"{GlobalDefaultPrefixes.ST_INSTANCE_PREFIX}{message.Name}";
         }
 
         internal string GetStNameWithPropertyPrefix(DescriptorProto message)
@@ -87,10 +76,8 @@ internal static class PrefixesExtensions
 
         internal string GetStNameWithInstancePrefix(FieldDescriptorProto fieldMessage)
         {
-            var strippedName = StripNestedTypeName(fieldMessage.TypeName);
-            return prefixes.TryGetPrefixForStByName(strippedName, out var prefixedName)
-                ? $"{prefixedName.Instance}{strippedName}"
-                : strippedName;
+            var name = fieldMessage.Name;
+            return $"{GlobalDefaultPrefixes.ST_INSTANCE_PREFIX}{name}";
         }
         internal bool TryGetPrefixForSt(DescriptorProto message, [NotNullWhen(true)] out Extensions.v1.Prefix? prefix)
         {
@@ -114,13 +101,6 @@ internal static class PrefixesExtensions
             return prefixes.TryGetPrefixForEnumByName(strippedName, out var prefixedName)
                 ? $"{prefixedName.Type}{strippedName}"
                 : strippedName;
-        }
-
-        internal string GetEnumNameWithInstancePrefix(EnumDescriptorProto @enum)
-        {
-            return prefixes.TryGetEnumPrefix(@enum, out var prefixedName)
-                ? $"{prefixedName.Instance}{@enum.Name}"
-                : @enum.Name;
         }
 
         internal bool TryGetEnumPrefix(EnumDescriptorProto @enum, [NotNullWhen(true)] out Extensions.v1.Prefix? prefix)

@@ -4,8 +4,8 @@ import "tchaxx-extensions.proto";
 
 package test.scalars;
 
-option (tchaxx.global_st_prefix) = {type: "ST_" instance: "_st"};
-option (tchaxx.global_fb_prefix) = {type: "FB_" instance: "_fb"};
+option (tchaxx.global_st_prefix) = {type: "ST_"};
+option (tchaxx.global_fb_prefix) = {type: "FB_"};
 
 message ScalarTypesTest {
   double double_value = 1;

@@ -5,10 +5,18 @@ package Issue2;
 import "tchaxx-extensions.proto";
 
 message MyStruct {
-int32 value = 1;
+  option (tchaxx.fb_prefix) = { type: "Class_", };
+  option (tchaxx.st_prefix) = { type: "ST_Class_", };
+  int32 value = 1;
+}
+
+message NoPrefix {
+  int32 value = 1;
 }
 
 message ExtendedStruct {
-MyStruct Data_A = 1;
-MyStruct Data_B = 2;
+  MyStruct Data_A = 1;
+  MyStruct Data_B = 2;
+  NoPrefix Data_C = 3;
+  NoPrefix Data_D = 4;
 }

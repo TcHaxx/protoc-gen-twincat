@@ -20,7 +20,7 @@ internal static class PrefixFactory
         fileDescriptorProto.Options.TryGetExtension(GlobalStPrefix, out var stPrefix);
         fileDescriptorProto.Options.TryGetExtension(GlobalEnumPrefix, out var enumPrefix);
 
-        return new GlobalPrefixes(fbPrefix, stPrefix, enumPrefix);
+        return new GlobalPrefixes(fbPrefix ?? GlobalDefaultPrefixes.FB, stPrefix ?? GlobalDefaultPrefixes.ST, enumPrefix ?? GlobalDefaultPrefixes.Enum);
     }
 
     private static Dictionary<DescriptorProto, MessagePrefixes> GetAllMessagePrefixes(

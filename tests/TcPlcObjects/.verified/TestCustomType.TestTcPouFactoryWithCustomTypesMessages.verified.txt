@@ -7,14 +7,14 @@
 *******************************************************************************)
 {attribute 'no_explicit_call' := 'do not call this POU directly'}
 {attribute 'no-analysis'}
-FUNCTION_BLOCK INTERNAL FINAL TestCustomType IMPLEMENTS I_Message
+FUNCTION_BLOCK INTERNAL FINAL FB_TestCustomType IMPLEMENTS I_Message
 VAR
     _fbMessageParser : FB_MessageParser(ipMessage:= THIS^);
     _fbMessageWriter : FB_MessageWriter(ipMessage:= THIS^);
-    TestCustomType : TestCustomType;
+    _stTestCustomType : ST_TestCustomType;
     // repeated float custom_type_as_repeated_myftype = 3;
     _fbFieldCodecId3 : FB_FieldCodecFloat(nTag:= 16#1A);
-    _fbRepeatedId3 : FB_RepeatedField(anyArray:= F_ToAnyType(TestCustomType.custom_type_as_repeated_myftype), anyFirstElem:= F_ToAnyType(TestCustomType.custom_type_as_repeated_myftype[0]));
+    _fbRepeatedId3 : FB_RepeatedField(anyArray:= F_ToAnyType(_stTestCustomType.custom_type_as_repeated_myftype), anyFirstElem:= F_ToAnyType(_stTestCustomType.custom_type_as_repeated_myftype[0]));
     END_VAR
 ]]>,
     Implementation: {
@@ -33,9 +33,9 @@ END_VAR
         Implementation: {
           ST:
 <![CDATA[// uint32 custom_type_as_time = 1;
-nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= TestCustomType.custom_type_as_time);
+nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stTestCustomType.custom_type_as_time);
 // string custom_type_as_mytype = 2;
-nSize := nSize + 1 + F_ComputeStringSize(anyString:= TestCustomType.custom_type_as_mytype);
+nSize := nSize + 1 + F_ComputeStringSize(anyString:= _stTestCustomType.custom_type_as_mytype);
 // repeated float custom_type_as_repeated_myftype = 3;
 _fbRepeatedId3.CalculateSize(nSize => nRepeatedFieldSize);
 nSize := nSize + nRepeatedFieldSize;
@@ -71,11 +71,11 @@ END_IF
 
 CASE nTag OF
     16#08:    // uint32 custom_type_as_time = 1;
-        MergeFrom := fbParseCtx.ReadUint32(anyUdint:= TestCustomType.custom_type_as_time); 
+        MergeFrom := fbParseCtx.ReadUint32(anyUdint:= _stTestCustomType.custom_type_as_time); 
     16#12:    // string custom_type_as_mytype = 2;
-        MergeFrom := fbParseCtx.ReadString(anyStringOut:= TestCustomType.custom_type_as_mytype); 
+        MergeFrom := fbParseCtx.ReadString(anyStringOut:= _stTestCustomType.custom_type_as_mytype); 
     16#1A:    // repeated float custom_type_as_repeated_myftype = 3;
-        MergeFrom := _fbRepeatedId3.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId3,nCount=> TestCustomType.custom_type_as_repeated_myftype_count);
+        MergeFrom := _fbRepeatedId3.AddEntriesFrom(fbParseCtx:= fbParseCtx, ipFieldCodec:= _fbFieldCodecId3,nCount=> _stTestCustomType.custom_type_as_repeated_myftype_count);
 ELSE
     MergeFrom := fbParseCtx.SkipLastField();
 END_CASE
@@ -103,7 +103,7 @@ WriteTo := fbWriteCtx.WriteTag(1, E_WireType.Varint);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteUint32(anyUdint:= TestCustomType.custom_type_as_time);
+WriteTo := fbWriteCtx.WriteUint32(anyUdint:= _stTestCustomType.custom_type_as_time);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
@@ -112,12 +112,12 @@ WriteTo := fbWriteCtx.WriteTag(2, E_WireType.LengthDelimited);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
-WriteTo := fbWriteCtx.WriteString(sStringToWrite:= TestCustomType.custom_type_as_mytype);
+WriteTo := fbWriteCtx.WriteString(sStringToWrite:= _stTestCustomType.custom_type_as_mytype);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
 // repeated float custom_type_as_repeated_myftype = 3;
-WriteTo := _fbRepeatedId3.WriteToWithCount(fbWriteCtx:= fbWriteCtx, ipFieldCodec:= _fbFieldCodecId3, nCount:= TestCustomType.custom_type_as_repeated_myftype_count);
+WriteTo := _fbRepeatedId3.WriteToWithCount(fbWriteCtx:= fbWriteCtx, ipFieldCodec:= _fbFieldCodecId3, nCount:= _stTestCustomType.custom_type_as_repeated_myftype_count);
 IF FAILED(WriteTo) THEN
     RETURN;
 END_IF
@@ -129,7 +129,7 @@ END_IF
     ],
     Property: [
       {
-        Declaration: <![CDATA[PROPERTY PUBLIC TestCustomType : TestCustomType]]>,
+        Declaration: <![CDATA[PROPERTY PUBLIC TestCustomType : ST_TestCustomType]]>,
         Name: TestCustomType,
         Id: Guid_4,
         Get: {
@@ -137,7 +137,7 @@ END_IF
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[TestCustomType := TestCustomType;]]>
+            ST: <![CDATA[TestCustomType := _stTestCustomType;]]>
           },
           Name: Get
         },
@@ -146,7 +146,7 @@ END_VAR]]>,
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[TestCustomType := TestCustomType;]]>
+            ST: <![CDATA[_stTestCustomType := TestCustomType;]]>
           },
           Name: Set
         }
@@ -184,13 +184,13 @@ PROPERTY PUBLIC Writer : REFERENCE TO FB_MessageWriter]]>,
         Get: {
           Declaration: <![CDATA[]]>,
           Implementation: {
-            ST: <![CDATA[MessageValue := F_ToAnyType(anyArg:= TestCustomType);]]>
+            ST: <![CDATA[MessageValue := F_ToAnyType(anyArg:= _stTestCustomType);]]>
           },
           Name: Get
         }
       }
     ],
-    Name: TestCustomType,
+    Name: FB_TestCustomType,
     Id: Guid_8,
     SpecialFunc: None
   },
