@@ -74,7 +74,7 @@ internal static class TcPouFactory
                 sb.AppendLine($$"""
                                     // {{repeatedField.Dump()}}
                                     _fbFieldCodec{{suffix}} : FB_FieldCodec{{repeatedField.Type}}(nTag:= 16#{{repeatedField.GetFieldTagValue().ToString("X2")}}, ipMessage:= {{fbName}});
-                                    _fbRepeated{{suffix}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}[0]));
+                                    _fbRepeated{{suffix}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}[0]), ipFieldCodec:= _fbFieldCodec{{suffix}});
                                 """);
             }
             else
@@ -82,7 +82,7 @@ internal static class TcPouFactory
                 sb.AppendLine($$"""
                                     // {{repeatedField.Dump()}}
                                     _fbFieldCodec{{suffix}} : FB_FieldCodec{{repeatedField.Type}}(nTag:= 16#{{repeatedField.GetPackedRepetatedFieldTagValue().ToString("X2")}});
-                                    _fbRepeated{{suffix}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}[0]));
+                                    _fbRepeated{{suffix}} : FB_RepeatedField(anyArray:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}), anyFirstElem:= F_ToAnyType({{msgName}}.{{repeatedField.Name}}[0]), ipFieldCodec:= _fbFieldCodec{{suffix}});
                                 """);
             }
         }

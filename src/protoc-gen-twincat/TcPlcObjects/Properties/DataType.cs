@@ -1,5 +1,7 @@
-﻿using System.Xml;
+﻿using System.Text;
+using System.Xml;
 using Google.Protobuf.Reflection;
+using TcHaxx.ProtocGenTc.Fields;
 using TcHaxx.ProtocGenTc.Prefix;
 
 namespace TcHaxx.ProtocGenTc.TcPlcObjects.Properties;
@@ -90,11 +92,21 @@ internal class DataType : IPropertyProcessor
     {
         var nameInst = prefixes.GetStNameWithInstancePrefix(message);
         var nameProp = prefixes.GetStNameWithPropertyPrefix(message);
-        return new Implementation()
+        var sb = new StringBuilder();
+        sb.AppendLine($"""
+                      {nameInst} := {nameProp};
+                      """);
+        foreach (var field in message.Field)
         {
-            ST = CData.From($"""
-                             {nameInst} := {nameProp};
-                             """)
-        };
+            if (field.Type == FieldDescriptorProto.Types.Type.Message)
+            {
+                sb.AppendLine($"// {field.Dump()}");
+                var msgStName = prefixes.GetStNameWithInstancePrefix(message);
+                sb.AppendLine($"""
+                               {nameInst}.{field.Name} := {nameProp}.{field.Name};
+                               """);
+            }
+        }
+        return new() { ST = CData.From(sb.ToString()) };
     }
 }

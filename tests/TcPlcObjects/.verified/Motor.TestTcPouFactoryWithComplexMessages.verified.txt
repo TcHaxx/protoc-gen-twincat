@@ -15,7 +15,7 @@ VAR
     _stMotor : ST_Motor;
     // repeated int32 sensor_readings = 4;
     _fbFieldCodecId4 : FB_FieldCodecInt32(nTag:= 16#22);
-    _fbRepeatedId4 : FB_RepeatedField(anyArray:= F_ToAnyType(_stMotor.sensor_readings), anyFirstElem:= F_ToAnyType(_stMotor.sensor_readings[0]));
+    _fbRepeatedId4 : FB_RepeatedField(anyArray:= F_ToAnyType(_stMotor.sensor_readings), anyFirstElem:= F_ToAnyType(_stMotor.sensor_readings[0]), ipFieldCodec:= _fbFieldCodecId4);
     _fbmotor_config : FB_MotorConfig;
     END_VAR
 ]]>,
@@ -25,7 +25,8 @@ VAR
     Method: [
       {
         Declaration:
-<![CDATA[(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
+<![CDATA[{attribute 'no-analysis'}
+(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
 METHOD CalculateSize : UDINT
 VAR
     nSize : UDINT;
@@ -41,10 +42,11 @@ nSize := nSize + 1 + F_ComputeEnumSize(anyEnum:= _stMotor.status);
 // uint32 speed = 3;
 nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stMotor.speed);
 // repeated int32 sensor_readings = 4;
+_fbRepeatedId4.nCount := _stMotor.sensor_readings_count;
 _fbRepeatedId4.CalculateSize(nSize => nRepeatedFieldSize);
 nSize := nSize + nRepeatedFieldSize;
 // bytes config = 5;
-nSize := nSize + 1 + F_ComputeBytesSize(aBytes:= _stMotor.config);
+nSize := nSize + 1 + F_ComputeBytesSize(aBytes:= _stMotor.config, nCount:= _stMotor.config_count);
 // MotorConfig motor_config = 6;
 nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbmotor_config);
 CalculateSize := nSize;
@@ -56,6 +58,7 @@ CalculateSize := nSize;
       {
         Declaration:
 <![CDATA[(* Merges the data from the specified coded input stream with the current message.*)
+{attribute 'no-analysis'}
 METHOD MergeFrom : HRESULT
 VAR_IN_OUT
     fbParseCtx : FB_ParseContext;
@@ -105,6 +108,7 @@ END_REPEAT
       {
         Declaration:
 <![CDATA[(* Writes the data to the given coded output stream.*)
+{attribute 'no-analysis'}
 METHOD WriteTo : HRESULT
 VAR_IN_OUT
 	(* Coded output stream to write the data to. *)
@@ -189,7 +193,11 @@ END_VAR]]>,
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[_stMotor := Motor;]]>
+            ST:
+<![CDATA[_stMotor := Motor;
+// MotorConfig motor_config = 6;
+_stMotor.motor_config := Motor.motor_config;
+]]>
           },
           Name: Set
         }

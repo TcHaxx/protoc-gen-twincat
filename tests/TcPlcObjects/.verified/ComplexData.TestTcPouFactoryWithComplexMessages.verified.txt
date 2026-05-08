@@ -15,10 +15,10 @@ VAR
     _stComplexData : ST_ComplexData;
     // repeated uint32 array_data = 5;
     _fbFieldCodecId5 : FB_FieldCodecUint32(nTag:= 16#2A);
-    _fbRepeatedId5 : FB_RepeatedField(anyArray:= F_ToAnyType(_stComplexData.array_data), anyFirstElem:= F_ToAnyType(_stComplexData.array_data[0]));
+    _fbRepeatedId5 : FB_RepeatedField(anyArray:= F_ToAnyType(_stComplexData.array_data), anyFirstElem:= F_ToAnyType(_stComplexData.array_data[0]), ipFieldCodec:= _fbFieldCodecId5);
     // repeated SensorReading readings = 10;
     _fbFieldCodecId10 : FB_FieldCodecMessage(nTag:= 16#52, ipMessage:= _fbreadings);
-    _fbRepeatedId10 : FB_RepeatedField(anyArray:= F_ToAnyType(_stComplexData.readings), anyFirstElem:= F_ToAnyType(_stComplexData.readings[0]));
+    _fbRepeatedId10 : FB_RepeatedField(anyArray:= F_ToAnyType(_stComplexData.readings), anyFirstElem:= F_ToAnyType(_stComplexData.readings[0]), ipFieldCodec:= _fbFieldCodecId10);
     _fbreadings : FB_SensorReading;
     END_VAR
 ]]>,
@@ -28,7 +28,8 @@ VAR
     Method: [
       {
         Declaration:
-<![CDATA[(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
+<![CDATA[{attribute 'no-analysis'}
+(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
 METHOD CalculateSize : UDINT
 VAR
     nSize : UDINT;
@@ -46,18 +47,21 @@ nSize := nSize + 1 + F_ComputeInt32Size(anyDint:= _stComplexData.value_int);
 // uint32 value_word = 4;
 nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stComplexData.value_word);
 // repeated uint32 array_data = 5;
+_fbRepeatedId5.nCount := _stComplexData.array_data_count;
 _fbRepeatedId5.CalculateSize(nSize => nRepeatedFieldSize);
 nSize := nSize + nRepeatedFieldSize;
 // Status state = 6;
 nSize := nSize + 1 + F_ComputeEnumSize(anyEnum:= _stComplexData.state);
 // bytes raw_bytes = 7;
-nSize := nSize + 1 + F_ComputeBytesSize(aBytes:= _stComplexData.raw_bytes);
+nSize := nSize + 1 + F_ComputeBytesSize(aBytes:= _stComplexData.raw_bytes, nCount:= _stComplexData.raw_bytes_count);
 // double measurement = 8;
 nSize := nSize + 1 + F_ComputeDoubleSize(fValue:= _stComplexData.measurement);
 // float calibration_factor = 9;
 nSize := nSize + 1 + F_ComputeFloatSize(fValue:= _stComplexData.calibration_factor);
 // repeated SensorReading readings = 10;
-nSize := nSize + 1 + F_ComputeMessageSize(iMessage:= _fbreadings);
+_fbRepeatedId10.nCount := _stComplexData.readings_count;
+_fbRepeatedId10.CalculateSize(nSize => nRepeatedFieldSize);
+nSize := nSize + nRepeatedFieldSize;
 // DataType data_type = 11;
 nSize := nSize + 1 + F_ComputeEnumSize(anyEnum:= _stComplexData.data_type);
 CalculateSize := nSize;
@@ -69,6 +73,7 @@ CalculateSize := nSize;
       {
         Declaration:
 <![CDATA[(* Merges the data from the specified coded input stream with the current message.*)
+{attribute 'no-analysis'}
 METHOD MergeFrom : HRESULT
 VAR_IN_OUT
     fbParseCtx : FB_ParseContext;
@@ -128,6 +133,7 @@ END_REPEAT
       {
         Declaration:
 <![CDATA[(* Writes the data to the given coded output stream.*)
+{attribute 'no-analysis'}
 METHOD WriteTo : HRESULT
 VAR_IN_OUT
 	(* Coded output stream to write the data to. *)
@@ -252,7 +258,11 @@ END_VAR]]>,
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[_stComplexData := ComplexData;]]>
+            ST:
+<![CDATA[_stComplexData := ComplexData;
+// repeated SensorReading readings = 10;
+_stComplexData.readings := ComplexData.readings;
+]]>
           },
           Name: Set
         }

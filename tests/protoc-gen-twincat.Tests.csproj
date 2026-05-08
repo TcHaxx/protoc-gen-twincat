@@ -50,6 +50,6 @@
   <Target Name="ProtocGenTc_BeforeCompile" BeforeTargets="Build">
     <MakeDir Directories="$(ProtobufDescriptorSetOutDir)/proto" />
     <MakeDir Directories="$(ProtobufDescriptorSetOutDir)/proto/issues" />
-    <Exec Command="protoc -I../proto -Iproto --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(Protobuf.Identity).pb ./%(Protobuf.Identity)" />
+    <Exec Command="protoc -Iproto -I../proto  --include_source_info --include_imports --descriptor_set_out=$(ProtobufDescriptorSetOutDir)/%(Protobuf.Identity).pb ./%(Protobuf.Identity)" />
   </Target>
 </Project>

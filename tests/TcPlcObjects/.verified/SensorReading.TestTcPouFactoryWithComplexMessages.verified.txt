@@ -20,7 +20,8 @@ VAR
     Method: [
       {
         Declaration:
-<![CDATA[(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
+<![CDATA[{attribute 'no-analysis'}
+(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
 METHOD CalculateSize : UDINT
 VAR
     nSize : UDINT;
@@ -44,6 +45,7 @@ CalculateSize := nSize;
       {
         Declaration:
 <![CDATA[(* Merges the data from the specified coded input stream with the current message.*)
+{attribute 'no-analysis'}
 METHOD MergeFrom : HRESULT
 VAR_IN_OUT
     fbParseCtx : FB_ParseContext;
@@ -85,6 +87,7 @@ END_REPEAT
       {
         Declaration:
 <![CDATA[(* Writes the data to the given coded output stream.*)
+{attribute 'no-analysis'}
 METHOD WriteTo : HRESULT
 VAR_IN_OUT
 	(* Coded output stream to write the data to. *)
@@ -145,7 +148,9 @@ END_VAR]]>,
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[_stSensorReading := SensorReading;]]>
+            ST:
+<![CDATA[_stSensorReading := SensorReading;
+]]>
           },
           Name: Set
         }

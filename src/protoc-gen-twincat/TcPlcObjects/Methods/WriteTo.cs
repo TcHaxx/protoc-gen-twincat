@@ -37,6 +37,7 @@ internal class WriteTo : IMethodProcessor
         var sb = new StringBuilder();
         sb.AppendLine($$"""
                         (* Writes the data to the given coded output stream.*)
+                        {attribute 'no-analysis'}
                         METHOD {{Constants.METHOD_NAME_WRITE_TO}} : HRESULT
                         VAR_IN_OUT
                         	(* Coded output stream to write the data to. *)

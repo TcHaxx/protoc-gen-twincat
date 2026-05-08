@@ -15,7 +15,7 @@ VAR
     _stDevice : ST_Device;
     // repeated uint32 error_codes = 3;
     _fbFieldCodecId3 : FB_FieldCodecUint32(nTag:= 16#1A);
-    _fbRepeatedId3 : FB_RepeatedField(anyArray:= F_ToAnyType(_stDevice.error_codes), anyFirstElem:= F_ToAnyType(_stDevice.error_codes[0]));
+    _fbRepeatedId3 : FB_RepeatedField(anyArray:= F_ToAnyType(_stDevice.error_codes), anyFirstElem:= F_ToAnyType(_stDevice.error_codes[0]), ipFieldCodec:= _fbFieldCodecId3);
     END_VAR
 ]]>,
     Implementation: {
@@ -24,7 +24,8 @@ VAR
     Method: [
       {
         Declaration:
-<![CDATA[(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
+<![CDATA[{attribute 'no-analysis'}
+(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
 METHOD CalculateSize : UDINT
 VAR
     nSize : UDINT;
@@ -38,12 +39,13 @@ nSize := nSize + 1 + F_ComputeStringSize(anyString:= _stDevice.name);
 // uint32 id = 2;
 nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stDevice.id);
 // repeated uint32 error_codes = 3;
+_fbRepeatedId3.nCount := _stDevice.error_codes_count;
 _fbRepeatedId3.CalculateSize(nSize => nRepeatedFieldSize);
 nSize := nSize + nRepeatedFieldSize;
 // int32 temperature = 4;
 nSize := nSize + 1 + F_ComputeInt32Size(anyDint:= _stDevice.temperature);
 // bytes data = 5;
-nSize := nSize + 1 + F_ComputeBytesSize(aBytes:= _stDevice.data);
+nSize := nSize + 1 + F_ComputeBytesSize(aBytes:= _stDevice.data, nCount:= _stDevice.data_count);
 CalculateSize := nSize;
 ]]>
         },
@@ -53,6 +55,7 @@ CalculateSize := nSize;
       {
         Declaration:
 <![CDATA[(* Merges the data from the specified coded input stream with the current message.*)
+{attribute 'no-analysis'}
 METHOD MergeFrom : HRESULT
 VAR_IN_OUT
     fbParseCtx : FB_ParseContext;
@@ -99,6 +102,7 @@ END_REPEAT
       {
         Declaration:
 <![CDATA[(* Writes the data to the given coded output stream.*)
+{attribute 'no-analysis'}
 METHOD WriteTo : HRESULT
 VAR_IN_OUT
 	(* Coded output stream to write the data to. *)
@@ -173,7 +177,9 @@ END_VAR]]>,
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[_stDevice := Device;]]>
+            ST:
+<![CDATA[_stDevice := Device;
+]]>
           },
           Name: Set
         }

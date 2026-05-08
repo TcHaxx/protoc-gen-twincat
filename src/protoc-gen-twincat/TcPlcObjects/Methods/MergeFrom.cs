@@ -30,6 +30,7 @@ internal class MergeFrom : IMethodProcessor
         var sb = new StringBuilder();
         sb.AppendLine($$"""
                         (* Merges the data from the specified coded input stream with the current message.*)
+                        {attribute 'no-analysis'}
                         METHOD {{Constants.METHOD_NAME_MERGE_FROM}} : HRESULT
                         VAR_IN_OUT
                             fbParseCtx : FB_ParseContext;

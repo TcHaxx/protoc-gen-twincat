@@ -30,6 +30,7 @@ internal class CalculateSize : IMethodProcessor
     {
         var sb = new StringBuilder();
         sb.AppendLine($$"""
+                      {attribute 'no-analysis'}
                       (* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
                       METHOD {{Constants.METHOD_NAME_CALCULATE_SIZE}} : UDINT
                       VAR
@@ -46,7 +47,7 @@ internal class CalculateSize : IMethodProcessor
         foreach (var field in message.Field)
         {
             sb.AppendLine($"// {field.Dump()}");
-            if (field.Type == FieldDescriptorProto.Types.Type.Message)
+            if (field.Type == FieldDescriptorProto.Types.Type.Message && field.Label != FieldDescriptorProto.Types.Label.Repeated)
             {
                 sb.AppendLine(
                     $"nSize := nSize + {field.GetFieldTagLength()} + F_ComputeMessageSize(iMessage:= {prefixes.GetFbNameWithInstancePrefix(field)});");
@@ -55,7 +56,9 @@ internal class CalculateSize : IMethodProcessor
             {
                 var suffix = $"Id{field.Number}";
                 var instanceName = $"_fbRepeated{suffix}";
+                var countVar = $"{prefixes.GetStNameWithInstancePrefix(message)}.{RepeatedFieldHelper.GetCountFieldName(field)}";
                 sb.AppendLine($$"""
+                                {{instanceName}}.nCount := {{countVar}};
                                 {{instanceName}}.CalculateSize(nSize => nRepeatedFieldSize);
                                 nSize := nSize + nRepeatedFieldSize;
                                 """);
@@ -70,8 +73,17 @@ internal class CalculateSize : IMethodProcessor
             {
                 var instanceName = prefixes.GetStNameWithInstancePrefix(message);
                 var (parameterName, _) = field.GetFieldAssignVarString(string.Empty);
-                sb.AppendLine(
-                    $"nSize := nSize + {field.GetFieldTagLength()} + F_Compute{field.Type}Size({parameterName}:= {instanceName}.{field.Name});");
+                var countVar = $"{prefixes.GetStNameWithInstancePrefix(message)}.{RepeatedFieldHelper.GetCountFieldName(field)}";
+                if (field.Type == FieldDescriptorProto.Types.Type.Bytes)
+                {
+                    sb.AppendLine(
+                        $"nSize := nSize + {field.GetFieldTagLength()} + F_Compute{field.Type}Size({parameterName}:= {instanceName}.{field.Name}, nCount:= {countVar});");
+                }
+                else
+                {
+                    sb.AppendLine(
+                        $"nSize := nSize + {field.GetFieldTagLength()} + F_Compute{field.Type}Size({parameterName}:= {instanceName}.{field.Name});");
+                }
             }
         }
 

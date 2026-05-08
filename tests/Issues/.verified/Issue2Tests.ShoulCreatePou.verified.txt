@@ -24,7 +24,8 @@ VAR
     Method: [
       {
         Declaration:
-<![CDATA[(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
+<![CDATA[{attribute 'no-analysis'}
+(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
 METHOD CalculateSize : UDINT
 VAR
     nSize : UDINT;
@@ -50,6 +51,7 @@ CalculateSize := nSize;
       {
         Declaration:
 <![CDATA[(* Merges the data from the specified coded input stream with the current message.*)
+{attribute 'no-analysis'}
 METHOD MergeFrom : HRESULT
 VAR_IN_OUT
     fbParseCtx : FB_ParseContext;
@@ -97,6 +99,7 @@ END_REPEAT
       {
         Declaration:
 <![CDATA[(* Writes the data to the given coded output stream.*)
+{attribute 'no-analysis'}
 METHOD WriteTo : HRESULT
 VAR_IN_OUT
 	(* Coded output stream to write the data to. *)
@@ -170,7 +173,17 @@ END_VAR]]>,
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[_stExtendedStruct := ExtendedStruct;]]>
+            ST:
+<![CDATA[_stExtendedStruct := ExtendedStruct;
+// MyStruct Data_A = 1;
+_stExtendedStruct.Data_A := ExtendedStruct.Data_A;
+// MyStruct Data_B = 2;
+_stExtendedStruct.Data_B := ExtendedStruct.Data_B;
+// NoPrefix Data_C = 3;
+_stExtendedStruct.Data_C := ExtendedStruct.Data_C;
+// NoPrefix Data_D = 4;
+_stExtendedStruct.Data_D := ExtendedStruct.Data_D;
+]]>
           },
           Name: Set
         }

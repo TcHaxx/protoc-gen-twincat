@@ -15,7 +15,7 @@ VAR
     _stTestSimpleMessage : ST_TestSimpleMessage;
     // repeated uint32 numbers = 2;
     _fbFieldCodecId2 : FB_FieldCodecUint32(nTag:= 16#12);
-    _fbRepeatedId2 : FB_RepeatedField(anyArray:= F_ToAnyType(_stTestSimpleMessage.numbers), anyFirstElem:= F_ToAnyType(_stTestSimpleMessage.numbers[0]));
+    _fbRepeatedId2 : FB_RepeatedField(anyArray:= F_ToAnyType(_stTestSimpleMessage.numbers), anyFirstElem:= F_ToAnyType(_stTestSimpleMessage.numbers[0]), ipFieldCodec:= _fbFieldCodecId2);
     END_VAR
 ]]>,
     Implementation: {
@@ -24,7 +24,8 @@ VAR
     Method: [
       {
         Declaration:
-<![CDATA[(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
+<![CDATA[{attribute 'no-analysis'}
+(* Calculates the size of this message in Protocol Buffer wire format, in bytes. *)
 METHOD CalculateSize : UDINT
 VAR
     nSize : UDINT;
@@ -36,6 +37,7 @@ END_VAR
 <![CDATA[// uint32 id = 1;
 nSize := nSize + 1 + F_ComputeUint32Size(anyUdint:= _stTestSimpleMessage.id);
 // repeated uint32 numbers = 2;
+_fbRepeatedId2.nCount := _stTestSimpleMessage.numbers_count;
 _fbRepeatedId2.CalculateSize(nSize => nRepeatedFieldSize);
 nSize := nSize + nRepeatedFieldSize;
 CalculateSize := nSize;
@@ -47,6 +49,7 @@ CalculateSize := nSize;
       {
         Declaration:
 <![CDATA[(* Merges the data from the specified coded input stream with the current message.*)
+{attribute 'no-analysis'}
 METHOD MergeFrom : HRESULT
 VAR_IN_OUT
     fbParseCtx : FB_ParseContext;
@@ -87,6 +90,7 @@ END_REPEAT
       {
         Declaration:
 <![CDATA[(* Writes the data to the given coded output stream.*)
+{attribute 'no-analysis'}
 METHOD WriteTo : HRESULT
 VAR_IN_OUT
 	(* Coded output stream to write the data to. *)
@@ -134,7 +138,9 @@ END_VAR]]>,
 <![CDATA[VAR
 END_VAR]]>,
           Implementation: {
-            ST: <![CDATA[_stTestSimpleMessage := stTestSimpleMessage;]]>
+            ST:
+<![CDATA[_stTestSimpleMessage := stTestSimpleMessage;
+]]>
           },
           Name: Set
         }
